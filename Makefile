@@ -5,8 +5,16 @@ help: ## Help message
 
 
 .PHONY: docs
-docs: notes ## Generate docs
+docs: html slides ## Generate docs
 
 .PHONY: notes
-notes: ## Update notes
+notes: ## Build notes images
 	plantuml -tsvg -oimg docs/notes/*
+
+.PHONY: html
+html: ## Build html site
+	sphinx-build -b html docs build
+
+.PHONY: slides
+slides: ## Build slides
+	sphinx-build -b revealjs docs/slides build/slides
