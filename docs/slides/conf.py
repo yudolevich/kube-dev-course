@@ -15,4 +15,13 @@ exclude_patterns = [
 
 language = 'ru'
 
-revealjs_style_theme = 'black'
+revealjs_style_theme = 'league'
+revealjs_script_plugins = [
+    {
+        "name": "RevealHighlight",
+        "src": "revealjs4/plugin/highlight/highlight.js",
+    },
+]
+revealjs_css_files = [
+    "revealjs4/plugin/highlight/zenburn.css",
+]

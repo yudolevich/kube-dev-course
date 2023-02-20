@@ -246,7 +246,7 @@ DESCRIPTION:
 
 Через флаг `--dry-run` можно производить пробный прогон без реальных изменений в кластере.
 Есть два варианта:
-* `--dry-run=clien` - клиент сам формирует конфигурацию объекта без отправки его в api
+* `--dry-run=client` - клиент сам формирует конфигурацию объекта без отправки его в api
 * `--dry-run=server` - клиент формирует конфигурацию объекта с отправкой в api, а api производит
   операции валидации и мутации объекта, но не сохраняет его в базе
 
@@ -545,7 +545,7 @@ pod/nginx edited
   ```
 * Применяем значения из файла в кластере командой `kubectl apply`
   ```console
-  $ kubectl apply -f nginx.yaml
+  $ k apply -f nginx.yaml
   Warning: resource pods/nginx is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
   pod/nginx configured
   ```
