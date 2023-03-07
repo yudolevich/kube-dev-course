@@ -2,3 +2,5 @@ sphinx
 myst-parser
 sphinx-revealjs
 sphinx-rtd-theme
+sphinxcontrib-mermaid
+sphinx-copybutton
