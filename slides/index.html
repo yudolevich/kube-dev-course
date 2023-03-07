@@ -1,0 +1,850 @@
+
+<!DOCTYPE html>
+
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <title></title>
+    <link rel="stylesheet" type="text/css" href="_static/revealjs4/dist/reveal.css" />
+    <link rel="stylesheet" href="_static/revealjs4/dist/theme/league.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/revealjs4/plugin/highlight/zenburn.css" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  </head><body>
+    <div class="reveal">
+        <div class="slides" role="main">
+            <section >
+<h1></h1>
+<a class="reference internal image-reference" href="_images/logo.svg"><img alt="_images/logo.svg" src="_images/logo.svg" width="200px" /></a>
+</section>
+<section>
+<section >
+<h2>Основные концепции</h2>
+</section>
+<section >
+<h3>Эволюция инфраструктуры</h3>
+<p><img alt="" src="_images/container_evolution3.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Физические сервера</p>
+<p><img alt="" src="_images/container_evolution1.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Физические сервера</p>
+<p>Минусы</p>
+<ul class="simple">
+<li class="fragment"><p>борьба приложений за ресурсы</p></li>
+<li class="fragment"><p>проблема вертикального масштабирования</p></li>
+<li class="fragment"><p>неэффективное использование ресурсов</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Виртуализация</p>
+<p><img alt="" src="_images/container_evolution2.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Виртуализация</p>
+<ul class="simple">
+<li class="fragment"><p>ресурсы ограничены параметрами виртуальной машины</p></li>
+<li class="fragment"><p>простота вертикального масштабирования</p></li>
+<li class="fragment"><p>возможность более плотного размещения</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Контейнеры</p>
+<p><img alt="" src="_images/container_evolution3.svg" /></p>
+<p class="fragment">Зачем?</p>
+</section>
+<section >
+<h3></h3>
+<p>Отличие контейнеров от ВМ</p>
+<ul class="simple">
+<li class="fragment"><p>изоляция на уровне ОС</p></li>
+<li class="fragment"><p>запускается только нужное приложение</p></li>
+<li class="fragment"><p>минимальные накладные расходы</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>DevOps практики</p>
+<ul class="simple">
+<li class="fragment"><p>гибкость создания и развертывания с docker image</p></li>
+<li class="fragment"><p>одинаково работает при разработке, тестировании и на проде</p></li>
+<li class="fragment"><p>удобство использования в CI/CD</p></li>
+<li class="fragment"><p>хорошо подходит для микросервисной архитектуры</p></li>
+</ul>
+</section>
+<section >
+<h3>Эволюция архитектуры приложений</h3>
+<p><img alt="" src="_images/monolithvsmicro.drawio.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Монолитная архитектура</p>
+<p><img alt="" src="_images/monolith.drawio.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Монолитная архитектура</p>
+<ul class="simple">
+<li class="fragment"><p>изменения одного компонента требуют редеплой всего приложения</p></li>
+<li class="fragment"><p>требуются мощные сервера, проблема масштабирования</p></li>
+<li class="fragment"><p>нельзя масштабировать только нужные компоненты</p></li>
+<li class="fragment"><p>отказ одного компонента ведет к полной неработоспособности</p></li>
+<li class="fragment"><p>сложная структура проекта, тяжело заменять компоненты</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Микросервисная архитектура</p>
+<p><img alt="" src="_images/microservices.drawio.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Микросервисная архитектура</p>
+<ul class="simple">
+<li class="fragment"><p>можно обновлять независимо</p></li>
+<li class="fragment"><p>меньше требования к ресурсам, легко масштабировать горизонтально</p></li>
+<li class="fragment"><p>можно масштабировать только необходимые компоненты</p></li>
+<li class="fragment"><p>при отказе затрагивает только связанные компоненты</p></li>
+<li class="fragment"><p>разработка на разных языках и технологиях</p></li>
+</ul>
+</section>
+<section >
+<h3>Kubernetes</h3>
+<a class="reference internal image-reference" href="_images/logo.svg"><img alt="_images/logo.svg" src="_images/logo.svg" width="100px" /></a>
+<ul class="simple">
+<li class="fragment"><p>размещение и жизненный цикл контейнеров</p></li>
+<li class="fragment"><p>масштабирование и распределение нагрузки</p></li>
+<li class="fragment"><p>конфигурация через декларативное описание</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Основные компоненты</p>
+<ul class="simple">
+<li class="fragment"><p>control-plane <img alt="" src="_images/control-plane.svg" /></p></li>
+<li class="fragment"><p>node components <img alt="" src="_images/node.svg" /></p></li>
+</ul>
+</section>
+<section >
+<h3>Control Plane</h3>
+<p><img alt="" src="_images/control-plane.svg" /></p>
+<ul class="simple">
+<li class="fragment"><p>обработка операций взаимодействия с кластером</p></li>
+<li class="fragment"><p>управления размещением нагрузки по нодам</p></li>
+<li class="fragment"><p>отслеживание ресурсов и событий в кластере и их обработка</p></li>
+</ul>
+</section>
+<section >
+<h3>Control Plane</h3>
+<ul class="simple">
+<li class="fragment"><p>kube-apiserver <img alt="" src="_images/api.svg" /></p></li>
+<li class="fragment"><p>etcd <img alt="" src="_images/etcd.svg" /></p></li>
+</ul>
+</section>
+<section >
+<h3>Control Plane</h3>
+<ul class="simple">
+<li class="fragment"><p>kube-scheduler <img alt="" src="_images/sched.svg" /></p></li>
+<li class="fragment"><p>kube-controller-manager <img alt="" src="_images/c-m.svg" /></p></li>
+<li class="fragment"><p>cloud-controller-manager <img alt="" src="_images/c-c-m.svg" /></p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Отказоустойчивый кластер</p>
+<p><img alt="" src="_images/ha-cluster.svg" /></p>
+</section>
+<section >
+<h3>Node</h3>
+<p><img alt="" src="_images/node.svg" /></p>
+<ul class="simple">
+<li class="fragment"><p>kubelet <img alt="" src="_images/kubelet.svg" /></p></li>
+<li class="fragment"><p>kube-proxy <img alt="" src="_images/k-proxy.svg" /></p></li>
+<li class="fragment"><p>container runtime <img alt="" src="_images/cri.svg" /></p></li>
+</ul>
+</section>
+<section >
+<h3>API Kubernetes</h3>
+<p><img alt="" src="_images/api.svg" /></p>
+</section>
+<section >
+<h3></h3>
+<p>Объект в kubernetes</p>
+<ul class="simple">
+<li class="fragment"><p>Конфигурация и состояние нод кластера(Node)</p></li>
+<li class="fragment"><p>Конфигурация и состояние развертывания приложения(Deployment)</p></li>
+<li class="fragment"><p>Конфигурация данных для приложения(ConfigMap)</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Объект в kubernetes</p>
+<pre data-id="id21"><code data-trim data-noescape class="yaml" data-line-numbers="1|2|3-7|8-14|15">apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}</code></pre>
+</section>
+<section >
+<h3></h3>
+<p>REST</p>
+<pre data-id="id22"><code data-trim data-noescape class="bash">$ kubectl get --raw /
+{
+  &quot;paths&quot;: [
+    &quot;/.well-known/openid-configuration&quot;,
+    &quot;/api&quot;,
+    &quot;/api/v1&quot;,
+    &quot;/apis&quot;,
+    &quot;/apis/&quot;,
+    &quot;/apis/apps&quot;,
+    &quot;/apis/apps/v1&quot;,
+    ...
+</code></pre>
+</section>
+<section >
+<h3></h3>
+<p>Groups</p>
+<ul class="simple">
+<li class="fragment"><p>/api/v1 - core группа, соответствует<br />
+apiVersion: v1</p></li>
+<li class="fragment"><p>/apis/$GROUP/$VERSION - именованные группы, соответствует<br />
+apiVersion: $GROUP/$VERSION</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<p>Scope</p>
+<pre data-id="id24"><code data-trim data-noescape class="bash" data-line-numbers="1-3|5-7"># для cluster-wide ресурсов
+&quot;/apis/${GROUP}/${VERSION}/${RESOURCE}&quot;
+(/apis/apiregistration.k8s.io/v1/apiservices)
+
+# для namespaced ресурсов
+&quot;/apis/${GROUP}/${VERSION}/namespaces/${NAMESPACE}/${RESOURCE}&quot;
+(/apis/apps/v1/namespaces/default/deployments)</code></pre>
+</section>
+<section >
+<h3></h3>
+<p>Get Object</p>
+<pre data-id="id25"><code data-trim data-noescape class="bash">&quot;/apis/$GROUP/$VERSION/namespaces/$NAMESPACE/$RESOURCE/$NAME&quot;</code></pre>
+</section>
+</section>
+<section>
+<section >
+<h2>Pod</h2>
+<a class="reference internal image-reference" href="_images/pod.svg"><img alt="_images/pod.svg" src="_images/pod.svg" width="200px" /></a>
+</section>
+<section >
+<h3></h3>
+<p>Pod - это минимальная единица развертывания</p>
+<ul class="simple">
+<li class="fragment"><p>один или несколько контейнеров на одной ноде</p></li>
+<li class="fragment"><p>общая сеть</p></li>
+<li class="fragment"><p>общее хранилище</p></li>
+<li class="fragment"><p>общий набор параметров</p></li>
+</ul>
+</section>
+<section >
+<h3></h3>
+<pre data-id="id27"><code data-trim data-noescape class="yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80</code></pre>
+<pre data-id="id27"><code data-trim data-noescape class="console">$ kubectl apply -f pod.yaml</code></pre>
+</section>
+<section >
+<h3>Несколько контейнеров</h3>
+<a class="reference internal image-reference" href="_images/pod-multicontainer.svg"><img alt="_images/pod-multicontainer.svg" class="align-center" src="_images/pod-multicontainer.svg" width="300px" /></a>
+</section>
+<section >
+<h3></h3>
+<pre data-id="id29"><code data-trim data-noescape class="yaml" data-line-numbers="7-8|9-11|12-13|14-16|17-20">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    volumeMounts:
+    - mountPath: /opt/nginx/conf
+      name: conf
+  - name: reloader
+    image: config-reloader:1.2.3
+    volumeMounts:
+    - mountPath: /opt/nginx/conf
+      name: conf
+  volumes:
+  - name: conf
+    configMap:
+      name: conf</code></pre>
+</section>
+<section >
+<h3>Жизненный цикл</h3>
+<img alt="_images/lifecycle.svg" src="_images/lifecycle.svg" /></section>
+<section >
+<h3>Pod Phases</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>Pending</strong> - под создан, но не назначен на ноду</p></li>
+<li class="fragment"><p><strong>Running</strong> - под назначен и все контейнеры запущены</p></li>
+<li class="fragment"><p><strong>Succeeded</strong> - все контейнеры успешно завершены</p></li>
+<li class="fragment"><p><strong>Failed</strong> - все контейнеры завершены, но хотя бы один неуспешно</p></li>
+<li class="fragment"><p><strong>Unknown</strong> - не удалось определить статус пода</p></li>
+</ul>
+</section>
+<section >
+<h3>Pod Conditions</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>PodScheduled</strong> - под назначен на ноду</p></li>
+<li class="fragment"><p><strong>ContainersReady</strong> - все контейнеры пода подготовлены</p></li>
+<li class="fragment"><p><strong>Initialized</strong> - все инит контейнеры в поде выполнились успешно</p></li>
+<li class="fragment"><p><strong>Ready</strong> - под готов принимать запросы</p></li>
+</ul>
+</section>
+<section >
+<h3>Container states</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>Waiting</strong> - подготовительные операции для старта</p></li>
+<li class="fragment"><p><strong>Running</strong> - контейнер запустился и работает</p></li>
+<li class="fragment"><p><strong>Terminated</strong> - контейнер завершился</p></li>
+</ul>
+</section>
+<section >
+<h3>Container restart policy</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>Always</strong> - при любом завершении контейнера</p></li>
+<li class="fragment"><p><strong>OnFailure</strong> - при некорректном завершении</p></li>
+<li class="fragment"><p><strong>Never</strong> - никогда не перезапускать</p></li>
+</ul>
+</section>
+<section >
+<h3>Container hooks</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>PostStart</strong> - запускается сразу после создания контейнера</p></li>
+<li class="fragment"><p><strong>PreStop</strong> - запускается непосредственно перед завершением контейнера</p></li>
+</ul>
+</section>
+<section >
+<h3>Container probes</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>exec</strong> - выполняет команду внутри контейнера</p></li>
+<li class="fragment"><p><strong>httpGet</strong> - выполняет HTTP GET запрос по IP пода</p></li>
+<li class="fragment"><p><strong>tcpSocket</strong> - выполняет TCP проверку по IP и порту</p></li>
+<li class="fragment"><p><strong>grpc</strong> - выполняет вызов удаленной процедуры по протоколу gRPC</p></li>
+</ul>
+</section>
+<section >
+<h3>Container probes</h3>
+<ul class="simple">
+<li class="fragment"><p><strong>livenessProbe</strong> - определяет, что контейнер работает</p></li>
+<li class="fragment"><p><strong>readinessProbe</strong> - определяет, что контейнер готов принимать запросы</p></li>
+<li class="fragment"><p><strong>startupProbe</strong> - определяет, что приложение в контейнере запустилось</p></li>
+</ul>
+</section>
+<section >
+<h3>Pod status</h3>
+<pre data-id="pod-status"><code data-trim data-noescape class="yaml" data-line-numbers="2|3-6|7-10|11-14|15-18|19|20-27|28-30|31-37">status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2023-03-03T14:38:28Z&quot;
+    status: &quot;True&quot;
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2023-03-03T14:39:31Z&quot;
+    status: &quot;True&quot;
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2023-03-03T14:39:31Z&quot;
+    status: &quot;True&quot;
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: &quot;2023-03-03T14:38:28Z&quot;
+    status: &quot;True&quot;
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://83ae1cecc32ff20bc915438c265bae638b8741c371cd4b3006cbbfbf1aeb255c
+    image: docker.io/library/nginx:latest
+    imageID: docker.io/library/nginx&#64;sha256:3f13b4376446cf92b0cb9a5c46ba75d57c41f627c4edb8b635fa47386ea29e20
+    lastState: {}
+    name: nginx
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: &quot;2023-03-03T14:39:31Z&quot;
+  hostIP: 172.18.0.3
+  phase: Running
+  podIP: 10.244.2.5
+  podIPs:
+  - ip: 10.244.2.5
+  qosClass: Burstable
+  startTime: &quot;2023-03-03T14:38:28Z&quot;</code></pre>
+</section>
+<section >
+<h3>Pod status</h3>
+<pre data-id="id32"><code data-trim data-noescape class="console">$ k get po
+NAME    READY   STATUS    RESTARTS   AGE
+nginx   1/1     Running   0          3d17h</code></pre>
+</section>
+<section >
+<h3>Pod termination</h3>
+<img alt="_images/terminate.svg" src="_images/terminate.svg" /></section>
+<section >
+<h3>Конфигурация</h3>
+</section>
+<section >
+<h3></h3>
+<pre data-id="id34"><code data-trim data-noescape class="console">$ # kubectl explain pod.&lt;field&gt;
+$ kubectl explain pod.spec.containers.image
+KIND:     Pod
+VERSION:  v1
+
+FIELD:    image &lt;string&gt;
+
+DESCRIPTION:
+     Docker image name. More info:
+     https://kubernetes.io/docs/concepts/containers/images This field is
+     optional to allow higher level config management to default or override
+     container images in workload controllers like Deployments and StatefulSets.</code></pre>
+</section>
+<section >
+<h3>Scheduling</h3>
+<pre data-id="scheduling"><code data-trim data-noescape class="yaml" data-line-numbers="6">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  nodeName: kind-worker
+  containers:
+  - name: nginx
+    image: nginx</code></pre>
+</section>
+<section >
+<h3>Scheduling</h3>
+<pre data-id="id35"><code data-trim data-noescape class="yaml" data-line-numbers="6-7">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: kind-worker
+  containers:
+  - name: nginx
+    image: nginx</code></pre>
+</section>
+<section >
+<h3>Scheduling</h3>
+<pre data-id="id36"><code data-trim data-noescape class="yaml" data-line-numbers="6-14">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - kind-worker
+  containers:
+  - name: nginx
+    image: nginx</code></pre>
+</section>
+<section >
+<h3>Pod Lifecycle</h3>
+<pre data-id="pod-lifecycle"><code data-trim data-noescape class="yaml" data-line-numbers="6-8">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 5
+  activeDeadlineSeconds: 10
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Pod Volumes</h3>
+<pre data-id="pod-volumes"><code data-trim data-noescape class="yaml" data-line-numbers="12-14">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+    - name: data
+      mountPath: /data/
+  volumes:
+  - name: data
+    emptyDir: {}</code></pre>
+</section>
+<section >
+<h3>Name Resolution</h3>
+<ul class="simple">
+<li class="fragment"><p><em>hostname</em> - позволяет задать хостнейм для пода.</p></li>
+<li class="fragment"><p><em>subdomain</em> - позволяет задать fqdn хостнейм для пода в виде<br />
+<em>hostname.subdomain.namespace.svc.cluster.local</em>.</p></li>
+</ul>
+</section>
+<section >
+<h3>Name Resolution</h3>
+<pre data-id="id37"><code data-trim data-noescape class="yaml" data-line-numbers="6-14">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostAliases:
+  - ip: &quot;127.0.0.1&quot;
+    hostnames:
+    - &quot;foo.local&quot;
+    - &quot;bar.local&quot;
+  - ip: &quot;10.1.2.3&quot;
+    hostnames:
+    - &quot;foo.remote&quot;
+    - &quot;bar.remote&quot;
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Name Resolution</h3>
+<pre data-id="id38"><code data-trim data-noescape class="yaml" data-line-numbers="6|7-10">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  dnsPolicy: &quot;None&quot;
+  dnsConfig:
+    nameservers:
+    - 8.8.8.8
+    - 8.8.4.4
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Hosts namespaces</h3>
+<pre data-id="hosts-namespaces"><code data-trim data-noescape class="yaml" data-line-numbers="6-7">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostNetwork: true
+  shareProcessNamespace: true
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Service account</h3>
+<pre data-id="service-account"><code data-trim data-noescape class="yaml" data-line-numbers="6-7">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  serviceAccountName: default
+  automountServiceAccountToken: false
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Pod Security Context</h3>
+<pre data-id="pod-security-context"><code data-trim data-noescape class="yaml" data-line-numbers="6-10">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Containers</h3>
+<pre data-id="containers"><code data-trim data-noescape class="yaml" data-line-numbers="6-7|8-11|12-14">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  imagePullSecrets:
+  - name: registry-cred
+  initContainers:
+  - name: init
+    image: busybox:1.28
+    command: ['sh', '-c', 'echo hello']
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Конфигурация контейнера</h3>
+</section>
+<section >
+<h3>Image</h3>
+<pre data-id="image"><code data-trim data-noescape class="yaml" data-line-numbers="6|8">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  imagePullPolicy: Always
+  containers:
+  - image: nginx
+    name: nginx</code></pre>
+</section>
+<section >
+<h3>Entrypoint</h3>
+<pre data-id="entrypoint"><code data-trim data-noescape class="yaml" data-line-numbers="9-11">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: echo
+    image: busybox:1.28
+    command: ['sh', '-c']
+    args: ['echo $PWD']
+    workingDir: /</code></pre>
+</section>
+<section >
+<h3>Ports</h3>
+<pre data-id="ports"><code data-trim data-noescape class="yaml" data-line-numbers="9-14">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - name: http
+      containerPort: 80
+      protocol: TCP
+    - name: https
+      containerPort: 443</code></pre>
+</section>
+<section >
+<h3>Environment</h3>
+<pre data-id="environment"><code data-trim data-noescape class="yaml" data-line-numbers="9-11|12-17|18-21">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    env:
+    - name: KEY
+      value: ENV_VALUE
+    - name: KEY_FROM_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: config
+          key: KEY
+          optional: true
+    envFrom:
+    - configMapRef:
+        name: config
+        optional: true</code></pre>
+</section>
+<section >
+<h3>Container Volumes</h3>
+<pre data-id="container-volumes"><code data-trim data-noescape class="yaml" data-line-numbers="9-13">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    volumeMounts:
+    - mountPath: /opt/nginx/conf
+      readOnly: true
+      subPath: conf
+      name: conf
+  volumes:
+  - name: conf
+    configMap:
+      name: conf</code></pre>
+</section>
+<section >
+<h3>Resources</h3>
+<pre data-id="resources"><code data-trim data-noescape class="yaml" data-line-numbers="9-15|10-12|13-15">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    resources:
+      requests:
+        cpu: &quot;500m&quot;
+        memory: &quot;100Mi&quot;
+      limits:
+        cpu: &quot;1&quot;
+        memory: &quot;200Mi&quot;</code></pre>
+</section>
+<section >
+<h3>Container Lifecycle</h3>
+<pre data-id="container-lifecycle"><code data-trim data-noescape class="yaml" data-line-numbers="9-15">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    lifecycle:
+      postStart:
+        exec:
+          command: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;echo &gt; /var/index.html&quot;]
+      preStop:
+        exec:
+          command: [&quot;/bin/sh&quot;,&quot;-c&quot;,&quot;nginx -s quit&quot;]</code></pre>
+</section>
+<section >
+<h3>Container Lifecycle</h3>
+<pre data-id="id40"><code data-trim data-noescape class="yaml" data-line-numbers="9-15|16-20|21-29">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    startupProbe:
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    readinessProbe:
+      tcpSocket:
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+        httpHeaders:
+        - name: Custom-Header
+          value: Awesome
+      initialDelaySeconds: 3
+      periodSeconds: 3</code></pre>
+</section>
+<section >
+<h3>Container Security Context</h3>
+<pre data-id="container-security-context"><code data-trim data-noescape class="yaml" data-line-numbers="9-12">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    securityContext:
+      readOnlyRootFilesystem: true
+      privileged: true</code></pre>
+<style type="text/css">
+    /* 1. Style header/footer <div> so they are positioned as desired. */
+    #header-left {
+        position: absolute;
+        top: 0%;
+        left: 0%;
+    }
+    #header-right {
+        position: absolute;
+        top: 0%;
+        right: 0%;
+    }
+    #footer-left {
+        position: absolute;
+        bottom: 0%;
+        left: 0%;
+    }
+</style>
+<div id="hidden" style="display:none;">
+    <div id="header">
+        <div id="header-left"></div>
+        <div id="header-right"></div>
+        <div id="footer-left"></div>
+    </div>
+</div>
+<script src="_static/jquery.js"></script>
+<script type="text/javascript">
+    var header = $('#header').html();
+    if ( window.location.search.match( /print-pdf/gi ) ) {
+        Reveal.addEventListener( 'ready', function( event ) {
+            $('.slide-background').append(header);
+        });
+    }
+    else {
+        $('div.reveal').append(header);
+   }
+</script></section>
+</section>
+
+        </div>
+    </div>
+    
+    <script src="_static/revealjs4/dist/reveal.js"></script>
+    
+    
+      <script src="_static/revealjs4/plugin/highlight/highlight.js"></script>
+      
+    
+    <script>
+        var revealjsConfig = new Object();
+        Object.assign(revealjsConfig, JSON.parse('null'));
+        
+        
+        
+          revealjsConfig.plugins = [
+            RevealHighlight,
+          ];
+        
+        // More info https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize(revealjsConfig);
+    </script>
+
+  </body>
+</html>

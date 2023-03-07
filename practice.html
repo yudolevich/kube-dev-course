@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Практика &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Основы работы с kubernetes" href="01_practice_core.html" />
+    <link rel="prev" title="Pod" href="02_topic_pod.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Практика</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Практика</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/practice.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>Практика<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html#kind">kind</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id1">Установка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id2">Создание кластера</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html#kubectl">kubectl</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id3">Установка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id4">Конфигурация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id5">Автодополнение</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id6">Информация о ресурсах</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id7">Работа с объектами</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id8">Полезные функции</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#c-kind-pod">Работа c объектами на примере kind: Pod</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id1">Создание</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id2">Получение информации</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id3">Логи</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id4">Проброс портов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id5">Запуск команд в контейнере</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#id6">Копирование файлов контейнера</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html#configmap-secret">Использование ConfigMap/Secret</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="02_topic_pod.html" class="btn btn-neutral float-left" title="Pod" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="01_practice_core.html" class="btn btn-neutral float-right" title="Основы работы с kubernetes" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
