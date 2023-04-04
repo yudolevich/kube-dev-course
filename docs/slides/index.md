@@ -16,5 +16,9 @@
 :relative-images:
 ```
 
+```{include} 04_topic_netbalance.md
+:relative-images:
+```
+
 ```{include} custom_html.md
 ```
