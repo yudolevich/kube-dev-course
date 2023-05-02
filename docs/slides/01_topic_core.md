@@ -1,5 +1,9 @@
 ## Основные концепции
 
+```{image} img/control-plane.svg
+:width: 200px
+```
+
 ### Эволюция инфраструктуры
 ![](img/container_evolution3.svg)
 

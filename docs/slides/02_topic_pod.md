@@ -1,5 +1,5 @@
 ## Pod
-```{image} img/pod.svg
+```{image} img/pod-unl.svg
 :width: 200px
 ```
 

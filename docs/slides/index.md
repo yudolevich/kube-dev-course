@@ -24,5 +24,9 @@
 :relative-images:
 ```
 
+```{include} 06_topic_accesscontrol.md
+:relative-images:
+```
+
 ```{include} custom_html.md
 ```
