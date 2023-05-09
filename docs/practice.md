@@ -5,4 +5,5 @@
 03_practice_workloads.md
 04_practice_netbalance.md
 05_practice_storage.md
+06_practice_accesscontrol.md
 ```
