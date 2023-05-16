@@ -28,5 +28,9 @@
 :relative-images:
 ```
 
+```{include} 07_topic_helm.md
+:relative-images:
+```
+
 ```{include} custom_html.md
 ```
