@@ -6,4 +6,5 @@
 04_practice_netbalance.md
 05_practice_storage.md
 06_practice_accesscontrol.md
+07_practice_helm.md
 ```
