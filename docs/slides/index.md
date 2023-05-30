@@ -32,5 +32,9 @@
 :relative-images:
 ```
 
+```{include} 08_topic_operator.md
+:relative-images:
+```
+
 ```{include} custom_html.md
 ```
