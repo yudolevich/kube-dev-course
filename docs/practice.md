@@ -7,4 +7,5 @@
 05_practice_storage.md
 06_practice_accesscontrol.md
 07_practice_helm.md
+08_practice_operator.md
 ```

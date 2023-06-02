@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - deploy.miit.ru
+  resources:
+  - nginxes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - deploy.miit.ru
+  resources:
+  - nginxes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - deploy.miit.ru
+  resources:
+  - nginxes/status
+  verbs:
+  - get
+  - patch
+  - update

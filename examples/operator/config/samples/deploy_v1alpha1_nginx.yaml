@@ -1,0 +1,12 @@
+apiVersion: deploy.miit.ru/v1alpha1
+kind: Nginx
+metadata:
+  labels:
+    app.kubernetes.io/name: nginx
+    app.kubernetes.io/instance: nginx-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: nginx-sample
+spec:
+  # TODO(user): Add fields here
