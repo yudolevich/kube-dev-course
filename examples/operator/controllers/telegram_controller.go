@@ -23,6 +23,7 @@ func NewTBot(token string, uid int64, client client.Client) (*TBot, error) {
 	if err != nil {
 		return nil, err
 	}
+	bot.Debug = true
 
 	return &TBot{BotAPI: bot, uid: uid, kube: client}, nil
 }

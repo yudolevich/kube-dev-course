@@ -392,7 +392,8 @@ type NginxReconciler struct {
     }
 ```
 
-После чего добавим создание `TBot` контроллера и добавление его в `Manager` и `NginxReconciler`:
+Осталось лишь дописать инициализацию нашего приложения в `main.go`, для этого
+добавим в него создание `TBot` контроллера и добавление его в `Manager` и `NginxReconciler`:
 ```go
     chatid, err := strconv.ParseInt(os.Getenv("TELEGRAM_CHATID"), 10, 64)
     if err != nil {
@@ -481,7 +482,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   creationTimestamp: null
-  name: manager-role
+  name: manager-role-deploy
 rules:
 - apiGroups:
   - ""
