@@ -1,5 +1,25 @@
 # Основы работы с kubernetes
 
+## Пререквизиты
+Для выполнения практики необходимо иметь установленный [docker][].
+
+Все приведенные примеры команд производятся в оболочке `bash`, предполагая что имеется окружение
+в виде [GNU Coreutils][gnu]. Если вы используете другие оболочки, то некоторые команды будут отличаться.
+
+Для получения необходимой среды на Windows можно воспользоваться [wsl][] или
+в независимости от платформы можно воспользоваться [vagrant][] с Vagrantfile:
+```ruby
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/lunar64"
+  config.vm.network "forwarded_port", guest: 6443, host: 6443
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y docker.io
+    usermod -a -G docker vagrant
+  SHELL
+end
+```
+
 ## kind
 Для взаимодействия с кластером kubernetes нам в первую очередь необходим сам кластер.
 Для локальной работы и обучения предлагаю воспользоваться открытым проектом
@@ -551,6 +571,10 @@ pod/nginx edited
   ```
 
 
+[docker]:https://www.docker.com/
+[gnu]:https://ru.wikipedia.org/wiki/GNU_Coreutils
+[wsl]:https://learn.microsoft.com/ru-ru/windows/wsl/
+[vagrant]:https://www.vagrantup.com/
 [kind]:https://kind.sigs.k8s.io/
 [kind-install]:https://kind.sigs.k8s.io/docs/user/quick-start/#installation
 [kind-releases]:https://github.com/kubernetes-sigs/kind/releases
