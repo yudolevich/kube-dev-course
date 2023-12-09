@@ -12,6 +12,10 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/lunar64"
   config.vm.network "forwarded_port", guest: 6443, host: 6443
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 4096
+    v.cpus = 4
+  end
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
     apt-get install -y docker.io

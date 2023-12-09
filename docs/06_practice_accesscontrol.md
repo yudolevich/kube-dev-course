@@ -39,7 +39,7 @@ kind: CertificateSigningRequest
 metadata:
   name: myuser
 spec:
-  request: $(base64 < csr.pem)
+  request: $(base64 -w0 < csr.pem)
   signerName: kubernetes.io/kube-apiserver-client
   expirationSeconds: 86400  # one day
   usages:
