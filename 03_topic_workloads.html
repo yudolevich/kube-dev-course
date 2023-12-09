@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workloads &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Network" href="04_topic_netbalance.html" />
+    <link rel="prev" title="Pod" href="02_topic_pod.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Workloads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#deployment-replicaset">Deployment/ReplicaSet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Селектор</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Обновление</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#recreate">Recreate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rollingupdate">RollingUpdate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Состояние</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statefulset">StatefulSet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Идентификатор пода</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pod-management-policies">Pod Management Policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#orderedready">OrderedReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parallel">Parallel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#update-strategies">Update Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#daemonset">DaemonSet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-cronjob">Job/Cronjob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rollout">Rollout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#history">History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pause-resume">Pause/Resume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rollback">Rollback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#restart">Restart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#scaling">Scaling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#horizontal-pod-autoscaling">Horizontal Pod Autoscaling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#disruptions">Disruptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Workloads</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/03_topic_workloads.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="workloads">
+<h1>Workloads<a class="headerlink" href="#workloads" title="Permalink to this heading"></a></h1>
+<div class="mermaid">
+            graph TB
+    u((User)) --&gt; lb{{LoadBalancer}}
+    subgraph n1 [node]
+      a1(app)
+    end
+    subgraph n2 [node]
+      a2(app)
+    end
+    subgraph n3 [node]
+      a3(app)
+    end
+    lb --&gt; a1 &amp; a2 &amp; a3
+        </div><p>Kubernetes позволяет запускать рабочую нагрузку в виде подов, однако, когда речь заходит о промышленной
+эксплуатации, запуска в единственном экземпляре оказывается недостаточно, чтобы обеспечить высокую
+доступность приложения при обработке большого количества запросов клиентов. Для удобного управления
+набором подов в зависимости от типа рабочей нагрузки в kubernetes существует несколько типов ресурсов.</p>
+<ul class="simple">
+<li><p><strong>Deployment</strong> и <strong>ReplicaSet</strong> - для рабочих нагрузок, которые не хранят состояние(stateless), где
+поды взаимозаменяемы и могут создаваться/удаляться при необходимости.</p></li>
+<li><p><strong>StatefulSet</strong> - для нагрузок, которые требуют сохранение некоторого состояния.</p></li>
+<li><p><strong>DaemonSet</strong> - для приложений, которые необходимо выполнять на каждой ноде.</p></li>
+<li><p><strong>Job</strong> и <strong>CronJob</strong> - для задач, которые выполняются единоразово или периодически по расписанию.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В общем случае не предполагается управление напрямую подами вручную, используйте преведенные типы
+ресурсов для управления рабочими нагрузками в kubernetes.</p>
+</div>
+<section id="deployment-replicaset">
+<h2>Deployment/ReplicaSet<a class="headerlink" href="#deployment-replicaset" title="Permalink to this heading"></a></h2>
+<div class="mermaid">
+            graph TB
+    d([Deployment]) --&gt; rs1([ReplicaSet])
+    d([Deployment]) --&gt; rs2([ReplicaSet])
+    rs1 --&gt; p11((Pod))
+    rs1 --&gt; p12((Pod))
+    rs2 --&gt; p21((Pod))
+    rs2 --&gt; p22((Pod))
+        </div><p>Если экземпляр приложения не требует хранения состояния внутри себя и не важно какой именно экземпляр
+будет обрабатывать пришедший запрос, то для управления этими экземплярами отлично подойдет ресурс
+<strong>Deployment</strong>. Он позволяет запускать нескольких реплик приложения, а также управлять процессом
+обновления.</p>
+<p>Для управления количеством копий пода используется дополнительный ресурс <strong>ReplicaSet</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReplicaSet</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-rs</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p>Он описывает необходимое состояние в виде шаблона пода - <code class="docutils literal notranslate"><span class="pre">spec.template</span></code>, селектора подов по лейблам -
+<code class="docutils literal notranslate"><span class="pre">spec.selector</span></code>, за которыми нужно следить, а также количество реплик пода - <code class="docutils literal notranslate"><span class="pre">spec.replicas</span></code>.
+Таким образом ReplicaSet контроллер отслеживает по селектору текущее состояние подов и пытается привести
+их количество к ожидаемому через создание/удаление дополнительных экземпляров.</p>
+<p>Обычно использовать <strong>ReplicaSet</strong> напрямую не приходится, для этого стоит использовать <strong>Deployment</strong>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">  </span><span class="nt">revisionHistoryLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p>Он добавляет функционал управления процессом обновления и отката, через создание новых ReplicaSet и
+управление количеством реплик в них. В конфигурации появляются такие поля как <code class="docutils literal notranslate"><span class="pre">spec.strategy</span></code> - стратегия
+обновления, <code class="docutils literal notranslate"><span class="pre">spec.revisionHistoryLimit</span></code> - количество старых ReplicaSet для возможности отката на них,
+<code class="docutils literal notranslate"><span class="pre">spec.paused</span></code> - для возможности выставления паузы в процессе обновления и некоторые другие для
+управления процессом обновления.</p>
+<section id="id1">
+<h3>Селектор<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>ReplicaSet определяет через поле <code class="docutils literal notranslate"><span class="pre">spec.selector</span></code> лейблы, по которым находятся соответствующие поды
+управляемые ReplicaSet контроллером. Таким образом лейблы в этом поле должны  совпадать с лейблами в
+<code class="docutils literal notranslate"><span class="pre">spec.template.metadata.labels</span></code>. Когда ReplicaSet управляется через Deployment, то в селектор
+также добавляется лейбл <code class="docutils literal notranslate"><span class="pre">pod-template-hash</span></code>, который содержит хэш от шаблона пода, таким образом
+каждый объект ReplicaSet будет иметь уникальное значение лейбла <code class="docutils literal notranslate"><span class="pre">pod-template-hash</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Поле <code class="docutils literal notranslate"><span class="pre">spec.selector</span></code> неизменяемо после создания.</p>
+</div>
+</section>
+<section id="id2">
+<h3>Обновление<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>При изменении шаблона пода в <code class="docutils literal notranslate"><span class="pre">spec.template</span></code> в Deployment срабатывает триггер на обновление. Для
+Deployment есть два типа стратегии обновления - <strong>Recreate</strong> и <strong>RollingUpdate</strong>.</p>
+<section id="recreate">
+<h4>Recreate<a class="headerlink" href="#recreate" title="Permalink to this heading"></a></h4>
+<p>Стратегия Recreate позволяет быть уверенным, что старая версия приложения полностью завершила работу
+перед запуском новой версии. Процесс состоит из следующих шагов:</p>
+<ul class="simple">
+<li><p>Контроллер выставляет количество реплик в текущем ReplicaSet в 0</p></li>
+<li><p>Ожидает пока поды данного ReplicaSet завершат свою работу и удалятся</p></li>
+<li><p>Создает новый ReplicaSet с новым шаблоном пода и необходимым количеством реплик</p></li>
+</ul>
+<p>Можно проследить как контроллер управляет ресурсами с момента изменения <code class="docutils literal notranslate"><span class="pre">spec.template</span></code>, например,
+с помощью команды <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">set</span></code> изменив значение переменной среды.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>deploy
+<span class="go">NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">nginx-deployment   3/3     3            3           47h</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>rs
+<span class="go">NAME                         DESIRED   CURRENT   READY   AGE</span>
+<span class="go">nginx-deployment-c5f8dc5d6   3         3         3       19s</span>
+<span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deploy/nginx-deployment<span class="w"> </span><span class="nv">ENV</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="go">deployment.apps/nginx-deployment env updated</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>rs
+<span class="go">NAME                         DESIRED   CURRENT   READY   AGE</span>
+<span class="go">nginx-deployment-c5f8dc5d6   0         0         0       36s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                               READY   STATUS        RESTARTS   AGE</span>
+<span class="go">nginx-deployment-c5f8dc5d6-bqmcl   1/1     Terminating   0          38s</span>
+<span class="go">nginx-deployment-c5f8dc5d6-v7btw   1/1     Terminating   0          38s</span>
+<span class="go">nginx-deployment-c5f8dc5d6-wkx9w   1/1     Terminating   0          38s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>rs
+<span class="go">NAME                          DESIRED   CURRENT   READY   AGE</span>
+<span class="go">nginx-deployment-6c86565b44   3         3         0       4s</span>
+<span class="go">nginx-deployment-c5f8dc5d6    0         0         0       45s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                                READY   STATUS              RESTARTS   AGE</span>
+<span class="go">nginx-deployment-6c86565b44-4cx9r   0/1     ContainerCreating   0          8s</span>
+<span class="go">nginx-deployment-6c86565b44-dlvcz   0/1     ContainerCreating   0          8s</span>
+<span class="go">nginx-deployment-6c86565b44-dnnht   0/1     ContainerCreating   0          8s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                                READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx-deployment-6c86565b44-4cx9r   1/1     Running   0          16s</span>
+<span class="go">nginx-deployment-6c86565b44-dlvcz   1/1     Running   0          16s</span>
+<span class="go">nginx-deployment-6c86565b44-dnnht   1/1     Running   0          16s</span>
+</pre></div>
+</div>
+</section>
+<section id="rollingupdate">
+<h4>RollingUpdate<a class="headerlink" href="#rollingupdate" title="Permalink to this heading"></a></h4>
+<p>Стратегия RollingUpdate позволяет плавно переключить нагрузку со старой версии приложения на новую.
+Процесс в общем случае состоит из шагов:</p>
+<ul class="simple">
+<li><p>Контроллер создает новый ReplicaSet с новым шаблоном пода и количеством реплик 0</p></li>
+<li><p>Поочередно уменьшает количество реплик в старом ReplicaSet и увеличивает в новом</p></li>
+</ul>
+<p>Он также включает дополнительные параметры <code class="docutils literal notranslate"><span class="pre">spec.strategy.rollingUpdate.maxSurge</span></code> и
+<code class="docutils literal notranslate"><span class="pre">spec.strategy.rollingUpdate.maxUnavailable</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxUnavailable</span></code> - максимальное количество подов, которые могут быть недоступны в процессе обновления</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">maxSurge</span></code> - максимальное количество подов, которое может быть создано сверх желаемого количества
+<code class="docutils literal notranslate"><span class="pre">spec.replicas</span></code> в процессе обновления
+Данные параметры могу задаваться в как абсолютных значениях так и в процентах. По умолчанию равны 25%.</p></li>
+</ul>
+<p>С помощью опции <code class="docutils literal notranslate"><span class="pre">-w</span></code> или <code class="docutils literal notranslate"><span class="pre">--watch</span></code> утилиты <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> можно отследить как происходит переключение реплик
+между двумя ReplicaSet, которыми управляет Deployment.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deploy/nginx-deployment<span class="w"> </span><span class="nv">ENV</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="go">deployment.apps/nginx-deployment env updated</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>rs<span class="w"> </span>-w
+<span class="go">NAME                          DESIRED   CURRENT   READY   AGE</span>
+<span class="go">nginx-deployment-9ccdcc857    3         3         3       28s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   1         0         0       0s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   1         0         0       0s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   1         1         0       0s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   1         1         1       5s</span>
+<span class="go">nginx-deployment-9ccdcc857    2         3         3       40s</span>
+<span class="go">nginx-deployment-9ccdcc857    2         3         3       41s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   2         1         1       6s</span>
+<span class="go">nginx-deployment-9ccdcc857    2         2         2       41s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   2         1         1       6s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   2         2         1       7s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   2         2         2       9s</span>
+<span class="go">nginx-deployment-9ccdcc857    1         2         2       44s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   3         2         2       9s</span>
+<span class="go">nginx-deployment-9ccdcc857    1         2         2       44s</span>
+<span class="go">nginx-deployment-9ccdcc857    1         1         1       44s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   3         2         2       9s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   3         3         2       9s</span>
+<span class="go">nginx-deployment-7c7dcd74b5   3         3         3       15s</span>
+<span class="go">nginx-deployment-9ccdcc857    0         1         1       50s</span>
+<span class="go">nginx-deployment-9ccdcc857    0         1         1       50s</span>
+<span class="go">nginx-deployment-9ccdcc857    0         0         0       50s</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h3>Состояние<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>Как и с другими ресурсами о Deployment подробную информацию можно получить командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">describe</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>describe<span class="w"> </span>deploy<span class="w"> </span>nginx-deployment
+<span class="go">Name:                   nginx-deployment</span>
+<span class="go">Namespace:              default</span>
+<span class="go">CreationTimestamp:      Sat, 18 Mar 2023 23:42:34 +0300</span>
+<span class="go">Labels:                 app=nginx</span>
+<span class="go">Annotations:            deployment.kubernetes.io/revision: 3</span>
+<span class="go">Selector:               app=nginx</span>
+<span class="go">Replicas:               3 desired | 3 updated | 3 total | 3 available | 0 unavailable</span>
+<span class="go">StrategyType:           RollingUpdate</span>
+<span class="go">MinReadySeconds:        0</span>
+<span class="go">RollingUpdateStrategy:  25% max unavailable, 25% max surge</span>
+<span class="go">Pod Template:</span>
+<span class="go">  Labels:  app=nginx</span>
+<span class="go">  Containers:</span>
+<span class="go">   nginx:</span>
+<span class="go">    Image:        nginx</span>
+<span class="go">    Port:         &lt;none&gt;</span>
+<span class="go">    Host Port:    &lt;none&gt;</span>
+<span class="go">    Environment:  &lt;none&gt;</span>
+<span class="go">    Mounts:       &lt;none&gt;</span>
+<span class="go">  Volumes:        &lt;none&gt;</span>
+<span class="go">Conditions:</span>
+<span class="go">  Type           Status  Reason</span>
+<span class="go">  ----           ------  ------</span>
+<span class="go">  Available      True    MinimumReplicasAvailable</span>
+<span class="go">  Progressing    True    NewReplicaSetAvailable</span>
+<span class="go">OldReplicaSets:  &lt;none&gt;</span>
+<span class="go">NewReplicaSet:   nginx-deployment-76d6c9b8c (3/3 replicas created)</span>
+<span class="go">Events:</span>
+<span class="go">  Type    Reason             Age                    From                   Message</span>
+<span class="go">  ----    ------             ----                   ----                   -------</span>
+<span class="go">  Normal  ScalingReplicaSet  5m26s                  deployment-controller  Scaled up replica set nginx-deployment-76d6c9b8c to 3</span>
+<span class="go">  Normal  ScalingReplicaSet  4m44s                  deployment-controller  Scaled up replica set nginx-deployment-bc8fc6c46 to 1</span>
+<span class="go">  Normal  ScalingReplicaSet  4m35s                  deployment-controller  Scaled down replica set nginx-deployment-76d6c9b8c to 2 from 3</span>
+<span class="go">  Normal  ScalingReplicaSet  4m35s                  deployment-controller  Scaled up replica set nginx-deployment-bc8fc6c46 to 2 from 1</span>
+<span class="go">  Normal  ScalingReplicaSet  4m24s                  deployment-controller  Scaled down replica set nginx-deployment-76d6c9b8c to 1 from 2</span>
+<span class="go">  Normal  ScalingReplicaSet  4m24s                  deployment-controller  Scaled up replica set nginx-deployment-bc8fc6c46 to 3 from 2</span>
+<span class="go">  Normal  ScalingReplicaSet  4m17s                  deployment-controller  Scaled down replica set nginx-deployment-76d6c9b8c to 0 from 1</span>
+<span class="go">  Normal  ScalingReplicaSet  3m                     deployment-controller  Scaled up replica set nginx-deployment-76d6c9b8c to 1 from 0</span>
+<span class="go">  Normal  ScalingReplicaSet  2m57s                  deployment-controller  Scaled down replica set nginx-deployment-bc8fc6c46 to 2 from 3</span>
+<span class="go">  Normal  ScalingReplicaSet  2m39s (x4 over 2m57s)  deployment-controller  (combined from similar events): Scaled down replica set nginx-deployment-bc8fc6c46 to 0 from 1</span>
+</pre></div>
+</div>
+<p>Текущее состояние реплик отражено в поле Replicas, в процессе обновления здесь будут отражены:</p>
+<ul class="simple">
+<li><p><strong>desired</strong> - ожидаемое количество реплик</p></li>
+<li><p><strong>updated</strong> - количество реплик с новой версией</p></li>
+<li><p><strong>total</strong> - общее количество существующих реплик(старой и новой версии)</p></li>
+<li><p><strong>available</strong> - количество реплик в состоянии Ready</p></li>
+<li><p><strong>unavailable</strong> - количество реплик в состоянии NotReady</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Replicas</span><span class="p">:</span> <span class="mi">3</span> <span class="n">desired</span> <span class="o">|</span> <span class="mi">2</span> <span class="n">updated</span> <span class="o">|</span> <span class="mi">4</span> <span class="n">total</span> <span class="o">|</span> <span class="mi">3</span> <span class="n">available</span> <span class="o">|</span> <span class="mi">1</span> <span class="n">unavailable</span>
+</pre></div>
+</div>
+<p>В момент обновления поля <code class="docutils literal notranslate"><span class="pre">OldReplicaSets</span></code> и <code class="docutils literal notranslate"><span class="pre">NewReplicaSet</span></code> будут содержать информацию о старом и
+новом ReplicaSet, а также текущее количество реплик в них.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">OldReplicaSets</span><span class="p">:</span>  <span class="n">nginx</span><span class="o">-</span><span class="n">deployment</span><span class="o">-</span><span class="mi">76</span><span class="n">d6c9b8c</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span> <span class="n">replicas</span> <span class="n">created</span><span class="p">)</span>
+<span class="n">NewReplicaSet</span><span class="p">:</span>   <span class="n">nginx</span><span class="o">-</span><span class="n">deployment</span><span class="o">-</span><span class="n">bc8fc6c46</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span> <span class="n">replicas</span> <span class="n">created</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Поле <a class="reference external" href="https://pkg.go.dev/k8s.io/api/apps/v1#DeploymentConditionType">Conditions</a> может отражать три типа состояний, в которых находится Deployment:</p>
+<ul class="simple">
+<li><p><strong>Available</strong> - указывает на то, что количество реплик в состоянии Ready не меньше указанного в
+<code class="docutils literal notranslate"><span class="pre">spec.replicas</span></code></p></li>
+<li><p><strong>Progressing</strong> - указывает на то, что процесс обновления производится или успешно завершен</p></li>
+<li><p><strong>ReplicaFailure</strong> - указывает на то, что в процессе обновления не удается создать новые реплики</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>С другими параметрами ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployment можно также ознакомиться в документации</a> или командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">deploy</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="statefulset">
+<h2>StatefulSet<a class="headerlink" href="#statefulset" title="Permalink to this heading"></a></h2>
+<p>Использование ресурса StatefulSet - еще один из способов управление множественными репликами приложения.
+Он подходит, если каждой реплике приложения необходимо внутри хранить какое-то состояние.
+Характеризуется следующими особенностями:</p>
+<ul class="simple">
+<li><p>Стабильные и уникальные сетевые идентификаторы</p></li>
+<li><p>Стабильное постоянное хранилище</p></li>
+<li><p>Упорядоченный процесс развертывания и увеличения реплик</p></li>
+<li><p>Упорядоченный процесс обновления</p></li>
+</ul>
+<p>Пример StatefulSet с Service типа Headless:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">  </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StatefulSet</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">serviceName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span>
+<span class="w">  </span><span class="nt">podManagementPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OrderedReady</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www</span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/share/nginx/html</span>
+<span class="w">  </span><span class="nt">updateStrategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">  </span><span class="nt">volumeClaimTemplates</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;ReadWriteOnce&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;standard&quot;</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100Mi</span>
+</pre></div>
+</div>
+<p>Здесь также как и в Deployment есть:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">selector</span></code> - выбирает набор подов по их лейблам</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">replicas</span></code> - указывает количество необходимых реплик приложения</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">template</span></code> - описывает шаблон пода</p></li>
+</ul>
+<p>Также есть и особые параметры:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">volumeClaimTemplates</span></code> - позволяет описать шаблон для создания PersistentVolumeClaim, что позволяет
+создать для каждой реплики свое собственное хранилище и смонтировать внутрь пода (в кластере должен
+существовать StorageClass с именем <code class="docutils literal notranslate"><span class="pre">storageClassName</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">serviceName</span></code> - указывает имя ресурса Service для построения доменного имени пода вида
+<code class="docutils literal notranslate"><span class="pre">podName.serviceName.namespace.svc.cluster.local</span></code> или внутри неймспейса просто <code class="docutils literal notranslate"><span class="pre">podName.serviceName</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">podManagementPolicy</span></code> - контролирует каким образом будет производиться создание новых и удаление
+старых реплик при создании StatefulSet, увеличении и уменьшении количества реплик</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">updateStrategy</span></code> - контролирует процесс обновления при изменении шаблона пода</p></li>
+</ul>
+<section id="id4">
+<h3>Идентификатор пода<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>Поды в StatefulSet имеют уникальные идентификаторы, которые создаются последовательно и позволяют
+иметь постоянные сетевые имена. Имена состоят из имени StatefulSet и суффикса <code class="docutils literal notranslate"><span class="pre">-&lt;n&gt;</span></code>,
+где n от 0 до replicas-1.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pods
+<span class="go">NAME    READY   STATUS    RESTARTS   AGE</span>
+<span class="go">web-0   1/1     Running   0          2m21s</span>
+<span class="go">web-1   1/1     Running   0          109s</span>
+<span class="go">web-2   1/1     Running   0          82s</span>
+</pre></div>
+</div>
+<p>Также каждый под имеет стабильное сетевое имя вида <code class="docutils literal notranslate"><span class="pre">$(pod).$(service).$(namespace).svc.cluster.local</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web-0<span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo $HOSTNAME &gt; /usr/share/nginx/html/index.html&#39;</span>
+<span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web-1<span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo $HOSTNAME &gt; /usr/share/nginx/html/index.html&#39;</span>
+<span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>web-2<span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo $HOSTNAME &gt; /usr/share/nginx/html/index.html&#39;</span>
+<span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>web-0<span class="w"> </span>--<span class="w"> </span>/bin/bash
+<span class="gp">root@web-0:/# </span>curl<span class="w"> </span>web-0.nginx.default.svc.cluster.local
+<span class="go">web-0</span>
+<span class="gp">root@web-0:/# </span>curl<span class="w"> </span>web-0.nginx
+<span class="go">web-0</span>
+<span class="gp">root@web-0:/# </span>curl<span class="w"> </span>web-1.nginx
+<span class="go">web-1</span>
+<span class="gp">root@web-0:/# </span>curl<span class="w"> </span>web-2.nginx
+<span class="go">web-2</span>
+</pre></div>
+</div>
+<p>Имена регистрируются в кластерном DNS:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">root@web-0:/# </span>getent<span class="w"> </span>hosts<span class="w"> </span>web-0.nginx
+<span class="go">10.244.1.65     web-0.nginx.default.svc.cluster.local</span>
+<span class="gp">root@web-0:/# </span>getent<span class="w"> </span>hosts<span class="w"> </span>web-1.nginx
+<span class="go">10.244.2.77     web-1.nginx.default.svc.cluster.local</span>
+<span class="gp">root@web-0:/# </span>getent<span class="w"> </span>hosts<span class="w"> </span>web-2.nginx
+<span class="go">10.244.1.67     web-2.nginx.default.svc.cluster.local</span>
+<span class="gp">root@web-0:/# </span>getent<span class="w"> </span>hosts<span class="w"> </span>nginx<span class="w"> </span><span class="c1"># headless service</span>
+<span class="go">10.244.1.67     nginx.default.svc.cluster.local</span>
+<span class="go">10.244.1.65     nginx.default.svc.cluster.local</span>
+<span class="go">10.244.2.77     nginx.default.svc.cluster.local</span>
+</pre></div>
+</div>
+</section>
+<section id="pod-management-policies">
+<h3>Pod Management Policies<a class="headerlink" href="#pod-management-policies" title="Permalink to this heading"></a></h3>
+<section id="orderedready">
+<h4>OrderedReady<a class="headerlink" href="#orderedready" title="Permalink to this heading"></a></h4>
+<p>Данная политика используется по умолчанию и гарантирует:</p>
+<ul class="simple">
+<li><p>Для StatefulSet с N репликами при создании или увеличении реплик поды создаются последовательно
+от 0 до N-1</p></li>
+<li><p>При уменьшении количества реплик поды терминируются в обратном порядке от N-1 до 0</p></li>
+<li><p>Перед созданием нового пода все предыдущие должны находиться в статусе Running и Ready</p></li>
+<li><p>Перед удалением пода все предыдущие должны быть завершены и удалены</p></li>
+</ul>
+</section>
+<section id="parallel">
+<h4>Parallel<a class="headerlink" href="#parallel" title="Permalink to this heading"></a></h4>
+<p>При изменении количества реплик не происходит процесса ожидания пока другие поды окажутся в состоянии
+Running и Ready или успешно терминирутся, операции с подами производятся параллельно.</p>
+</section>
+</section>
+<section id="update-strategies">
+<h3>Update Strategies<a class="headerlink" href="#update-strategies" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>OnDelete - отключает автоматическое обновление подов в StatefulSet при изменении <code class="docutils literal notranslate"><span class="pre">spec.template</span></code>,
+для обновления требуется вручную удалить под</p></li>
+<li><p>RollingUpdate - стратегия с последовательным обновлением подов, используется по умолчанию</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>С другими параметрами ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSet можно также ознакомиться в документации</a> или командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">sts</span></code>.</p>
+</div>
+</section>
+</section>
+<section id="daemonset">
+<h2>DaemonSet<a class="headerlink" href="#daemonset" title="Permalink to this heading"></a></h2>
+<p>Если требуется запустить приложение на всех нодах(или на некоторых), то для этого можно воспользоваться
+ресурсом DaemonSet. При добавлении или удалении нод в кластере поды также будут добавляться и удаляться.
+Типичные примеры использования:</p>
+<ul class="simple">
+<li><p>Запуск контроллера, управляющего хранилищем на ноде</p></li>
+<li><p>Запуск коллектора логов на ноде</p></li>
+<li><p>Запуск агента мониторинга на ноде</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DaemonSet</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exporter</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-exporter</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-exporter</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app.kubernetes.io/component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exporter</span>
+<span class="w">      </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-exporter</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app.kubernetes.io/component</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exporter</span>
+<span class="w">        </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-exporter</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">args</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--path.sysfs=/host/sys</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">--path.rootfs=/host/root</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">node-exporter</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">prom/node-exporter</span>
+<span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9100</span>
+<span class="w">            </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/host/sys</span>
+<span class="w">          </span><span class="nt">mountPropagation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HostToContainer</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sys</span>
+<span class="w">          </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/host/root</span>
+<span class="w">          </span><span class="nt">mountPropagation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HostToContainer</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">          </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hostPath</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/sys</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sys</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hostPath</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+</pre></div>
+</div>
+<p>В данном примере на всех нодах запускается экспортер метрик для возможности мониторинга нод кластера.
+Конфигурация <code class="docutils literal notranslate"><span class="pre">selector</span></code>, <code class="docutils literal notranslate"><span class="pre">template</span></code> и <code class="docutils literal notranslate"><span class="pre">updateStrategy</span></code> будет аналогична ресурсу StatefulSet.
+Для того, чтобы управлять набором нод, на которых требуется запустить поды, можно изменить конфигурацию
+шаблона пода - <code class="docutils literal notranslate"><span class="pre">spec.template.spec.nodeSelector</span></code>, <code class="docutils literal notranslate"><span class="pre">spec.template.spec.affinity.nodeAffinity</span></code> и
+<code class="docutils literal notranslate"><span class="pre">spec.template.spec.tolerations</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>С другими параметрами ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSet можно также ознакомиться в документации</a> или командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">ds</span></code>.</p>
+</div>
+</section>
+<section id="job-cronjob">
+<h2>Job/Cronjob<a class="headerlink" href="#job-cronjob" title="Permalink to this heading"></a></h2>
+<p>Если приложение не должно работать постоянно, а после запуска и выполнения своего функционала должно
+завершиться, то для такой рабочей нагрузки подойдет ресурс Job. Job позволяет запустить один или
+несколько подов с задачей, ожидая успешного завершения и повторяя запуск заданное количество раз
+при неудачах.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Job</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">  </span><span class="nt">activeDeadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">        </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">hello&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+</pre></div>
+</div>
+<p>Параметр <code class="docutils literal notranslate"><span class="pre">template</span></code> как и в других ресурсах задает шаблон запускаемого пода. Через параметр
+<code class="docutils literal notranslate"><span class="pre">backoffLimit</span></code> можно указать количество попыток запуска пода, если запуск завершился неудачей. А через
+параметр <code class="docutils literal notranslate"><span class="pre">activeDeadlineSeconds</span></code> можно указать максимальное время выполнения, после которого запуск
+будет считаться неудачным.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>С другими параметрами ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/job/">Job можно также ознакомиться в документации</a> или командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">job</span></code>.</p>
+</div>
+<p>Ресурс CronJob позволяет запускать ресурсы Job регулярно по расписанию.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&quot;</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">activeDeadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+<span class="w">            </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">hello&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">          </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+</pre></div>
+</div>
+<p>Здесь в параметре <code class="docutils literal notranslate"><span class="pre">jobTemplate</span></code> указывается шаблон создаваемого ресурса Job, а в параметре <code class="docutils literal notranslate"><span class="pre">schedule</span></code>
+указывается расписание запуска в формате <a class="reference external" href="https://ru.wikipedia.org/wiki/Cron">cron</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>С другими параметрами ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob можно также ознкомиться в документации</a> или командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">cronjob</span></code>.</p>
+</div>
+</section>
+<section id="rollout">
+<h2>Rollout<a class="headerlink" href="#rollout" title="Permalink to this heading"></a></h2>
+<p>Для управления процессом развертывания(обновления) существует команда <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span></code>, с помощью
+которой можно посмотреть статус развертывания, поставить на паузу, посмотреть историю развертываний и
+сделать откат к предыдущей версии. Команда может быть применена к ресурсам Deployment, StatefulSet и
+DaemonSet.</p>
+<section id="status">
+<h3>Status<a class="headerlink" href="#status" title="Permalink to this heading"></a></h3>
+<p>Для просмотра статуса есть команда <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">status</span></code>, которая покажет статус последнего
+развертывания. Если развертывание активно в текущий момент, то команда будет отслеживать его статус
+до завершения.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deploy/nginx-deployment<span class="w"> </span><span class="nv">ENV</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="go">deployment.apps/nginx-deployment env updated</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment<span class="w"> </span>nginx-deployment
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 2 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 2 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 2 out of 3 new replicas have been updated...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 old replicas are pending termination...</span>
+<span class="go">Waiting for deployment &quot;nginx-deployment&quot; rollout to finish: 1 old replicas are pending termination...</span>
+<span class="go">deployment &quot;nginx-deployment&quot; successfully rolled out</span>
+</pre></div>
+</div>
+</section>
+<section id="history">
+<h3>History<a class="headerlink" href="#history" title="Permalink to this heading"></a></h3>
+<p>Историю развертываний можно посмотреть командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">history</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         &lt;none&gt;</span>
+<span class="go">2         &lt;none&gt;</span>
+</pre></div>
+</div>
+<p>REVISION и CHANGE-CAUSE берутся из аннотаций <code class="docutils literal notranslate"><span class="pre">deployment.kubernetes.io/revision</span></code> и
+<code class="docutils literal notranslate"><span class="pre">kubernetes.io/change-cause</span></code> соответствующей ReplicaSet. Добавить аннотацию на последнюю ревизию
+также можно путем добавления на Deployment:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deploy<span class="w"> </span>nginx-deployment<span class="w"> </span><span class="nv">ENV</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="go">deployment.apps/nginx-deployment env updated</span>
+<span class="gp">$ </span>k<span class="w"> </span>annotate<span class="w"> </span>deploy/nginx-deployment<span class="w"> </span>kubernetes.io/change-cause<span class="o">=</span><span class="s2">&quot;new date 1&quot;</span>
+<span class="go">deployment.apps/nginx-deployment annotated</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         &lt;none&gt;</span>
+<span class="go">2         &lt;none&gt;</span>
+<span class="go">3         new date 1</span>
+</pre></div>
+</div>
+</section>
+<section id="pause-resume">
+<h3>Pause/Resume<a class="headerlink" href="#pause-resume" title="Permalink to this heading"></a></h3>
+<p>Приостановить и возобновить процесс развертывания можно командами <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">pause</span></code> и
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">resume</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>pause<span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment paused</span>
+<span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>env<span class="w"> </span>deploy<span class="w"> </span>nginx-deployment<span class="w"> </span><span class="nv">ENV</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="go">deployment.apps/nginx-deployment env updated</span>
+<span class="gp">$ </span>k<span class="w"> </span>annotate<span class="w"> </span>deployment<span class="w"> </span>nginx-deployment<span class="w"> </span>kubernetes.io/change-cause<span class="o">=</span><span class="s2">&quot;new date 3&quot;</span>
+<span class="go">deployment.apps/nginx-deployment annotated</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         &lt;none&gt;</span>
+<span class="go">2         &lt;none&gt;</span>
+<span class="go">3         new date 1</span>
+<span class="go">4         new date 2</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>deploy
+<span class="go">NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">nginx-deployment   3/3     0            3           3d22h</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>resume<span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment resumed</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>deploy
+<span class="go">NAME               READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">nginx-deployment   3/3     3            3           3d22h</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         &lt;none&gt;</span>
+<span class="go">2         &lt;none&gt;</span>
+<span class="go">3         new date 1</span>
+<span class="go">4         new date 2</span>
+<span class="go">5         new date 3</span>
+</pre></div>
+</div>
+</section>
+<section id="rollback">
+<h3>Rollback<a class="headerlink" href="#rollback" title="Permalink to this heading"></a></h3>
+<p>Откатиться на предыдущую ревизию можно с помощью команды <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">undo</span></code>, при этом создается
+новая ревизия:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         new date 1</span>
+<span class="go">2         new date 2</span>
+<span class="go">3         new date 3</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment rolled back</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">1         new date 1</span>
+<span class="go">3         new date 3</span>
+<span class="go">4         new date 2</span>
+</pre></div>
+</div>
+<p>Также можно явно задать ревизию через флаг <code class="docutils literal notranslate"><span class="pre">--to-revision=&lt;n&gt;</span></code>, где n - номер ревизии:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deploy/nginx-deployment<span class="w"> </span>--to-revision<span class="w"> </span><span class="m">1</span>
+<span class="go">deployment.apps/nginx-deployment rolled back</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">3         new date 3</span>
+<span class="go">4         new date 2</span>
+<span class="go">5         new date 1</span>
+</pre></div>
+</div>
+</section>
+<section id="restart">
+<h3>Restart<a class="headerlink" href="#restart" title="Permalink to this heading"></a></h3>
+<p>Если требуется просто пересоздать все поды без изменения его шаблона, то можно использовать команду
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">rollout</span> <span class="pre">restart</span></code>, при этом также появится новая ревизия:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment restarted</span>
+<span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span><span class="nb">history</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment</span>
+<span class="go">REVISION  CHANGE-CAUSE</span>
+<span class="go">3         new date 3</span>
+<span class="go">4         new date 2</span>
+<span class="go">5         new date 1</span>
+<span class="go">6         new date 1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="scaling">
+<h2>Scaling<a class="headerlink" href="#scaling" title="Permalink to this heading"></a></h2>
+<p>Управление количеством реплик ресурса производится путем запроса к сабресурсу <code class="docutils literal notranslate"><span class="pre">/scale</span></code> с указанием
+количества необходимых реплик. Такую операцию поддерживают стандартные ресурсы Deployment, ReplicaSet и
+StatefulSet.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">curl -XPATCH -H &quot;Content-Type: application/merge-patch+json&quot; \</span>
+<span class="go">  &quot;https://${api}/apis/apps/v1/namespaces/default/deployments/nginx-deployment/scale&quot; \</span>
+<span class="go">  -d &#39;{&quot;spec&quot;:{&quot;replicas&quot;:2}}&#39;</span>
+</pre></div>
+</div>
+<p>В утилите kubectl есть команда <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">scale</span></code> позволяющая производить данную операцию.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>scale<span class="w"> </span>--replicas<span class="o">=</span><span class="m">10</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment scaled</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                               READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx-deployment-76d6c9b8c-56lvx   1/1     Running   0          31s</span>
+<span class="go">nginx-deployment-76d6c9b8c-6n5cn   1/1     Running   0          31s</span>
+<span class="go">nginx-deployment-76d6c9b8c-8fbrs   1/1     Running   0          31s</span>
+<span class="go">nginx-deployment-76d6c9b8c-bzj82   1/1     Running   0          32s</span>
+<span class="go">nginx-deployment-76d6c9b8c-cbpzt   1/1     Running   0          17m</span>
+<span class="go">nginx-deployment-76d6c9b8c-ljtql   1/1     Running   0          31s</span>
+<span class="go">nginx-deployment-76d6c9b8c-qqdkt   1/1     Running   0          31s</span>
+<span class="go">nginx-deployment-76d6c9b8c-tblnb   1/1     Running   0          17m</span>
+<span class="go">nginx-deployment-76d6c9b8c-wkn5b   1/1     Running   0          30s</span>
+<span class="go">nginx-deployment-76d6c9b8c-zvkkr   1/1     Running   0          31s</span>
+<span class="gp">$ </span>k<span class="w"> </span>scale<span class="w"> </span>--replicas<span class="o">=</span><span class="m">0</span><span class="w"> </span>deploy/nginx-deployment
+<span class="go">deployment.apps/nginx-deployment scaled</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                               READY   STATUS        RESTARTS   AGE</span>
+<span class="go">nginx-deployment-76d6c9b8c-56lvx   1/1     Terminating   0          43s</span>
+<span class="go">nginx-deployment-76d6c9b8c-8fbrs   0/1     Terminating   0          43s</span>
+<span class="go">nginx-deployment-76d6c9b8c-bzj82   1/1     Terminating   0          44s</span>
+<span class="go">nginx-deployment-76d6c9b8c-cbpzt   1/1     Terminating   0          17m</span>
+<span class="go">nginx-deployment-76d6c9b8c-ljtql   1/1     Terminating   0          43s</span>
+<span class="go">nginx-deployment-76d6c9b8c-qqdkt   0/1     Terminating   0          43s</span>
+<span class="go">nginx-deployment-76d6c9b8c-tblnb   1/1     Terminating   0          17m</span>
+<span class="go">nginx-deployment-76d6c9b8c-zvkkr   1/1     Terminating   0          43s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">No resources found in default namespace.</span>
+</pre></div>
+</div>
+<section id="horizontal-pod-autoscaling">
+<h3>Horizontal Pod Autoscaling<a class="headerlink" href="#horizontal-pod-autoscaling" title="Permalink to this heading"></a></h3>
+<div class="mermaid">
+            graph BT
+  hpa[Horizontal Pod Autoscaler] --&gt; scale[Scale]
+  subgraph rc[RC / Deployment]
+    scale
+  end
+  scale -.-&gt; pod1[Pod 1]
+  scale -.-&gt; pod2[Pod 2]
+  scale -.-&gt; pod3[Pod N]
+
+  classDef hpa fill:#D5A6BD,stroke:#1E1E1D,stroke-width:1px,color:#1E1E1D;
+  classDef rc fill:#F9CB9C,stroke:#1E1E1D,stroke-width:1px,color:#1E1E1D;
+  classDef scale fill:#B6D7A8,stroke:#1E1E1D,stroke-width:1px,color:#1E1E1D;
+  classDef pod fill:#9FC5E8,stroke:#1E1E1D,stroke-width:1px,color:#1E1E1D;
+  class hpa hpa;
+  class rc rc;
+  class scale scale;
+  class pod1,pod2,pod3 pod
+        </div></section>
+</section>
+<section id="disruptions">
+<h2>Disruptions<a class="headerlink" href="#disruptions" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">policy/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PodDisruptionBudget</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="02_topic_pod.html" class="btn btn-neutral float-left" title="Pod" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="04_topic_netbalance.html" class="btn btn-neutral float-right" title="Network" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

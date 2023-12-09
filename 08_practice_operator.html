@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operator &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="Kustomize/Helm" href="07_practice_helm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#operator-sdk">Operator-SDK</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Инициализация</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#go">GO</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#custom-types">Custom Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#controllers">Controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nginx-controller">Nginx controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#telegram">Telegram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#telegram-controller">Telegram controller</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#build-deploy">Build &amp; Deploy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run">Run</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Operator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/08_practice_operator.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="operator">
+<h1>Operator<a class="headerlink" href="#operator" title="Permalink to this heading"></a></h1>
+<p>В данной практике опробуем работу <a class="reference external" href="https://sdk.operatorframework.io/">operator-sdk</a> на примере создания оператора на языке <a class="reference external" href="https://go.dev/">GO</a>,
+который позволяет производить деплой приложения с конфигурацией(для простоты возьмем nginx)
+с запросом подтверждения операции.</p>
+<section id="operator-sdk">
+<h2>Operator-SDK<a class="headerlink" href="#operator-sdk" title="Permalink to this heading"></a></h2>
+<section id="id1">
+<h3>Установка<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>Для работы потребуется утилита operator-sdk, установить ее можно используя
+<a class="reference external" href="https://sdk.operatorframework.io/docs/installation/">инструкцию с официального сайта</a> или скачать со <a class="reference external" href="https://github.com/operator-framework/operator-sdk/releases">страницы релизов на github</a>.
+Для Windows рекомендуется использовать <a class="reference external" href="https://learn.microsoft.com/ru-ru/windows/wsl/">WSL</a> для работы с operator-sdk, так как она предполагает
+наличие утилит командной строки, таких как <code class="docutils literal notranslate"><span class="pre">make</span></code>, <code class="docutils literal notranslate"><span class="pre">awk</span></code>, <code class="docutils literal notranslate"><span class="pre">sed</span></code>, <code class="docutils literal notranslate"><span class="pre">bash</span></code> и т.д.</p>
+</section>
+<section id="id2">
+<h3>Инициализация<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>Создадим директорию для нового проекта и произведем инициализацию:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>operator<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>operator
+<span class="gp">$ </span>operator-sdk<span class="w"> </span>init<span class="w"> </span>--domain<span class="w"> </span>miit.ru<span class="w"> </span>--repo<span class="w"> </span>github.com/yudolevich/kube-dev-course/example/operator
+<span class="go">Writing kustomize manifests for you to edit...</span>
+<span class="go">Writing scaffold for you to edit...</span>
+<span class="go">Get controller runtime:</span>
+<span class="go">go get sigs.k8s.io/controller-runtime@v0.13.0</span>
+<span class="go">Update dependencies:</span>
+<span class="go">go mod tidy</span>
+<span class="go">Next: define a resource with:</span>
+<span class="go">operator-sdk create api</span>
+</pre></div>
+</div>
+<p>В команде <code class="docutils literal notranslate"><span class="pre">init</span></code> мы указываем произвольный домен, который будет использоваться в кастомных ресурсах,
+а также имя репозитория, который будет использоваться в <code class="docutils literal notranslate"><span class="pre">go.mod</span></code>.</p>
+<p>Также сгенерируем код для структур апи и контроллера:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>operator-sdk<span class="w"> </span>create<span class="w"> </span>api<span class="w"> </span>--group<span class="w"> </span>deploy<span class="w"> </span>--version<span class="w"> </span>v1alpha1<span class="w"> </span>--kind<span class="w"> </span>Nginx<span class="w"> </span>--resource<span class="w"> </span>--controller
+<span class="go">Writing kustomize manifests for you to edit...</span>
+<span class="go">Writing scaffold for you to edit...</span>
+<span class="go">api/v1alpha1/nginx_types.go</span>
+<span class="go">controllers/nginx_controller.go</span>
+<span class="go">Update dependencies:</span>
+<span class="go">go mod tidy</span>
+<span class="go">Running make:</span>
+<span class="go">make generate</span>
+<span class="go">Next: implement your new API and generate the manifests (e.g. CRDs,CRs) with:</span>
+<span class="go">make manifests</span>
+</pre></div>
+</div>
+<p>Таким образом мы инициализировали проект оператора, который будет обрабатывать ресурсы вида
+<code class="docutils literal notranslate"><span class="pre">&lt;kind&gt;.&lt;group&gt;.&lt;domain&gt;</span></code>, то есть в нашем случае <code class="docutils literal notranslate"><span class="pre">nginxes.deploy.miit.ru</span></code>.</p>
+</section>
+</section>
+<section id="go">
+<h2>GO<a class="headerlink" href="#go" title="Permalink to this heading"></a></h2>
+<p>На данном этапе у нас есть каркас проекта оператора на golang, теперь необходимо описать нашу структуру
+и логику ее обработки.</p>
+<section id="custom-types">
+<h3>Custom Types<a class="headerlink" href="#custom-types" title="Permalink to this heading"></a></h3>
+<p>Структура нашего кастомного ресурса находится в файле <code class="docutils literal notranslate"><span class="pre">api/v1alpha1/nginx_types.go</span></code>:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!</span>
+<span class="c1">// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.</span>
+
+<span class="c1">// NginxSpec defines the desired state of Nginx</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">NginxSpec</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
+<span class="w">        </span><span class="c1">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+<span class="w">        </span><span class="c1">// Foo is an example field of Nginx. Edit nginx_types.go to remove/update</span>
+<span class="w">        </span><span class="nx">Foo</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="s">`json:&quot;foo,omitempty&quot;`</span>
+<span class="p">}</span>
+
+<span class="c1">// NginxStatus defines the observed state of Nginx</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">NginxStatus</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster</span>
+<span class="w">        </span><span class="c1">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Здесь нам сразу же предлагается отредактировать данную структуру, внеся необходимые нам поля,
+а после запустить <code class="docutils literal notranslate"><span class="pre">make</span></code> для генерации кода. Добавим пару полей в <code class="docutils literal notranslate"><span class="pre">NginxSpec</span></code>: <code class="docutils literal notranslate"><span class="pre">Replicas</span></code> для задания
+количества реплик в деплойменте и <code class="docutils literal notranslate"><span class="pre">Index</span></code> для указания текста, который должен выводить наш nginx.
+Также в <code class="docutils literal notranslate"><span class="pre">NginxStatus</span></code> добавим индикатор подтверждения <code class="docutils literal notranslate"><span class="pre">Approved</span></code>, который будет сигнализировать о том,
+что подтверждение получено:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span><span class="w"> </span><span class="nx">NginxSpec</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster</span>
+<span class="w">        </span><span class="c1">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+
+<span class="w">        </span><span class="nx">Replicas</span><span class="w"> </span><span class="kt">int32</span><span class="w">  </span><span class="s">`json:&quot;replicas,omitempty&quot;`</span>
+<span class="w">        </span><span class="nx">Index</span><span class="w">    </span><span class="kt">string</span><span class="w"> </span><span class="s">`json:&quot;index&quot;`</span>
+<span class="p">}</span>
+
+<span class="c1">// NginxStatus defines the observed state of Nginx</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">NginxStatus</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster</span>
+<span class="w">        </span><span class="c1">// Important: Run &quot;make&quot; to regenerate code after modifying this file</span>
+<span class="w">        </span><span class="nx">Approved</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="s">`json:&quot;approved&quot;`</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Также мы указываем json теги, которые будут использовать для сериализации нашей структуры в json формат,
+который будет использоваться в нашем кастомном ресурсе при описании его в yaml формате.</p>
+<p>После редактирования структуры для генерации необходимого кода и манифестов требуется запустить <code class="docutils literal notranslate"><span class="pre">make</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>make<span class="w"> </span>generate
+<span class="go">bin/controller-gen object:headerFile=&quot;hack/boilerplate.go.txt&quot; paths=&quot;./...&quot;</span>
+<span class="gp">$ </span>make<span class="w"> </span>manifests
+<span class="go">bin/controller-gen rbac:roleName=manager-role crd webhook paths=&quot;./...&quot; output:crd:artifacts:config=config/crd/bases</span>
+</pre></div>
+</div>
+</section>
+<section id="controllers">
+<h3>Controllers<a class="headerlink" href="#controllers" title="Permalink to this heading"></a></h3>
+<p>После инициализации operator-sdk создает директорию <code class="docutils literal notranslate"><span class="pre">controllers</span></code>, в которой генерирует код
+контроллера <code class="docutils literal notranslate"><span class="pre">controllers/nginx_controller.go</span></code>, обрабатывающего наши кастомные ресурсы. Здесь создается
+структура <code class="docutils literal notranslate"><span class="pre">NginxReconciler</span></code> и ее метод <code class="docutils literal notranslate"><span class="pre">Reconcile</span></code>, который будет вызываться при любых изменениях
+нашего ресурса. Собственно ее нам сразу же и предлагается изменить:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Reconcile is part of the main kubernetes reconciliation loop which aims to</span>
+<span class="c1">// move the current state of the cluster closer to the desired state.</span>
+<span class="c1">// TODO(user): Modify the Reconcile function to compare the state specified by</span>
+<span class="c1">// the Nginx object against the actual cluster state, and then</span>
+<span class="c1">// perform operations to make the cluster state reflect the state specified by</span>
+<span class="c1">// the user.</span>
+<span class="c1">//</span>
+<span class="c1">// For more details, check Reconcile and its Result here:</span>
+<span class="c1">// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile</span>
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">NginxReconciler</span><span class="p">)</span><span class="w"> </span><span class="nx">Reconcile</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">_</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">log</span><span class="p">.</span><span class="nx">FromContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+
+<span class="w">        </span><span class="c1">// TODO(user): your logic here</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="nginx-controller">
+<h3>Nginx controller<a class="headerlink" href="#nginx-controller" title="Permalink to this heading"></a></h3>
+<p>Добавим следующую логику: при получении обновления мы запрашиваем текущее состояние ресурса методом
+<code class="docutils literal notranslate"><span class="pre">r.Get</span></code>, после чего проверяем поле <code class="docutils literal notranslate"><span class="pre">approved</span></code> в статусе ресурса и, если оно не проставлено,
+то прекращаем обработку, иначе производим деплой.</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">NginxReconciler</span><span class="p">)</span><span class="w"> </span><span class="nx">Reconcile</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">logger</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">log</span><span class="p">.</span><span class="nx">FromContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+<span class="w">    </span><span class="nx">nginx</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">deployv1alpha1</span><span class="p">.</span><span class="nx">Nginx</span><span class="p">{}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">req</span><span class="p">.</span><span class="nx">NamespacedName</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">errors</span><span class="p">.</span><span class="nx">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">logger</span><span class="p">.</span><span class="nx">WithValues</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span><span class="w"> </span><span class="s">&quot;namespace&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetNamespace</span><span class="p">())</span>
+
+<span class="w">    </span><span class="nx">logger</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;reconicle&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Approved</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// todo: send approve request</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">deploy</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">logger</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error deploy nginx&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Сам процесс деплоя можно описать отдельно:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">NginxReconciler</span><span class="p">)</span><span class="w"> </span><span class="nx">deploy</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="w"> </span><span class="o">*</span><span class="nx">deployv1alpha1</span><span class="p">.</span><span class="nx">Nginx</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">labels</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;nginx&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">()}</span>
+<span class="w">    </span><span class="nx">owner</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">OwnerReference</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">APIVersion</span><span class="p">:</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">APIVersion</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">Kind</span><span class="p">:</span><span class="w">       </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Kind</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">UID</span><span class="p">:</span><span class="w">        </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetUID</span><span class="p">(),</span>
+<span class="w">        </span><span class="nx">Name</span><span class="p">:</span><span class="w">       </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">cm</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">v1</span><span class="p">.</span><span class="nx">ConfigMap</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">            </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span>
+<span class="w">            </span><span class="nx">Namespace</span><span class="p">:</span><span class="w">       </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetNamespace</span><span class="p">(),</span>
+<span class="w">            </span><span class="nx">Labels</span><span class="p">:</span><span class="w">          </span><span class="nx">labels</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">OwnerReferences</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">OwnerReference</span><span class="p">{</span><span class="nx">owner</span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">Data</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span>
+<span class="w">            </span><span class="s">&quot;index.html&quot;</span><span class="p">:</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Index</span><span class="p">,</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">deploy</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">Deployment</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">            </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span>
+<span class="w">            </span><span class="nx">Namespace</span><span class="p">:</span><span class="w">       </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetNamespace</span><span class="p">(),</span>
+<span class="w">            </span><span class="nx">OwnerReferences</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">OwnerReference</span><span class="p">{</span><span class="nx">owner</span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">appsv1</span><span class="p">.</span><span class="nx">DeploymentSpec</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">Selector</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">metav1</span><span class="p">.</span><span class="nx">LabelSelector</span><span class="p">{</span><span class="nx">MatchLabels</span><span class="p">:</span><span class="w"> </span><span class="nx">labels</span><span class="p">},</span>
+<span class="w">            </span><span class="nx">Replicas</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Replicas</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">Template</span><span class="p">:</span><span class="w"> </span><span class="nx">v1</span><span class="p">.</span><span class="nx">PodTemplateSpec</span><span class="p">{</span>
+<span class="w">                </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">metav1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span><span class="nx">Labels</span><span class="p">:</span><span class="w"> </span><span class="nx">labels</span><span class="p">},</span>
+<span class="w">                </span><span class="nx">Spec</span><span class="p">:</span><span class="w"> </span><span class="nx">v1</span><span class="p">.</span><span class="nx">PodSpec</span><span class="p">{</span>
+<span class="w">                    </span><span class="nx">Containers</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">v1</span><span class="p">.</span><span class="nx">Container</span><span class="p">{</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nx">Name</span><span class="p">:</span><span class="w">  </span><span class="s">&quot;nginx&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nx">Image</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;nginx&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nx">VolumeMounts</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">v1</span><span class="p">.</span><span class="nx">VolumeMount</span><span class="p">{</span>
+<span class="w">                                </span><span class="p">{</span>
+<span class="w">                                    </span><span class="nx">Name</span><span class="p">:</span><span class="w">      </span><span class="s">&quot;index&quot;</span><span class="p">,</span>
+<span class="w">                                    </span><span class="nx">MountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/usr/share/nginx/html&quot;</span><span class="p">,</span>
+<span class="w">                                </span><span class="p">},</span>
+<span class="w">                            </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nx">Volumes</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">v1</span><span class="p">.</span><span class="nx">Volume</span><span class="p">{</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;index&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nx">VolumeSource</span><span class="p">:</span><span class="w"> </span><span class="nx">v1</span><span class="p">.</span><span class="nx">VolumeSource</span><span class="p">{</span>
+<span class="w">                                </span><span class="nx">ConfigMap</span><span class="p">:</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">v1</span><span class="p">.</span><span class="nx">ConfigMapVolumeSource</span><span class="p">{</span>
+<span class="w">                                    </span><span class="nx">LocalObjectReference</span><span class="p">:</span><span class="w"> </span><span class="nx">v1</span><span class="p">.</span><span class="nx">LocalObjectReference</span><span class="p">{</span>
+<span class="w">                                        </span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span>
+<span class="w">                                    </span><span class="p">},</span>
+<span class="w">                                </span><span class="p">},</span>
+<span class="w">                            </span><span class="p">},</span>
+<span class="w">                        </span><span class="p">},</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">cm</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">deploy</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">NginxReconciler</span><span class="p">)</span><span class="w"> </span><span class="nx">apply</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">obj</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">Object</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">logger</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">log</span><span class="p">.</span><span class="nx">FromContext</span><span class="p">(</span><span class="nx">ctx</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">ObjectKeyFromObject</span><span class="p">(</span><span class="nx">obj</span><span class="p">),</span><span class="w"> </span><span class="nx">obj</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">errors</span><span class="p">.</span><span class="nx">IsNotFound</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="nx">logger</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;create&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">obj</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">logger</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;update&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">Update</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="nx">obj</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Здесь мы описываем структуры Deployment и ConfigMap также как мы это делали в yaml формате, но с
+использованием golang, что дает нам дополнительную гибкость за счет возможностей полнофункционального
+языка и удобство за счет работы в IDE или продвинутом текстовом редакторе с возможностью автодополнения
+и подсвечивания ошибок. Как видно мы взяли параметры из нашего ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code>, так что <code class="docutils literal notranslate"><span class="pre">replicas</span></code>
+попало в Deployment, а <code class="docutils literal notranslate"><span class="pre">index</span></code> в ConfigMap, который монтируется в него. Также мы использовали поле
+<code class="docutils literal notranslate"><span class="pre">OwnerReference</span></code>, таким образом при удалении нашего кастомного ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code> также каскадно удалятся
+все его дочерние ресурсы.</p>
+<p>Осталось только описать логику для подтверждения деплоя.</p>
+</section>
+<section id="telegram">
+<h3>Telegram<a class="headerlink" href="#telegram" title="Permalink to this heading"></a></h3>
+<p>Для подтверждения деплоя предлагаю создать контроллер, который будет писать вам в <a class="reference external" href="https://telegram.org/">telegram</a> при
+появлении нового ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code>. Чтобы создать нового бота достаточно написать
+<a class="reference external" href="https://t.me/botfather">t.me/botfather</a> команду <code class="docutils literal notranslate"><span class="pre">/newbot</span></code>, он спросит вас имя и уникальный username
+для бота и выдаст ссылку на него и токен, которым мы сможем воспользоваться в нашем операторе.</p>
+<p>Также нам понадобится <code class="docutils literal notranslate"><span class="pre">chat_id</span></code> для отправки сообщений, для этого достаточно перейти в диалог с ботом
+и нажать <code class="docutils literal notranslate"><span class="pre">start</span></code>, после чего выполнить в терминале:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">token</span><span class="o">=</span>&lt;токен<span class="w"> </span>бота&gt;
+<span class="gp">$ </span>curl<span class="w"> </span>https://api.telegram.org/bot<span class="si">${</span><span class="nv">token</span><span class="si">}</span>/getUpdates
+</pre></div>
+</div>
+<p>После чего вы получите json с сообщением <code class="docutils literal notranslate"><span class="pre">/start</span></code>, в котором в поле <code class="docutils literal notranslate"><span class="pre">id</span></code> будет указан идентификатор
+диалога с ботом, которым мы и воспользуемся далее вместе с токеном.</p>
+</section>
+<section id="telegram-controller">
+<h3>Telegram controller<a class="headerlink" href="#telegram-controller" title="Permalink to this heading"></a></h3>
+<p>Для взаимодействия с <a class="reference external" href="https://telegram.org/">telegram</a> можно воспользоваться пакетом <a class="reference external" href="https://go-telegram-bot-api.dev">go-telegram-bot-api</a>,
+выполним команду <code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">get</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>go<span class="w"> </span>get<span class="w"> </span>-u<span class="w"> </span>github.com/go-telegram-bot-api/telegram-bot-api/v5
+</pre></div>
+</div>
+<p>И создадим файл <code class="docutils literal notranslate"><span class="pre">controllers/telegram_controller.go</span></code>, в котором опишем структуру контроллера, функцию
+создания нового контроллера и логику получения обновлений о новых сообщениях и проставление в статусе
+нашего кастомного ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code> поля <code class="docutils literal notranslate"><span class="pre">approved:true</span></code>. Также сделаем метод <code class="docutils literal notranslate"><span class="pre">SendDeploy</span></code>, который
+будет отправляет сообщение о появлении нашего ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code> в кластере.</p>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Данный код не предназначен для продуктивного использования и нужен лишь в целях обучения работы
+с operator-sdk.</p>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nx">controllers</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="s">&quot;context&quot;</span>
+<span class="w">    </span><span class="s">&quot;fmt&quot;</span>
+<span class="w">    </span><span class="s">&quot;strings&quot;</span>
+
+<span class="w">    </span><span class="nx">tgbotapi</span><span class="w"> </span><span class="s">&quot;github.com/go-telegram-bot-api/telegram-bot-api/v5&quot;</span>
+<span class="w">    </span><span class="s">&quot;github.com/yudolevich/kube-dev-course/example/operator/api/v1alpha1&quot;</span>
+<span class="w">    </span><span class="nx">v1</span><span class="w"> </span><span class="s">&quot;k8s.io/apimachinery/pkg/apis/meta/v1&quot;</span>
+<span class="w">    </span><span class="s">&quot;k8s.io/apimachinery/pkg/types&quot;</span>
+<span class="w">    </span><span class="s">&quot;sigs.k8s.io/controller-runtime/pkg/client&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">type</span><span class="w"> </span><span class="nx">TBot</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">*</span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">BotAPI</span>
+<span class="w">    </span><span class="nx">kube</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">Client</span>
+<span class="w">    </span><span class="nx">uid</span><span class="w">  </span><span class="kt">int64</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">NewTBot</span><span class="p">(</span><span class="nx">token</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">uid</span><span class="w"> </span><span class="kt">int64</span><span class="p">,</span><span class="w"> </span><span class="nx">client</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">Client</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="nx">TBot</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">bot</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewBotAPI</span><span class="p">(</span><span class="nx">token</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">TBot</span><span class="p">{</span><span class="nx">BotAPI</span><span class="p">:</span><span class="w"> </span><span class="nx">bot</span><span class="p">,</span><span class="w"> </span><span class="nx">uid</span><span class="p">:</span><span class="w"> </span><span class="nx">uid</span><span class="p">,</span><span class="w"> </span><span class="nx">kube</span><span class="p">:</span><span class="w"> </span><span class="nx">client</span><span class="p">},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">b</span><span class="w"> </span><span class="o">*</span><span class="nx">TBot</span><span class="p">)</span><span class="w"> </span><span class="nx">Start</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nx">update</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="nx">b</span><span class="p">.</span><span class="nx">GetUpdatesChan</span><span class="p">(</span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewUpdate</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nx">update</span><span class="p">.</span><span class="nx">CallbackQuery</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="nx">name</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">strings</span><span class="p">.</span><span class="nx">Split</span><span class="p">(</span><span class="nx">update</span><span class="p">.</span><span class="nx">CallbackQuery</span><span class="p">.</span><span class="nx">Data</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nx">name</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">continue</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="nx">b</span><span class="p">.</span><span class="nx">kube</span><span class="p">.</span><span class="nx">Status</span><span class="p">().</span><span class="nx">Patch</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">Nginx</span><span class="p">{</span>
+<span class="w">            </span><span class="nx">ObjectMeta</span><span class="p">:</span><span class="w"> </span><span class="nx">v1</span><span class="p">.</span><span class="nx">ObjectMeta</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span><span class="w"> </span><span class="nx">name</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="nx">Namespace</span><span class="p">:</span><span class="w"> </span><span class="nx">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]},</span>
+<span class="w">        </span><span class="p">},</span><span class="w"> </span><span class="nx">client</span><span class="p">.</span><span class="nx">RawPatch</span><span class="p">(</span><span class="nx">types</span><span class="p">.</span><span class="nx">MergePatchType</span><span class="p">,</span><span class="w"> </span><span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;status&quot;:{&quot;approved&quot;: true}}`</span><span class="p">)),</span>
+<span class="w">        </span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<span class="p">}</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">b</span><span class="w"> </span><span class="o">*</span><span class="nx">TBot</span><span class="p">)</span><span class="w"> </span><span class="nx">SendDeploy</span><span class="p">(</span><span class="nx">nginx</span><span class="w"> </span><span class="o">*</span><span class="nx">v1alpha1</span><span class="p">.</span><span class="nx">Nginx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">msg</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewMessage</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">b</span><span class="p">.</span><span class="nx">uid</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">`Nginx: %s/%s</span>
+<span class="s">        replicas: %d</span>
+<span class="s">        index.html: %s`</span><span class="p">,</span>
+<span class="w">            </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetNamespace</span><span class="p">(),</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">(),</span>
+<span class="w">            </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Replicas</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Index</span><span class="p">),</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="w">    </span><span class="nx">msg</span><span class="p">.</span><span class="nx">ReplyMarkup</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewInlineKeyboardMarkup</span><span class="p">(</span>
+<span class="w">        </span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewInlineKeyboardRow</span><span class="p">(</span>
+<span class="w">            </span><span class="nx">tgbotapi</span><span class="p">.</span><span class="nx">NewInlineKeyboardButtonData</span><span class="p">(</span>
+<span class="w">                </span><span class="s">&quot;deploy&quot;</span><span class="p">,</span>
+<span class="w">                </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%s/%s&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetNamespace</span><span class="p">(),</span><span class="w"> </span><span class="nx">nginx</span><span class="p">.</span><span class="nx">GetName</span><span class="p">()),</span>
+<span class="w">            </span><span class="p">),</span>
+<span class="w">        </span><span class="p">),</span>
+<span class="w">    </span><span class="p">)</span>
+
+<span class="w">    </span><span class="nx">b</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Теперь добавим в <code class="docutils literal notranslate"><span class="pre">nginx_controller.go</span></code> отправку сообщения в <a class="reference external" href="https://telegram.org/">telegram</a> там где мы оставили <code class="docutils literal notranslate"><span class="pre">todo</span></code>
+комментарий, также расширив структуру нашего <code class="docutils literal notranslate"><span class="pre">NginxReconciler</span></code>:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// NginxReconciler reconciles a Nginx object</span>
+<span class="kd">type</span><span class="w"> </span><span class="nx">NginxReconciler</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">client</span><span class="p">.</span><span class="nx">Client</span>
+<span class="w">    </span><span class="nx">Tbot</span><span class="w">   </span><span class="o">*</span><span class="nx">TBot</span>
+<span class="w">    </span><span class="nx">Scheme</span><span class="w"> </span><span class="o">*</span><span class="nx">runtime</span><span class="p">.</span><span class="nx">Scheme</span>
+<span class="p">}</span>
+<span class="o">...</span>
+<span class="w">    </span><span class="nx">logger</span><span class="p">.</span><span class="nx">Info</span><span class="p">(</span><span class="s">&quot;reconicle&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">!</span><span class="nx">nginx</span><span class="p">.</span><span class="nx">Status</span><span class="p">.</span><span class="nx">Approved</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">r</span><span class="p">.</span><span class="nx">Tbot</span><span class="p">.</span><span class="nx">SendDeploy</span><span class="p">(</span><span class="nx">nginx</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">.</span><span class="nx">Result</span><span class="p">{},</span><span class="w"> </span><span class="kc">nil</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Осталось лишь дописать инициализацию нашего приложения в <code class="docutils literal notranslate"><span class="pre">main.go</span></code>, для этого
+добавим в него создание <code class="docutils literal notranslate"><span class="pre">TBot</span></code> контроллера и добавление его в <code class="docutils literal notranslate"><span class="pre">Manager</span></code> и <code class="docutils literal notranslate"><span class="pre">NginxReconciler</span></code>:</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="w">    </span><span class="nx">chatid</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TELEGRAM_CHATID&quot;</span><span class="p">),</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setupLog</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;error parse chatid&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nx">tbot</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">controllers</span><span class="p">.</span><span class="nx">NewTBot</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TELEGRAM_APITOKEN&quot;</span><span class="p">),</span><span class="w"> </span><span class="nx">chatid</span><span class="p">,</span><span class="w"> </span><span class="nx">mgr</span><span class="p">.</span><span class="nx">GetClient</span><span class="p">())</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setupLog</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unable to create telegram bot controller&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="nx">controllers</span><span class="p">.</span><span class="nx">NginxReconciler</span><span class="p">{</span>
+<span class="w">        </span><span class="nx">Client</span><span class="p">:</span><span class="w"> </span><span class="nx">mgr</span><span class="p">.</span><span class="nx">GetClient</span><span class="p">(),</span>
+<span class="w">        </span><span class="nx">Scheme</span><span class="p">:</span><span class="w"> </span><span class="nx">mgr</span><span class="p">.</span><span class="nx">GetScheme</span><span class="p">(),</span>
+<span class="w">        </span><span class="nx">Tbot</span><span class="p">:</span><span class="w">   </span><span class="nx">tbot</span><span class="p">,</span>
+<span class="w">    </span><span class="p">}).</span><span class="nx">SetupWithManager</span><span class="p">(</span><span class="nx">mgr</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setupLog</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unable to create controller&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;controller&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Nginx&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">//+kubebuilder:scaffold:builder</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mgr</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="nx">tbot</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">setupLog</span><span class="p">.</span><span class="nx">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;unable to add telegram bot controller to manager&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="build-deploy">
+<h2>Build &amp; Deploy<a class="headerlink" href="#build-deploy" title="Permalink to this heading"></a></h2>
+<p>На всякий случай повторим генерацию кода и манифестов, а также сделаем проверку зависимостей и
+запустим сборку:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>make<span class="w"> </span>generate
+<span class="go">bin/controller-gen object:headerFile=&quot;hack/boilerplate.go.txt&quot; paths=&quot;./...&quot;</span>
+<span class="gp">$ </span>make<span class="w"> </span>manifests
+<span class="go">bin/controller-gen rbac:roleName=manager-role crd webhook paths=&quot;./...&quot; output:crd:artifacts:config=config/crd/bases</span>
+<span class="gp">$ </span>go<span class="w"> </span>mod<span class="w"> </span>tidy
+<span class="gp">$ </span>make<span class="w"> </span>docker-build
+<span class="go">...</span>
+<span class="go">Step 16/16 : ENTRYPOINT [&quot;/manager&quot;]</span>
+<span class="go"> ---&gt; Running in a396e3faa2fa</span>
+<span class="go">Removing intermediate container a396e3faa2fa</span>
+<span class="go"> ---&gt; 22229db80f19</span>
+<span class="go">Successfully built 22229db80f19</span>
+<span class="go">Successfully tagged controller:latest</span>
+</pre></div>
+</div>
+<p>Перед деплоем необходимо внести пару изменений в манифесты, так как мы используем переменные среды и
+также запретим загрузку образа из внешних источников, для этого приведем файл
+<code class="docutils literal notranslate"><span class="pre">config/default/manager_config_patch.yaml</span></code> к следующему виду:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller-manager</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+<span class="w">        </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TELEGRAM_CHATID&quot;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;chat</span><span class="nv"> </span><span class="s">id&gt;&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;TELEGRAM_APITOKEN&quot;</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;bot</span><span class="nv"> </span><span class="s">token&gt;&quot;</span>
+</pre></div>
+</div>
+<p>Указав свои <code class="docutils literal notranslate"><span class="pre">chat</span> <span class="pre">id</span></code> и <code class="docutils literal notranslate"><span class="pre">bot</span> <span class="pre">token</span></code>, и добавим строку в файл <code class="docutils literal notranslate"><span class="pre">config/default/kustomization.yaml</span></code> в блок
+<code class="docutils literal notranslate"><span class="pre">patchesStrategicMerge</span></code>, приведя его к виду:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">patchesStrategicMerge</span><span class="p">:</span>
+<span class="c1"># Protect the /metrics endpoint by putting it behind auth.</span>
+<span class="c1"># If you want your controller-manager to expose the /metrics</span>
+<span class="c1"># endpoint w/o any authn/z, please comment the following line.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager_auth_proxy_patch.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager_config_patch.yaml</span>
+</pre></div>
+</div>
+<p>Также необходимы права на взаимодействие с ресурсами Deployment и ConfigMap нашему оператору, для
+этого создадим кластерную роль и биндинг <code class="docutils literal notranslate"><span class="pre">config/rbac/role-deploy.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager-role-deploy</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configmaps</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">list</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">patch</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">watch</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deployments</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">list</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">patch</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">watch</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager-rolebinding-deploy</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manager-role-deploy</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">controller-manager</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+</pre></div>
+</div>
+<p>Также необходимо указать этот файл в <code class="docutils literal notranslate"><span class="pre">config/rbac/kustomization.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service_account.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">role.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">role_binding.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">leader_election_role.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">leader_election_role_binding.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth_proxy_service.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth_proxy_role.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth_proxy_role_binding.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">auth_proxy_client_clusterrole.yaml</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">role-deploy.yaml</span>
+</pre></div>
+</div>
+<p>Осталось лишь загрузить образ в кластер и выполнить деплой:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kind<span class="w"> </span>load<span class="w"> </span>docker-image<span class="w"> </span>controller
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:22229db80f19bba9f657e7095bc8da00b10b8d221b4ba7e60e83dafe0c087f9c&quot; not yet present on node &quot;kind-control-plane&quot;, loading...</span>
+<span class="gp">$ </span>make<span class="w"> </span>deploy
+<span class="go">namespace/operator-system created</span>
+<span class="go">customresourcedefinition.apiextensions.k8s.io/nginxes.deploy.miit.ru created</span>
+<span class="go">serviceaccount/operator-controller-manager created</span>
+<span class="go">role.rbac.authorization.k8s.io/operator-leader-election-role created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role-deploy created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-metrics-reader created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-proxy-role created</span>
+<span class="go">rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding-deploy created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding created</span>
+<span class="go">service/operator-controller-manager-metrics-service created</span>
+<span class="go">deployment.apps/operator-controller-manager created</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>operator-system
+<span class="go">NAME                                           READY   STATUS    RESTARTS   AGE</span>
+<span class="go">operator-controller-manager-6798bdbdbd-n2cqt   2/2     Running   0          5m50s</span>
+</pre></div>
+</div>
+</section>
+<section id="run">
+<h2>Run<a class="headerlink" href="#run" title="Permalink to this heading"></a></h2>
+<p>Создадим наш кастомный ресурс типа <code class="docutils literal notranslate"><span class="pre">nginxes.deploy.miit.ru</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: deploy.miit.ru/v1alpha1</span>
+<span class="s">kind: Nginx</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">  name: nginx-sample</span>
+<span class="s">spec:</span>
+<span class="s">  replicas: 1</span>
+<span class="s">  index: |</span>
+<span class="s">    It&#39;s alive!</span>
+<span class="s">EOF</span>
+nginx.deploy.miit.ru/nginx-sample<span class="w"> </span>created
+</pre></div>
+</div>
+<p>После чего оператор должен отправить вам сообщение:
+<img alt="" src="_images/telegram-msg.png" /></p>
+<p>Если на текущий момент посмотреть в проекте, то никаких подов создано не будет:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">No resources found in default namespace.</span>
+</pre></div>
+</div>
+<p>После же нажатия на кнопку <code class="docutils literal notranslate"><span class="pre">deploy</span></code> в сообщении - оператор подтвердит создание ресурсов в кластере и
+под будет создан, при запросе к нему можно убедиться, что значение <code class="docutils literal notranslate"><span class="pre">index.html</span></code> взято из нашего ресурса:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                            READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx-sample-6b79c55d84-j6j62   1/1     Running   0          4s</span>
+
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/api/v1/namespaces/default/pods/<span class="k">$(</span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-o<span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d/<span class="w"> </span>-f2<span class="k">)</span>/proxy
+<span class="go">It&#39;s alive!</span>
+</pre></div>
+</div>
+<p>После удаления нашего ресурса <code class="docutils literal notranslate"><span class="pre">nginx</span></code> также каскадно удалятся Deploy, Pod и ConfigMap:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>delete<span class="w"> </span>nginx<span class="w"> </span>nginx-sample
+<span class="go">nginx.deploy.miit.ru &quot;nginx-sample&quot; deleted</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">No resources found in default namespace.</span>
+</pre></div>
+</div>
+<p>Пример кода из данной практики можно посмотреть <a class="reference external" href="https://github.com/yudolevich/kube-dev-course/tree/main/examples/operator">по ссылке</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="07_practice_helm.html" class="btn btn-neutral float-left" title="Kustomize/Helm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

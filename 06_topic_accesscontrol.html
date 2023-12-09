@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Access Control &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Практика" href="practice.html" />
+    <link rel="prev" title="Storage" href="05_topic_storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Access Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#authentication">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#certificate">Certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#token">Token</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#authorization">Authorization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#rbac">RBAC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#role">Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clusterrole">ClusterRole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rolebinding">RoleBinding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clusterrolebinding">ClusterRoleBinding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Access Control</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/06_topic_accesscontrol.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="access-control">
+<h1>Access Control<a class="headerlink" href="#access-control" title="Permalink to this heading"></a></h1>
+<p><img alt="" src="_images/acctl-overview.svg" /></p>
+<section id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this heading"></a></h2>
+<p>Аутентификация в Kubernetes – это процесс проверки подлинности идентификационных данных пользователя,
+который запрашивает доступ к ресурсам кластера. В Kubernetes есть несколько методов аутентификации,
+включая:</p>
+<ul class="simple">
+<li><p>Файл сертификата клиента: при этом методе пользователь использует сертификат и закрытый ключ для
+аутентификации.</p></li>
+<li><p>Использование токенов: при этом методе пользователь использует токен доступа для аутентификации.</p></li>
+<li><p>Прокси аутентификация: при этом методе пользователь производит аутентификацию через прокси сервер,
+который добавляет информацию о пользователе в HTTP заголовки.</p></li>
+</ul>
+<p>Аутентификацию в кластере можно пройти как обычный пользователь, либо как сервисный аккаунт, иначе
+запрос будет считаться анонимным.</p>
+<section id="certificate">
+<h3>Certificate<a class="headerlink" href="#certificate" title="Permalink to this heading"></a></h3>
+<p>Аутентификация пользователей в Kubernetes с помощью сертификата - это один из способов подтверждения
+личности пользователя. При использовании этого метода, пользователь использует свой клиентский сертификат
+для подключения к Kubernetes API серверу.</p>
+<p>Для того чтобы использовать этот метод аутентификации, необходимо создать сертификат и приватный ключ для
+каждого пользователя и добавить их в соответствующие места в кластере. Как правило, это делается следующим
+образом:</p>
+<ul class="simple">
+<li><p>Создание сертификатов и ключей для пользователей.</p></li>
+<li><p>Создание объекта CertificateSigningRequest (CSR) для каждого сертификата пользователя. CSR является
+запросом на подпись сертификата удостоверяющим центром (CA).</p></li>
+<li><p>Утверждение CSR для каждого пользователя, чтобы получить сертификаты, которые затем могут использоваться
+для аутентификации.</p></li>
+</ul>
+<p>При использовании сертификатов для аутентификации, можно использовать Role-Based Access Control (RBAC)
+для управления доступом пользователей к ресурсам Kubernetes в соответствии с определенными правилами.</p>
+</section>
+<section id="token">
+<h3>Token<a class="headerlink" href="#token" title="Permalink to this heading"></a></h3>
+<p>Другой способ аутентификации в кластере с использованием токена - уникальной строки, идентифицирующей
+пользователя, делающего запрос в API Kubernetes. В зависимости от конфигурации API токен может
+генерироваться различными способами: <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#static-token-file">csv файл</a>, <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#service-account-tokens">jwt sa</a>, <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens">jwt oidc</a>.</p>
+<p>При каждом запросе токен передается в HTTP заголовке, таким образом идентифицируя пользователя:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Authorization: Bearer 31ada4fd-adec-460c-809a-9e56ceb75269</span>
+</pre></div>
+</div>
+<p>Пример аутентификации с использованием <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#openid-connect-tokens">OpenID Connect</a>:</p>
+<div class="mermaid">
+            sequenceDiagram
+  participant user as User
+  participant idp as Identity Provider
+  participant kube as Kubectl
+  participant api as API Server
+  user -&gt;&gt; idp: 1. Login to IdP
+  activate idp
+  idp --&gt;&gt; user: 2. Provide access_token,&lt;br&gt;id_token, and refresh_token
+  deactivate idp
+  activate user
+  user -&gt;&gt; kube: 3. Call Kubectl&lt;br&gt;with --token being the id_token&lt;br&gt;OR add tokens to .kube/config
+  deactivate user
+  activate kube
+  kube -&gt;&gt; api: 4. Authorization: Bearer...
+  deactivate kube
+  activate api
+  api -&gt;&gt; api: 5. Is JWT signature valid?
+  api -&gt;&gt; api: 6. Has the JWT expired? (iat+exp)
+  api -&gt;&gt; api: 7. User authorized?
+  api --&gt;&gt; kube: 8. Authorized: Perform&lt;br&gt;action and return result
+  deactivate api
+  activate kube
+  kube --x user: 9. Return result
+  deactivate kube
+        </div></section>
+</section>
+<section id="authorization">
+<h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this heading"></a></h2>
+<p>Авторизация в Kubernetes – это процесс контроля доступа к ресурсам API сервера на основе правил,
+определяющих, какие действия могут выполнять пользователи, группы пользователей или сервисные аккаунты.
+В Kubernetes авторизация осуществляется на уровне API сервера.</p>
+<p>Для реализации авторизации Kubernetes использует модуль авторизации, который работает внутри API
+сервера и проверяет права доступа к каждому запросу. Каждый запрос, поступающий на API сервер,
+проходит через ряд проверок, в том числе аутентификацию и авторизацию.</p>
+<p>Авторизация в Kubernetes может быть реализована с помощью различных механизмов, включая:</p>
+<ul class="simple">
+<li><p>RBAC (Role-Based Access Control) – это механизм контроля доступа на основе ролей. RBAC позволяет
+определять роли и разрешения для групп пользователей или сервисных аккаунтов. RBAC в Kubernetes
+позволяет гибко настраивать доступ к ресурсам и действиям в кластере.</p></li>
+<li><p>ABAC (Attribute-Based Access Control) – это механизм контроля доступа на основе атрибутов.
+ABAC позволяет определять разрешения на основе значений атрибутов, таких как имя пользователя,
+группа, IP-адрес и т.д. Однако использование ABAC не рекомендуется, так как он менее гибок и
+безопасен по сравнению с RBAC.</p></li>
+<li><p>Webhook – это механизм авторизации на основе внешнего приложения, которое может принимать решения о
+доступе на основе дополнительных данных, например, информации о состоянии сети или времени.
+Webhook используется для реализации более сложных политик авторизации.</p></li>
+<li><p>Node – это механизм авторизации, который позволяет назначать разрешения на уровне узла.
+Node Authorization используется для разграничения доступа к файловой системе и сетевым ресурсам
+на узлах.</p></li>
+</ul>
+<section id="rbac">
+<h3>RBAC<a class="headerlink" href="#rbac" title="Permalink to this heading"></a></h3>
+<p>В Kubernetes для управления доступом к ресурсам используется механизм Role-Based Access Control (RBAC).
+RBAC позволяет определить, какие пользователи или группы пользователей имеют доступ к конкретным
+ресурсам и какие действия они могут выполнять с этими ресурсами. RBAC состоит из нескольких компонентов:
+Role, ClusterRole, RoleBinding и ClusterRoleBinding.</p>
+<section id="role">
+<h4>Role<a class="headerlink" href="#role" title="Permalink to this heading"></a></h4>
+<p>Role - это ресурс Kubernetes, который определяет набор разрешений на выполнение операций с объектами
+внутри одного неймспейса. К примеру, мы можем определить Role, которая позволяет пользователю только
+просматривать секреты в неймспейсе.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-viewer</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;secrets&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>В этом манифесте Role secret-viewer разрешено выполнять операции чтения (get, watch, list) с ресурсами
+типа secrets.</p>
+</section>
+<section id="clusterrole">
+<h4>ClusterRole<a class="headerlink" href="#clusterrole" title="Permalink to this heading"></a></h4>
+<p>ClusterRole - это ресурс Kubernetes, который определяет набор разрешений на выполнение операций с
+объектами во всем кластере. К примеру, мы можем определить ClusterRole, который позволяет пользователю
+только просматривать все поды в кластере.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-viewer</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;pods&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;get&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;watch&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;list&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>В этом манифесте ClusterRole pod-viewer разрешено выполнять операции чтения (get, watch, list)
+с ресурсами типа pods.</p>
+</section>
+<section id="rolebinding">
+<h4>RoleBinding<a class="headerlink" href="#rolebinding" title="Permalink to this heading"></a></h4>
+<p>RoleBinding - это ресурс Kubernetes, который связывает объект Role с пользователем или группой
+пользователей в конкретном неймспейсе. К примеру, мы можем создать RoleBinding, которая связывает Role
+secret-viewer с группой пользователей developers в неймспейсе my-namespace.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-viewer-binding</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-namespace</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Group</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">developers</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">secret-viewer</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+</pre></div>
+</div>
+<p>В этом манифесте RoleBinding secret-viewer-binding связывает Role secret-viewer с группой пользователей
+developers в неймспейсе my-namespace.</p>
+</section>
+<section id="clusterrolebinding">
+<h4>ClusterRoleBinding<a class="headerlink" href="#clusterrolebinding" title="Permalink to this heading"></a></h4>
+<p>ClusterRoleBinding - это ресурс Kubernetes, который связывает объект ClusterRole с пользователем или
+группой пользователей во всем кластере. К примеру, мы можем создать ClusterRoleBinding, которая
+связывает ClusterRole pod-viewer с конкретным пользователем.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-viewer-binding</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">User</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jane</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterRole</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pod-viewer</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+</pre></div>
+</div>
+<p>В этом манифесте ClusterRoleBinding pod-viewer-binding связывает ClusterRole pod-viewer с пользователем
+jane выдавая права во всем кластере.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="05_topic_storage.html" class="btn btn-neutral float-left" title="Storage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="practice.html" class="btn btn-neutral float-right" title="Практика" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

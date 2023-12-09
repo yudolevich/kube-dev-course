@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Storage &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Access Control" href="06_topic_accesscontrol.html" />
+    <link rel="prev" title="Network" href="04_topic_netbalance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Storage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#volumes">Volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ephemeral-volumes">Ephemeral Volumes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#emptydir">EmptyDir</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configmap">ConfigMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#secret">Secret</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#downwardapi">DownwardAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#projected">Projected</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#persistent-volumes">Persistent Volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#storage-classes">Storage Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Storage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/05_topic_storage.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="storage">
+<h1>Storage<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h1>
+<p>Хоть и kubernetes очень удобен для разворачивания и управления нагрузкой, которая не имеет
+состояния(stateless), он также предоставляет механизмы для хранения данных и работы приложений, которым
+необходимо хранить в себе некоторое состояние(stateful). Данные механизмы позволяют не терять данные
+между перезапусками контейнеров(<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">Volumes</a>), а также динамически выделять хранилище(<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a>,
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PersistentVolumeClaim</a>, <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PersistentVolume</a>) и управлять снимками
+хранилища(<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volume-snapshot-classes/">VolumeSnapshotClass</a>, <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volume-snapshots/">VolumeSnapshot</a>).</p>
+<section id="volumes">
+<h2>Volumes<a class="headerlink" href="#volumes" title="Permalink to this heading"></a></h2>
+<p>Для предотвращения потери данных между перезапусками контейнера в описании пода есть параметр
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">.spec.volumes</a>, в котором можно указать описание тома, где будут храниться данные между
+перезапусками. Также тома можно смонтировать одновременно сразу к нескольким контейнерам, тем самым
+обеспечив связь между ними.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-pd</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.k8s.io/test-webserver</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-container</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/my-nfs-data</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-volume</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-volume</span>
+<span class="w">    </span><span class="nt">nfs</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-nfs-server.example.com</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/my-nfs-volume</span>
+<span class="w">      </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<p>В данном примере показан <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/#nfs">volume типа nfs</a>, который монтируется в конкретный контейнер
+через параметр <code class="docutils literal notranslate"><span class="pre">volumeMounts</span></code>. Связь между <code class="docutils literal notranslate"><span class="pre">volume</span></code> пода и <code class="docutils literal notranslate"><span class="pre">volumeMounts</span></code> контейнера производится через
+параметр <code class="docutils literal notranslate"><span class="pre">name</span></code>. Volume поддерживает множество различных типов томов: configMap, secret, emptyDir,
+fc, iscsi, nfs, cephfs, rbd и другие. Помимо встроенных типов есть возможность добавление в кластер
+дополнительных типов с помощью <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/#csi">Container Storage Interface (CSI)</a>.</p>
+</section>
+<section id="ephemeral-volumes">
+<h2>Ephemeral Volumes<a class="headerlink" href="#ephemeral-volumes" title="Permalink to this heading"></a></h2>
+<p>Не всем приложениям нужно хранить данные между пересозданием пода, например данные временных файлов,
+кэша, логов и т.д. Также приложению могут потребоваться данные из api kubernetes, которые можно
+смонтировать внутрь пода. Для этого подойдут эфемерные тома, которые создаются только на время жизни пода.</p>
+<section id="emptydir">
+<h3>EmptyDir<a class="headerlink" href="#emptydir" title="Permalink to this heading"></a></h3>
+<p>Это пустая директория, которая создается и монтируется в под после его создания и назначения на ноду.
+Данный тип удобно использовать для временного хранения файлов, которые нужны только во время работы
+приложения, либо для обмена данными между контейнерами в поде.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-pd</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry.k8s.io/test-webserver</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-container</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/cache</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cache-volume</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cache-volume</span>
+<span class="w">    </span><span class="nt">emptyDir</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">medium</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Memory</span>
+<span class="w">      </span><span class="nt">sizeLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500Mi</span>
+</pre></div>
+</div>
+<p>По умолчанию размер тома не ограничивается(только размером файловой системы на ноде), но может быть
+ограничен дополнительным параметром <code class="docutils literal notranslate"><span class="pre">sizeLimit</span></code> и через <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#setting-requests-and-limits-for-local-ephemeral-storage">resources</a>. Через параметр
+<code class="docutils literal notranslate"><span class="pre">medium:</span> <span class="pre">Memory</span></code> можно указать хранение данных не на файловой системе, а в оперативной памяти.</p>
+</section>
+<section id="configmap">
+<h3>ConfigMap<a class="headerlink" href="#configmap" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a> в Kubernetes предназначен для хранения конфигурационных данных, которые могут быть
+использованы внутри приложения, запущенного в контейнере. ConfigMap Volume позволяет использовать
+данные <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a> в виде файлов внутри контейнера. Для использования ConfigMap Volume необходимо
+сначала создать <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a>, который будет содержать необходимые конфигурационные данные.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log-config</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
+</pre></div>
+</div>
+<p>Затем можно создать Volume в поде, используя данные из <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configmap-pod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:1.28</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-vol</span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/config</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-vol</span>
+<span class="w">      </span><span class="nt">configMap</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log-config</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log_level</span>
+<span class="w">            </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">log_level</span>
+<span class="w">        </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</section>
+<section id="secret">
+<h3>Secret<a class="headerlink" href="#secret" title="Permalink to this heading"></a></h3>
+<p>Также в Kubernetes существует ресурс <a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/secret/">Secret</a>, который используется для хранения конфиденциальных
+данных, таких как пароли, ключи API и сертификаты.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecret</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dmFsdWU=</span>
+<span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/configuration/secret/">Secret</a> может быть использован в качестве тома в Pod.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypod</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/etc/foo&quot;</span>
+<span class="w">      </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecret</span>
+<span class="w">      </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="downwardapi">
+<h3>DownwardAPI<a class="headerlink" href="#downwardapi" title="Permalink to this heading"></a></h3>
+<p>В Kubernetes существует возможность для контейнеров получать информацию об окружении, в котором они
+запущены, с помощью механизма Downward API. Downward API позволяет контейнерам получить информацию о:</p>
+<ul class="simple">
+<li><p>лейблах пода</p></li>
+<li><p>полях пода</p></li>
+<li><p>имени и уникальном идентификаторе пода</p></li>
+<li><p>имени и уникальном идентификаторе неймспейса</p></li>
+</ul>
+<p>Для использования Downward API можно использовать volume типа downwardAPI, который включает в себя файлы,
+содержащие запрашиваемую информацию.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">downwardapi-example</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapp</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">downwardapi</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/podinfo</span>
+<span class="w">      </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">downwardapi</span>
+<span class="w">    </span><span class="nt">downwardAPI</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;metadata/labels&quot;</span>
+<span class="w">        </span><span class="nt">fieldRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">fieldPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metadata.labels</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mem_limit&quot;</span>
+<span class="w">        </span><span class="nt">resourceFieldRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containerName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">client-container</span>
+<span class="w">          </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">limits.memory</span>
+<span class="w">          </span><span class="nt">divisor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Mi</span>
+</pre></div>
+</div>
+</section>
+<section id="projected">
+<h3>Projected<a class="headerlink" href="#projected" title="Permalink to this heading"></a></h3>
+<p>Projected volume в Kubernetes позволяет объединять в одном volume несколько источников данных, таких как
+ConfigMap, Secret, Downward API и ServiceAccountToken, и предоставлять их как один файловый системный
+раздел в контейнере. Это может быть полезно, если контейнеру требуется доступ к нескольким ресурсам
+конфигурации или сервисным данным.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">projected-example</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/config</span>
+<span class="w">      </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config</span>
+<span class="w">    </span><span class="nt">projected</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">sources</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMap</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myconfigmap</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secret</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysecret</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="persistent-volumes">
+<h2>Persistent Volumes<a class="headerlink" href="#persistent-volumes" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">Persistent Volumes (PV)</a> в Kubernetes - это абстракция над физическим хранилищем данных, которая
+позволяет абстрагировать хранилище от приложений, которые его используют. <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> - это ресурс Kubernetes,
+который описывает хранилище данных, такое как диск, NFS-шару или том в облаке, и его характеристики,
+такие как доступность, емкость и режим доступа. <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> можно создать заранее, до того, как к нему
+обратится приложение, а потом использовать его как ресурс для подов. Когда приложение запрашивает <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a>,
+Kubernetes выбирает наиболее подходящее свободное хранилище на основе его параметров.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolume</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pv0003</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5Gi</span>
+<span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteOnce</span>
+<span class="w">  </span><span class="nt">persistentVolumeReclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Recycle</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slow</span>
+<span class="w">  </span><span class="nt">mountOptions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hard</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nfsvers=4.1</span>
+<span class="w">  </span><span class="nt">nfs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.2</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">Persistent Volume Claim (PVC)</a> - это способ запроса ресурса <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> в Kubernetes. Когда <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PVC</a>
+создается, Kubernetes выбирает <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a>, который соответствует критериям <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PVC</a> (размер,
+доступность и т.д.), и резервирует его для использования.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myclaim</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteOnce</span>
+<span class="w">  </span><span class="nt">volumeMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filesystem</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">slow</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">release</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;stable&quot;</span>
+<span class="w">    </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="nv">environment</span><span class="p p-Indicator">,</span><span class="nt"> operator</span><span class="p">:</span><span class="w"> </span><span class="nv">In</span><span class="p p-Indicator">,</span><span class="nt"> values</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">dev</span><span class="p p-Indicator">]}</span>
+</pre></div>
+</div>
+<p>Поды могут использовать <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PVC</a>, чтобы монтировать том в свои контейнеры.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypod</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myfrontend</span>
+<span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/www/html&quot;</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypd</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mypd</span>
+<span class="w">      </span><span class="nt">persistentVolumeClaim</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myclaim</span>
+</pre></div>
+</div>
+</section>
+<section id="storage-classes">
+<h2>Storage Classes<a class="headerlink" href="#storage-classes" title="Permalink to this heading"></a></h2>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a> - это объект, который определяет класс хранилища для <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PersistentVolume (PV)</a>.
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a> определяет способ, которым <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> будет создан, конфигурирован и управляться.
+Он также определяет тип хранилища, такой как NFS, iSCSI, Ceph, AWS EBS, GCP PD и т.д., и параметры
+хранилища, такие как размер, скорость, доступность и т.д.</p>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a> может использоваться для динамического выделения <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a>. Это означает, что при
+создании пода, если нужный <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> не существует, <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a> может автоматически создать его
+для пода. Например, если поду требуется <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PersistentVolumeClaim (PVC)</a> определенного размера,
+и нет доступного <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a>, <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a> может создать новый <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> нужного размера и назначить
+его <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PVC</a>. Это может быть очень удобно для разработчиков, которые не хотят создавать и управлять
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PV</a> вручную.</p>
+<p>Кроме того, разные приложения могут использовать разные классы хранилищ, а <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a>
+обеспечивает способ управления и мониторинга этих классов в едином месте.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StorageClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">standard</span>
+<span class="nt">provisioner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/aws-ebs</span>
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gp2</span>
+<span class="nt">reclaimPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Retain</span>
+<span class="nt">allowVolumeExpansion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="nt">mountOptions</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
+<span class="nt">volumeBindingMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Immediate</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="04_topic_netbalance.html" class="btn btn-neutral float-left" title="Network" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="06_topic_accesscontrol.html" class="btn btn-neutral float-right" title="Access Control" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

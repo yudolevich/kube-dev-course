@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LoadBalance &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Storage" href="05_practice_storage.html" />
+    <link rel="prev" title="Workloads" href="03_practice_workloads.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">LoadBalance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kind">Kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#nginx-ingress">Nginx Ingress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#application">Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deploy">Deploy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">LoadBalance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rollingupdate">RollingUpdate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">LoadBalance</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/04_practice_netbalance.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="loadbalance">
+<h1>LoadBalance<a class="headerlink" href="#loadbalance" title="Permalink to this heading"></a></h1>
+<p>В данном практическом занятии предлагаю опробовать работу <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">Ingress</a> используя
+<a class="reference external" href="https://kubernetes.github.io/ingress-nginx/">Nginx Ingress Controller</a> и посмотреть на процесс балансировки трафика в момент обновления
+версии приложения.</p>
+<section id="kind">
+<h2>Kind<a class="headerlink" href="#kind" title="Permalink to this heading"></a></h2>
+<p>Для корректной работы <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">Ingress Controller</a> в kind необходимы дополнительные настройки кластера,
+для этого проще всего создать новый кластер с дополнительным блоком конфигурации,
+который позволит получить доступ к подам <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">Ingress Controller</a> с нашей машины.</p>
+<p>Можно создать новый кластер с другим именем, либо сначала удалить старый:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kind<span class="w"> </span>delete<span class="w"> </span>cluster
+</pre></div>
+</div>
+<p>Дополнительная конфигурация выставляет наружу порты 80 и 443, а также добавляет лейбл к ноде.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kind create cluster --config=-</span>
+<span class="s">kind: Cluster</span>
+<span class="s">apiVersion: kind.x-k8s.io/v1alpha4</span>
+<span class="s">nodes:</span>
+<span class="s">- role: control-plane</span>
+<span class="s">  kubeadmConfigPatches:</span>
+<span class="s">  - |</span>
+<span class="s">    kind: InitConfiguration</span>
+<span class="s">    nodeRegistration:</span>
+<span class="s">      kubeletExtraArgs:</span>
+<span class="s">        node-labels: &quot;ingress-ready=true&quot;</span>
+<span class="s">  extraPortMappings:</span>
+<span class="s">  - containerPort: 80</span>
+<span class="s">    hostPort: 80</span>
+<span class="s">    protocol: TCP</span>
+<span class="s">  - containerPort: 443</span>
+<span class="s">    hostPort: 443</span>
+<span class="s">    protocol: TCP</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</section>
+<section id="nginx-ingress">
+<h2>Nginx Ingress<a class="headerlink" href="#nginx-ingress" title="Permalink to this heading"></a></h2>
+<p>Для установки <a class="reference external" href="https://kubernetes.github.io/ingress-nginx/">Nginx Ingress Controller</a> достаточно выполнить команду:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+</pre></div>
+</div>
+<p>После которой в неймспейсе <strong>ingress-nginx</strong> создадутся необходимые ресурсы и запустится под контроллера.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-n<span class="w"> </span>ingress-nginx
+<span class="go">NAME                                        READY   STATUS      RESTARTS     AGE</span>
+<span class="go">ingress-nginx-admission-create-hkt6j        0/1     Completed   0            5h57m</span>
+<span class="go">ingress-nginx-admission-patch-k2wmt         0/1     Completed   0            5h57m</span>
+<span class="go">ingress-nginx-controller-69dfcc796b-zm5pt   1/1     Running     1 (5h ago)   5h57m</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Существует как минимум две реализации Ingress Controller с использованием Nginx:
+<a class="reference external" href="https://www.nginx.com/products/nginx-ingress-controller/">от компании Nginx Inc</a> и <a class="reference external" href="https://kubernetes.github.io/ingress-nginx/">от kubernetes сообщества</a>.
+В данном руководстве используется реализация от сообщества!</p>
+</div>
+</section>
+<section id="application">
+<h2>Application<a class="headerlink" href="#application" title="Permalink to this heading"></a></h2>
+<p>Для проверки работы <a class="reference external" href="https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/">Ingress</a> сделаем простое приложение, которое будет отвечать на HTTP запросы:</p>
+<ul class="simple">
+<li><p>GET / - будет возвращать HTTP код 200 и сообщение «ok»</p></li>
+<li><p>GET /version - будет возвращать HTTP код 200 и сообщение с текущей версией приложения,
+а в лог также выводить количество запросов, которое было обработано по данному пути</p></li>
+</ul>
+<p>Вы можете написать его на своем любимом языке, в качестве примера приведу простую реализацию на Golang:</p>
+<div class="highlight-golang notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span><span class="w"> </span><span class="nx">main</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<span class="w">	</span><span class="s">&quot;fmt&quot;</span>
+<span class="w">	</span><span class="s">&quot;io&quot;</span>
+<span class="w">	</span><span class="s">&quot;net/http&quot;</span>
+<span class="w">	</span><span class="s">&quot;os&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">var</span><span class="w"> </span><span class="p">(</span>
+<span class="w">	</span><span class="nx">Version</span><span class="w">  </span><span class="kt">string</span>
+<span class="w">	</span><span class="nx">reqCount</span><span class="w"> </span><span class="kt">uint</span>
+<span class="p">)</span>
+
+<span class="kd">func</span><span class="w"> </span><span class="nx">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	</span><span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="nx">io</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ok\n&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="p">})</span>
+
+<span class="w">	</span><span class="nx">http</span><span class="p">.</span><span class="nx">HandleFunc</span><span class="p">(</span><span class="s">&quot;/version&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">w</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ResponseWriter</span><span class="p">,</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">*</span><span class="nx">http</span><span class="p">.</span><span class="nx">Request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="nx">reqCount</span><span class="o">++</span>
+<span class="w">		</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;GET /version - %s, count - %d\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Version</span><span class="p">,</span><span class="w"> </span><span class="nx">reqCount</span><span class="p">)</span>
+<span class="w">		</span><span class="nx">io</span><span class="p">.</span><span class="nx">WriteString</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;version: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">Version</span><span class="p">))</span>
+<span class="w">	</span><span class="p">})</span>
+
+<span class="w">	</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;start server&quot;</span><span class="p">)</span>
+<span class="w">	</span><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">http</span><span class="p">.</span><span class="nx">ListenAndServe</span><span class="p">(</span><span class="s">&quot;:8080&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span><span class="p">);</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<span class="w">		</span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;error serve http: %s\n&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="p">)</span>
+<span class="w">		</span><span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">	</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Версию приложения предлагаю указывать при сборке образа в Dockerfile:</p>
+<div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="k">FROM</span><span class="w"> </span><span class="s">golang:1.20-alpine</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s">build</span>
+
+<span class="k">ARG</span><span class="w"> </span>BUILD_VERSION
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/build</span>
+
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span><span class="nv">GOOS</span><span class="o">=</span>linux<span class="w"> </span><span class="nv">GOARCH</span><span class="o">=</span>amd64<span class="w"> </span>go<span class="w"> </span>build<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-ldflags<span class="o">=</span><span class="s2">&quot;-X main.Version=</span><span class="si">${</span><span class="nv">BUILD_VERSION</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-a<span class="w"> </span>-o<span class="w"> </span>app<span class="w"> </span>main.go
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">alpine:3.17</span>
+
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>build<span class="w"> </span>/build/app<span class="w"> </span>/app
+
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/app&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>В данном примере версия приложения будет указана в итоговом бинарном файле, переданная через
+аргумент <code class="docutils literal notranslate"><span class="pre">BUILD_VERSION</span></code>.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>docker<span class="w"> </span>build<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">BUILD_VERSION</span><span class="o">=</span><span class="m">1</span>.0<span class="w"> </span>-t<span class="w"> </span>app:1.0<span class="w"> </span>.
+<span class="go">Sending build context to Docker daemon  5.632kB</span>
+<span class="go">Step 1/8 : FROM golang:1.20-alpine as build</span>
+<span class="go"> ---&gt; 818ca3531f99</span>
+<span class="go">Step 2/8 : ARG BUILD_VERSION</span>
+<span class="go"> ---&gt; Using cache</span>
+<span class="go"> ---&gt; 9a3dd54335f8</span>
+<span class="go">Step 3/8 : WORKDIR /build</span>
+<span class="go"> ---&gt; Using cache</span>
+<span class="go"> ---&gt; 9c28030abe9e</span>
+<span class="go">Step 4/8 : COPY . ./</span>
+<span class="go"> ---&gt; 3c00293d730e</span>
+<span class="go">Step 5/8 : RUN GOOS=linux GOARCH=amd64 go build   -ldflags=&quot;-X main.Version=${BUILD_VERSION}&quot;   -a -o app main.go</span>
+<span class="go"> ---&gt; Running in dfb517e386a7</span>
+<span class="go">Removing intermediate container dfb517e386a7</span>
+<span class="go"> ---&gt; 42fe6c7a47c5</span>
+<span class="go">Step 6/8 : FROM alpine:3.17</span>
+<span class="go"> ---&gt; b2aa39c304c2</span>
+<span class="go">Step 7/8 : COPY --from=build /build/app /app</span>
+<span class="go"> ---&gt; 68d71f56dd53</span>
+<span class="go">Step 8/8 : CMD [&quot;/app&quot;]</span>
+<span class="go"> ---&gt; Running in 448b41e615d3</span>
+<span class="go">Removing intermediate container 448b41e615d3</span>
+<span class="go"> ---&gt; 8f797e1b1ccb</span>
+<span class="go">Successfully built 8f797e1b1ccb</span>
+<span class="go">Successfully tagged app:1.0</span>
+</pre></div>
+</div>
+<p>Также соберем версию 2.0:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>docker<span class="w"> </span>build<span class="w"> </span>--build-arg<span class="w"> </span><span class="nv">BUILD_VERSION</span><span class="o">=</span><span class="m">2</span>.0<span class="w"> </span>-t<span class="w"> </span>app:2.0<span class="w"> </span>.
+<span class="go">...</span>
+<span class="go">Successfully built 5b5feec48cb7</span>
+<span class="go">Successfully tagged app:2.0</span>
+</pre></div>
+</div>
+<p>И загрузим в наш кластер:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kind<span class="w"> </span>load<span class="w"> </span>docker-image<span class="w"> </span>app:1.0
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:8f797e1b1ccb95ef25b846714a5162ec80aee72b102c78f7d188e52bf119a8c1&quot; not yet present on node &quot;kind-control-plane&quot;, loading...</span>
+<span class="gp">$ </span>kind<span class="w"> </span>load<span class="w"> </span>docker-image<span class="w"> </span>app:2.0
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:5b5feec48cb7b016637584224e59c64c5cb8e107226384f5bdc3c587da5b0fb9&quot; not yet present on node &quot;kind-control-plane&quot;, loading...</span>
+</pre></div>
+</div>
+</section>
+<section id="deploy">
+<h2>Deploy<a class="headerlink" href="#deploy" title="Permalink to this heading"></a></h2>
+<p>Создадим ресурс Deployment с нашим приложением в трех репликах:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>create<span class="w"> </span>deployment<span class="w"> </span>app<span class="w"> </span>--image<span class="o">=</span>app:1.0<span class="w"> </span>--replicas<span class="w"> </span><span class="m">3</span>
+<span class="go">deployment.apps/app created</span>
+</pre></div>
+</div>
+<p>Создадим ресурс Service, указав его порт и порт, который слушает приложение:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>expose<span class="w"> </span>deployment<span class="w"> </span>app<span class="w"> </span>--port<span class="w"> </span><span class="m">80</span><span class="w"> </span>--target-port<span class="w"> </span><span class="m">8080</span>
+<span class="go">service/app exposed</span>
+</pre></div>
+</div>
+<p>Создадим ресурс Ingress, указав в качестве хоста - localhost и сервис app с портом 80:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>create<span class="w"> </span>ingress<span class="w"> </span>app<span class="w"> </span>--rule<span class="o">=</span>localhost/*<span class="o">=</span>app:80
+<span class="go">ingress.networking.k8s.io/app created</span>
+</pre></div>
+</div>
+<p>Убедимся, что все ресурсы созданы и поды запущены:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>deploy,svc,ingress,pod
+<span class="go">NAME                  READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">deployment.apps/app   3/3     3            3           17m</span>
+
+<span class="go">NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+<span class="go">service/app          ClusterIP   10.96.219.251   &lt;none&gt;        80/TCP    14m</span>
+<span class="go">service/kubernetes   ClusterIP   10.96.0.1       &lt;none&gt;        443/TCP   6h57m</span>
+
+<span class="go">NAME                            CLASS    HOSTS       ADDRESS     PORTS   AGE</span>
+<span class="go">ingress.networking.k8s.io/app   &lt;none&gt;   localhost   localhost   80      5m5s</span>
+
+<span class="go">NAME                       READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pod/app-64885bbddf-5f5g7   1/1     Running   0          17m</span>
+<span class="go">pod/app-64885bbddf-gtnt6   1/1     Running   0          17m</span>
+<span class="go">pod/app-64885bbddf-mdnhs   1/1     Running   0          17m</span>
+</pre></div>
+</div>
+<p>Теперь доступ к приложению возможен через localhost:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl<span class="w"> </span>localhost
+<span class="go">ok</span>
+<span class="gp">$ </span>curl<span class="w"> </span>localhost/version
+<span class="go">version: 1.0</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>LoadBalance<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Убедимся, что трафик распределяется на все поды с приложением. Для этого удалим старые поды и убедимся,
+что новые запущены:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>delete<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app
+<span class="go">pod &quot;app-64885bbddf-5f5g7&quot; deleted</span>
+<span class="go">pod &quot;app-64885bbddf-gtnt6&quot; deleted</span>
+<span class="go">pod &quot;app-64885bbddf-mdnhs&quot; deleted</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME                   READY   STATUS    RESTARTS   AGE</span>
+<span class="go">app-64885bbddf-886x2   1/1     Running   0          10s</span>
+<span class="go">app-64885bbddf-9rrh9   1/1     Running   0          10s</span>
+<span class="go">app-64885bbddf-lfjdz   1/1     Running   0          10s</span>
+</pre></div>
+</div>
+<p>Сделаем в цикле 100 запросов к нашему Ingress и посмотрим в логах каждого пода,  сколько запросов
+он обработал:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..100<span class="o">}</span><span class="p">;</span><span class="k">do</span><span class="w"> </span>curl<span class="w"> </span>localhost/version<span class="w"> </span>-so<span class="w"> </span>/dev/null<span class="p">;</span><span class="k">done</span>
+<span class="gp">$ </span>k<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app<span class="w"> </span>--tail<span class="o">=</span><span class="m">1</span>
+<span class="go">GET /version - 1.0, count - 34</span>
+<span class="go">GET /version - 1.0, count - 33</span>
+<span class="go">GET /version - 1.0, count - 33</span>
+</pre></div>
+</div>
+<p>Как видно из вывода трафик равномерно распределился между подами. <a class="reference external" href="https://kubernetes.github.io/ingress-nginx/">Nginx Ingress Controller</a>
+по-умолчанию использует алгоритм балансировки <em>round robin</em>, изменить это поведение можно с помощью
+<a class="reference external" href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#load-balance">аннотаций на ресурсе Ingress</a>.</p>
+</section>
+<section id="rollingupdate">
+<h2>RollingUpdate<a class="headerlink" href="#rollingupdate" title="Permalink to this heading"></a></h2>
+<p>Посмотрим, как в процессе обновлении будут выглядеть ответы от приложения.</p>
+<p>Для начала увеличим количество реплик, к примеру, до 20, чтобы процесс обновления занял более
+продолжительное время:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>scale<span class="w"> </span>deploy/app<span class="w"> </span>--replicas<span class="w"> </span><span class="m">20</span>
+<span class="go">deployment.apps/app scaled</span>
+</pre></div>
+</div>
+<p>Для наблюдения за процессом обновления в отдельном окне терминала запустим цикл, который раз в секунду
+будет делать запрос к нашему приложению:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="k">while</span><span class="w"> </span>sleep<span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="k">do</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>date<span class="w"> </span><span class="s1">&#39;+%H:%M:%S&#39;</span><span class="k">)</span><span class="s2"> &quot;</span><span class="p">;</span>curl<span class="w"> </span>localhost/version<span class="p">;</span><span class="k">done</span>
+</pre></div>
+</div>
+<p>И обновим образ на версию 2.0:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">set</span><span class="w"> </span>image<span class="w"> </span>deploy/app<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app:2.0
+<span class="go">deployment.apps/app image updated</span>
+</pre></div>
+</div>
+<p>В нашем цикле будет видно как постепенно версия 1.0 сменяется на 2.0:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">21:07:01 version: 1.0</span>
+<span class="go">21:07:02 version: 1.0</span>
+<span class="go">21:07:03 version: 1.0</span>
+<span class="go">21:07:04 version: 1.0</span>
+<span class="go">21:07:05 version: 1.0</span>
+<span class="go">21:07:06 version: 1.0</span>
+<span class="go">21:07:07 version: 1.0</span>
+<span class="go">21:07:08 version: 2.0</span>
+<span class="go">21:07:09 version: 1.0</span>
+<span class="go">21:07:10 version: 2.0</span>
+<span class="go">21:07:11 version: 1.0</span>
+<span class="go">21:07:12 version: 2.0</span>
+<span class="go">21:07:13 version: 2.0</span>
+<span class="go">21:07:14 version: 2.0</span>
+<span class="go">21:07:20 version: 2.0</span>
+<span class="go">21:07:21 version: 2.0</span>
+</pre></div>
+</div>
+<p>Пока все поды полностью не обновятся и останется только версия 2.0.</p>
+<p>Попробуем также откатиться обратно:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>rollout<span class="w"> </span>undo<span class="w"> </span>deploy/app
+<span class="go">deployment.apps/app rolled back</span>
+</pre></div>
+</div>
+<p>В нашем цикле мы также увидим процесс смены версии в обратную сторону:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">21:19:14 version: 2.0</span>
+<span class="go">21:19:15 version: 2.0</span>
+<span class="go">21:19:16 version: 2.0</span>
+<span class="go">21:19:17 version: 2.0</span>
+<span class="go">21:19:23 version: 1.0</span>
+<span class="go">21:19:29 version: 2.0</span>
+<span class="go">21:19:30 version: 2.0</span>
+<span class="go">21:19:31 version: 1.0</span>
+<span class="go">21:19:37 version: 1.0</span>
+<span class="go">21:19:38 version: 1.0</span>
+<span class="go">21:19:39 version: 1.0</span>
+</pre></div>
+</div>
+<p>Все примеры, используемые здесь, можно также посмотреть на <a class="reference external" href="https://github.com/yudolevich/kube-dev-course/tree/main/examples/netbalance/">github</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="03_practice_workloads.html" class="btn btn-neutral float-left" title="Workloads" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="05_practice_storage.html" class="btn btn-neutral float-right" title="Storage" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

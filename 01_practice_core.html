@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Основы работы с kubernetes &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Работа с Pod" href="02_practice_pod.html" />
+    <link rel="prev" title="Практика" href="practice.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Основы работы с kubernetes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Пререквизиты</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kind">kind</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">Создание кластера</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#kubectl">kubectl</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Конфигурация</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Автодополнение</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Информация о ресурсах</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Работа с объектами</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Основы работы с kubernetes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/01_practice_core.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kubernetes">
+<h1>Основы работы с kubernetes<a class="headerlink" href="#kubernetes" title="Permalink to this heading"></a></h1>
+<section id="id1">
+<h2>Пререквизиты<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Для выполнения практики необходимо иметь установленный <a class="reference external" href="https://www.docker.com/">docker</a>.</p>
+<p>Все приведенные примеры команд производятся в оболочке <code class="docutils literal notranslate"><span class="pre">bash</span></code>, предполагая что имеется окружение
+в виде <a class="reference external" href="https://ru.wikipedia.org/wiki/GNU_Coreutils">GNU Coreutils</a>. Если вы используете другие оболочки, то некоторые команды будут отличаться.</p>
+<p>Для получения необходимой среды на Windows можно воспользоваться <a class="reference external" href="https://learn.microsoft.com/ru-ru/windows/wsl/">wsl</a> или
+в независимости от платформы можно воспользоваться <a class="reference external" href="https://www.vagrantup.com/">vagrant</a> с Vagrantfile:</p>
+<div class="highlight-ruby notranslate"><div class="highlight"><pre><span></span><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">config</span><span class="o">|</span>
+<span class="w">  </span><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ubuntu/lunar64&quot;</span>
+<span class="w">  </span><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span><span class="w"> </span><span class="s2">&quot;forwarded_port&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">guest</span><span class="p">:</span><span class="w"> </span><span class="mi">6443</span><span class="p">,</span><span class="w"> </span><span class="ss">host</span><span class="p">:</span><span class="w"> </span><span class="mi">6443</span>
+<span class="w">  </span><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span><span class="w"> </span><span class="s2">&quot;virtualbox&quot;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span><span class="o">|</span><span class="n">v</span><span class="o">|</span>
+<span class="w">    </span><span class="n">v</span><span class="o">.</span><span class="n">memory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4096</span>
+<span class="w">    </span><span class="n">v</span><span class="o">.</span><span class="n">cpus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="w">  </span><span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span><span class="w"> </span><span class="s2">&quot;shell&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">inline</span><span class="p">:</span><span class="w"> </span><span class="o">&lt;&lt;-</span><span class="dl">SHELL</span>
+<span class="sh">    apt-get update</span>
+<span class="sh">    apt-get install -y docker.io</span>
+<span class="sh">    usermod -a -G docker vagrant</span>
+<span class="dl">  SHELL</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="kind">
+<h2>kind<a class="headerlink" href="#kind" title="Permalink to this heading"></a></h2>
+<p>Для взаимодействия с кластером kubernetes нам в первую очередь необходим сам кластер.
+Для локальной работы и обучения предлагаю воспользоваться открытым проектом
+<a class="reference external" href="https://kind.sigs.k8s.io/">kind(Kubernetes in Docker)</a>, который позволяет запустить локальный кластер в Docker контейнере.</p>
+<section id="id2">
+<h3>Установка<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>Варианты установки описаны на сайте <a class="reference external" href="https://kind.sigs.k8s.io/docs/user/quick-start/#installation">kind.sigs.k8s.io</a>, можно воспользоваться
+пакетным менеджером или достаточно просто скачать и положить в каталог из переменной <code class="docutils literal notranslate"><span class="pre">PATH</span></code>
+исполняемый файл для своей ОС и архитектуры со страницы <a class="reference external" href="https://github.com/kubernetes-sigs/kind/releases">releases</a>.</p>
+<p>Вариант для Linux:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-Lo<span class="w"> </span>./kind<span class="w"> </span>https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+chmod<span class="w"> </span>+x<span class="w"> </span>./kind
+sudo<span class="w"> </span>mv<span class="w"> </span>./kind<span class="w"> </span>/usr/local/bin/kind
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>Создание кластера<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<p>Для создания кластера достаточно запустить команду:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kind<span class="w"> </span>create<span class="w"> </span>cluster
+</pre></div>
+</div>
+<p>Посмотреть созданные кластера можно командой:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kind<span class="w"> </span>get<span class="w"> </span>clusters
+</pre></div>
+</div>
+</section>
+</section>
+<section id="kubectl">
+<h2>kubectl<a class="headerlink" href="#kubectl" title="Permalink to this heading"></a></h2>
+<p>Для взаимодействия с кластером нам понадобится утилита <a class="reference external" href="https://kubernetes.io/ru/docs/reference/kubectl/overview/">kubectl</a> - это инструмент
+командной строки для управления кластерами Kubernetes.</p>
+<section id="id4">
+<h3>Установка<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>Варианты установки описаны на сайте <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/#kubectl">kubernetes</a> для каждой ОС. Здесь также достаточно
+скачать исполняемый файл и положить в каталог из переменной <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.</p>
+<p>Вариант для Linux:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-Lo<span class="w"> </span>./kubectl<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://dl.k8s.io/release/</span><span class="k">$(</span>curl<span class="w"> </span>-L<span class="w"> </span>-s<span class="w"> </span>https://dl.k8s.io/release/stable.txt<span class="k">)</span><span class="s2">/bin/linux/amd64/kubectl&quot;</span>
+chmod<span class="w"> </span>+x<span class="w"> </span>./kubectl
+sudo<span class="w"> </span>mv<span class="w"> </span>./kubectl<span class="w"> </span>/usr/local/bin/kubectl
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>Конфигурация<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<p>По умолчанию конфигурация находится в домашней директории по пути <code class="docutils literal notranslate"><span class="pre">~/.kube/config</span></code>, переопределить
+путь конфигурационного файла можно либо через переменную среды <code class="docutils literal notranslate"><span class="pre">KUBECONFIG</span></code>, либо явно указывая
+опцию <code class="docutils literal notranslate"><span class="pre">--kubeconfig</span></code>. Сам файл конфигурации можно посмотреть командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">config</span> <span class="pre">view</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span>--kubeconfig<span class="o">=</span>~/.kube/config1
+<span class="nb">export</span><span class="w"> </span><span class="nv">KUBECONFIG</span><span class="o">=</span>~/.kube/config2
+kubectl<span class="w"> </span>config<span class="w"> </span>view
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">clusters</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">certificate-authority-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATA+OMITTED</span>
+<span class="w">    </span><span class="nt">server</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://127.0.0.1:6443</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="nt">contexts</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">context</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="nt">current-context</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Config</span>
+<span class="nt">preferences</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="nt">users</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-kind</span>
+<span class="w">  </span><span class="nt">user</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">client-certificate-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATA+OMITTED</span>
+<span class="w">    </span><span class="nt">client-key-data</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DATA+OMITTED</span>
+</pre></div>
+</div>
+<p>В самой конфигурации можно выделить основные параметры:</p>
+<ul class="simple">
+<li><p>clusters - список кластеров, где указаны параметры подключения</p></li>
+<li><p>users - список учетных данных для подключения</p></li>
+<li><p>contexts - список именованных объединений конкретного кластера с учетными данными для подключения</p></li>
+<li><p>current-context - текущий выбранный контекст с которым и будет работать утилита kubectl</p></li>
+</ul>
+</section>
+<section id="id6">
+<h3>Автодополнение<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<p>Для удобного использования утилиты <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> можно воспользоваться функцией автоматического дополнения
+вводимой команды. На текущий момент это работает для командных оболочек <code class="docutils literal notranslate"><span class="pre">bash</span></code>, <code class="docutils literal notranslate"><span class="pre">zsh</span></code>, <code class="docutils literal notranslate"><span class="pre">fish</span></code> и
+<code class="docutils literal notranslate"><span class="pre">powershell</span></code>. Для подробной информации можно выполнить команду <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">completion</span> <span class="pre">-h</span></code>.</p>
+<p>Вариант для bash:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># для текущей сессии bash, должен быть установлен пакет bash-completion</span>
+<span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+
+<span class="c1"># для запуска при инициализации bash</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source &lt;(kubectl completion bash)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+<p>Также для удобного использования можно создать псевдоним для <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> в виде команды <code class="docutils literal notranslate"><span class="pre">k</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># для текущей сессии bash</span>
+<span class="nb">alias</span><span class="w"> </span><span class="nv">k</span><span class="o">=</span>kubectl
+<span class="nb">complete</span><span class="w"> </span>-F<span class="w"> </span>__start_kubectl<span class="w"> </span>k
+
+<span class="c1"># для запуска при инициализации bash</span>
+<span class="nb">echo</span><span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;alias k=kubectl\ncomplete -F __start_kubectl k&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Информация о ресурсах<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>Получить список всех типов ресурсов в кластере можно командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">api-resources</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>api-resources<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+<span class="go">NAME                   SHORTNAMES   APIVERSION   NAMESPACED   KIND</span>
+<span class="go">bindings                            v1           true         Binding</span>
+<span class="go">componentstatuses      cs           v1           false        ComponentStatus</span>
+<span class="go">configmaps             cm           v1           true         ConfigMap</span>
+<span class="go">endpoints              ep           v1           true         Endpoints</span>
+<span class="go">events                 ev           v1           true         Event</span>
+<span class="go">limitranges            limits       v1           true         LimitRange</span>
+<span class="go">namespaces             ns           v1           false        Namespace</span>
+<span class="go">nodes                  no           v1           false        Node</span>
+<span class="go">persistentvolumeclaims pvc          v1           true         PersistentVolumeClaim</span>
+</pre></div>
+</div>
+<p>Здесь можно увидеть следующие столбцы:</p>
+<ul class="simple">
+<li><p>NAME - имя ресурса</p></li>
+<li><p>SHORTNAMES - короткие имена, которые можно использовать при работе с этим ресурсом</p></li>
+<li><p>APIVERSION - поле apiVersion, которое используется в объектах данного типа ресурса</p></li>
+<li><p>NAMESPACED - является ли данный ресурс namespaced или cluster-wide</p></li>
+<li><p>KIND - поле kind, которое используется в объектах данного типа ресурса</p></li>
+</ul>
+<p>Для получения информации о ресурсе можно воспользоваться командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>explain<span class="w"> </span>pod
+<span class="go">KIND:     Pod</span>
+<span class="go">VERSION:  v1</span>
+
+<span class="go">DESCRIPTION:</span>
+<span class="go">     Pod is a collection of containers that can run on a host. This resource is</span>
+<span class="go">     created by clients and scheduled onto hosts.</span>
+
+<span class="go">FIELDS:</span>
+<span class="go">   apiVersion   &lt;string&gt;</span>
+<span class="go">     APIVersion defines the versioned schema of this representation of an</span>
+<span class="go">     object. Servers should convert recognized schemas to the latest internal</span>
+<span class="go">     value, and may reject unrecognized values. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources</span>
+
+<span class="go">   kind &lt;string&gt;</span>
+<span class="go">     Kind is a string value representing the REST resource this object</span>
+<span class="go">     represents. Servers may infer this from the endpoint the client submits</span>
+<span class="go">     requests to. Cannot be updated. In CamelCase. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds</span>
+
+<span class="go">   metadata     &lt;Object&gt;</span>
+<span class="go">     Standard object&#39;s metadata. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata</span>
+
+<span class="go">   spec &lt;Object&gt;</span>
+<span class="go">     Specification of the desired behavior of the pod. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status</span>
+
+<span class="go">   status       &lt;Object&gt;</span>
+<span class="go">     Most recently observed status of the pod. This data may not be up to date.</span>
+<span class="go">     Populated by the system. Read-only. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status</span>
+</pre></div>
+</div>
+<p>Тут представлено описание <code class="docutils literal notranslate"><span class="pre">DESCRIPTION</span></code>, а также в <code class="docutils literal notranslate"><span class="pre">FIELDS</span></code> все известные api поля и их тип.
+Можно обратиться к конкретному полю за дополнительной вложенной информацией:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>explain<span class="w"> </span>pod.spec<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-20
+<span class="go">KIND:     Pod</span>
+<span class="go">VERSION:  v1</span>
+
+<span class="go">RESOURCE: spec &lt;Object&gt;</span>
+
+<span class="go">DESCRIPTION:</span>
+<span class="go">     Specification of the desired behavior of the pod. More info:</span>
+<span class="go">     https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status</span>
+
+<span class="go">     PodSpec is a description of a pod.</span>
+
+<span class="go">FIELDS:</span>
+<span class="go">   activeDeadlineSeconds        &lt;integer&gt;</span>
+<span class="go">     Optional duration in seconds the pod may be active on the node relative to</span>
+<span class="go">     StartTime before the system will actively try to mark it failed and kill</span>
+<span class="go">     associated containers. Value must be a positive integer.</span>
+
+<span class="go">   affinity     &lt;Object&gt;</span>
+<span class="go">     If specified, the pod&#39;s scheduling constraints</span>
+
+<span class="gp">$ </span>k<span class="w"> </span>explain<span class="w"> </span>pod.spec.containers.command
+<span class="go">KIND:     Pod</span>
+<span class="go">VERSION:  v1</span>
+
+<span class="go">FIELD:    command &lt;[]string&gt;</span>
+
+<span class="go">DESCRIPTION:</span>
+<span class="go">     Entrypoint array. Not executed within a shell. The container image&#39;s</span>
+<span class="go">     ENTRYPOINT is used if this is not provided. Variable references $(VAR_NAME)</span>
+<span class="go">     are expanded using the container&#39;s environment. If a variable cannot be</span>
+<span class="go">     resolved, the reference in the input string will be unchanged. Double $$</span>
+<span class="go">     are reduced to a single $, which allows for escaping the $(VAR_NAME)</span>
+<span class="go">     syntax: i.e. &quot;$$(VAR_NAME)&quot; will produce the string literal &quot;$(VAR_NAME)&quot;.</span>
+<span class="go">     Escaped references will never be expanded, regardless of whether the</span>
+<span class="go">     variable exists or not. Cannot be updated. More info:</span>
+<span class="go">     https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>Работа с объектами<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<p>Утилита <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> позволяет производить <a class="reference external" href="https://ru.wikipedia.org/wiki/CRUD">CRUD</a> операции над объектами в kubernetes. Для этого
+можно использовать команды <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">replace</span></code>, <code class="docutils literal notranslate"><span class="pre">patch</span></code>, <code class="docutils literal notranslate"><span class="pre">delete</span></code> - по их названию можно
+понять какие операции они производят. Отдельно хочется выделить команды <code class="docutils literal notranslate"><span class="pre">apply</span></code>, <code class="docutils literal notranslate"><span class="pre">diff</span></code>,
+<code class="docutils literal notranslate"><span class="pre">describe</span></code> и <code class="docutils literal notranslate"><span class="pre">edit</span></code>:</p>
+<ul class="simple">
+<li><p><strong>apply</strong> - создает или обновляет существующий объект, сохраняя примененную конфигурацию в
+аннотацию <code class="docutils literal notranslate"><span class="pre">kubectl.kubernetes.io/last-applied-configuration</span></code> для расчета необходимых изменений
+при последующих обновлениях</p></li>
+<li><p><strong>diff</strong> - показывает изменения, которые произойдут в кластере при применении новой конфигурации объекта</p></li>
+<li><p><strong>describe</strong> - выдает состояние объекта в удобочитаемом формате</p></li>
+<li><p><strong>edit</strong> - открывает ресурс для редактирования в текстовом редакторе, определенном в переменной среды
+<code class="docutils literal notranslate"><span class="pre">KUBE_EDITOR</span></code> или <code class="docutils literal notranslate"><span class="pre">EDITOR</span></code></p></li>
+</ul>
+<p>Также есть ряд специализированных команд, которые позволяют выполнять конкретные действия в кластере:
+<code class="docutils literal notranslate"><span class="pre">run</span></code>, <code class="docutils literal notranslate"><span class="pre">logs</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code>, <code class="docutils literal notranslate"><span class="pre">exec</span></code>, <code class="docutils literal notranslate"><span class="pre">debug</span></code>, <code class="docutils literal notranslate"><span class="pre">scale</span></code> и многие другие. Их мы рассмотрим позже.</p>
+<section id="id9">
+<h4>Полезные функции<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h4>
+<p>Прежде чем начать работать с объектами хочется затронуть некоторые полезные функции в утилите <code class="docutils literal notranslate"><span class="pre">kubectl</span></code>.</p>
+<p>Через флаг <code class="docutils literal notranslate"><span class="pre">-v&lt;N&gt;</span></code> можно задать уровень логирования утилиты, где <code class="docutils literal notranslate"><span class="pre">N</span></code> - необходимый уровень. Это полезно
+для отладки или для обучения, так как позволит понять какой именно REST запрос отправляется на сервер.
+Отмечу три полезных уровня:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-v6</span></code> - отображается HTTP запрос отправляемый в api</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v8</span></code> - помимо запроса также отображается и тело ответа от api</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-v10</span></code> - максимальный уровень, отображает также и пример данного запроса с использованием утилиты
+<code class="docutils literal notranslate"><span class="pre">curl</span></code> для возможности сформировать запрос в ручном режиме</p></li>
+</ul>
+<p>Через флаг <code class="docutils literal notranslate"><span class="pre">-o</span></code> или <code class="docutils literal notranslate"><span class="pre">--output</span></code> можно управлять форматом вывода.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">name</span></code> выводит только имена объектов</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">wide</span></code> расширенный вывод в табличном виде</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">yaml</span></code> выводит содержимое в <code class="docutils literal notranslate"><span class="pre">yaml</span></code> формате</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">json</span></code> выводит содержимое в <code class="docutils literal notranslate"><span class="pre">json</span></code> формате</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">jsonpath=</span></code> выводит поля заданные выражением <a class="reference external" href="https://kubernetes.io/ru/docs/reference/kubectl/jsonpath/">jsonpath</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">custom-columns=</span></code> выводит содержимое в табличном виде с заданными столбцами</p></li>
+</ul>
+<p>Через флаг <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> можно производить пробный прогон без реальных изменений в кластере.
+Есть два варианта:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--dry-run=client</span></code> - клиент сам формирует конфигурацию объекта без отправки его в api</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dry-run=server</span></code> - клиент формирует конфигурацию объекта с отправкой в api, а api производит
+операции валидации и мутации объекта, но не сохраняет его в базе</p></li>
+</ul>
+</section>
+<section id="c-kind-pod">
+<h4>Работа c объектами на примере kind: Pod<a class="headerlink" href="#c-kind-pod" title="Permalink to this heading"></a></h4>
+<p>Для создания объекта пода есть специальная команда <code class="docutils literal notranslate"><span class="pre">run</span></code> -<br />
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">run</span> <span class="pre">--image=&lt;docker_image&gt;</span> <span class="pre">&lt;name&gt;</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>run<span class="w"> </span>--image<span class="w"> </span>nginx<span class="w"> </span>nginx<span class="w"> </span>--dry-run<span class="o">=</span>client<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="c1"># для начала посмотрим содержимое без применения</span>
+<span class="go">apiVersion: v1</span>
+<span class="go">kind: Pod</span>
+<span class="go">metadata:</span>
+<span class="go">  creationTimestamp: null</span>
+<span class="go">  labels:</span>
+<span class="go">    run: nginx</span>
+<span class="go">  name: nginx</span>
+<span class="go">spec:</span>
+<span class="go">  containers:</span>
+<span class="go">  - image: nginx</span>
+<span class="go">    name: nginx</span>
+<span class="go">    resources: {}</span>
+<span class="go">  dnsPolicy: ClusterFirst</span>
+<span class="go">  restartPolicy: Always</span>
+<span class="go">status: {}</span>
+<span class="gp">$ </span>k<span class="w"> </span>run<span class="w"> </span>--image<span class="w"> </span>nginx<span class="w"> </span>nginx
+<span class="go">pod/nginx created</span>
+</pre></div>
+</div>
+<p>Для получения информации о созданном поде можно воспользоваться командами <code class="docutils literal notranslate"><span class="pre">get</span></code> и <code class="docutils literal notranslate"><span class="pre">describe</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME    READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx   1/1     Running   0          80s</span>
+<span class="gp">$ </span>k<span class="w"> </span>describe<span class="w"> </span>po<span class="w"> </span>nginx
+<span class="go">Name:             nginx</span>
+<span class="go">Namespace:        default</span>
+<span class="go">Priority:         0</span>
+<span class="go">Service Account:  default</span>
+<span class="go">Node:             kind-control-plane/172.18.0.2</span>
+<span class="go">Start Time:       Sun, 19 Feb 2023 16:54:24 +0300</span>
+<span class="go">Labels:           run=nginx</span>
+<span class="go">Annotations:      &lt;none&gt;</span>
+<span class="go">Status:           Running</span>
+<span class="go">IP:               10.244.0.6</span>
+<span class="go">IPs:</span>
+<span class="go">  IP:  10.244.0.6</span>
+<span class="go">Containers:</span>
+<span class="go">  nginx:</span>
+<span class="go">    Container ID:   containerd://5b640dd7561025918ada550c1c513cf60392acc443a5c27ee64504efa0024cba</span>
+<span class="go">    Image:          nginx</span>
+<span class="go">    Image ID:       docker.io/library/nginx@sha256:6650513efd1d27c1f8a5351cbd33edf85cc7e0d9d0fcb4ffb23d8fa89b601ba8</span>
+<span class="go">    Port:           &lt;none&gt;</span>
+<span class="go">    Host Port:      &lt;none&gt;</span>
+<span class="go">    State:          Running</span>
+<span class="go">      Started:      Sun, 19 Feb 2023 16:54:37 +0300</span>
+<span class="go">    Ready:          True</span>
+<span class="go">    Restart Count:  0</span>
+<span class="go">    Environment:    &lt;none&gt;</span>
+<span class="go">    Mounts:</span>
+<span class="go">      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-dzptg (ro)</span>
+<span class="go">Conditions:</span>
+<span class="go">  Type              Status</span>
+<span class="go">  Initialized       True</span>
+<span class="go">  Ready             True</span>
+<span class="go">  ContainersReady   True</span>
+<span class="go">  PodScheduled      True</span>
+<span class="go">Volumes:</span>
+<span class="go">  kube-api-access-dzptg:</span>
+<span class="go">    Type:                    Projected (a volume that contains injected data from multiple sources)</span>
+<span class="go">    TokenExpirationSeconds:  3607</span>
+<span class="go">    ConfigMapName:           kube-root-ca.crt</span>
+<span class="go">    ConfigMapOptional:       &lt;nil&gt;</span>
+<span class="go">    DownwardAPI:             true</span>
+<span class="go">QoS Class:                   BestEffort</span>
+<span class="go">Node-Selectors:              &lt;none&gt;</span>
+<span class="go">Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s</span>
+<span class="go">                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s</span>
+<span class="go">Events:</span>
+<span class="go">  Type    Reason     Age    From               Message</span>
+<span class="go">  ----    ------     ----   ----               -------</span>
+<span class="go">  Normal  Scheduled  2m18s  default-scheduler  Successfully assigned default/nginx to kind-control-plane</span>
+<span class="go">  Normal  Pulling    2m17s  kubelet            Pulling image &quot;nginx&quot;</span>
+<span class="go">  Normal  Pulled     2m5s   kubelet            Successfully pulled image &quot;nginx&quot; in 11.713549374s</span>
+<span class="go">  Normal  Created    2m5s   kubelet            Created container nginx</span>
+<span class="go">  Normal  Started    2m5s   kubelet            Started container nginx</span>
+</pre></div>
+</div>
+<p>Выполнить команду внутри контейнера можно командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">exec</span> <span class="pre">&lt;pod&gt;</span> <span class="pre">--</span> <span class="pre">&lt;command&gt;</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>nginx<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/proc/1/cmdline
+<span class="go">nginx: master process nginx -g daemon off;</span>
+</pre></div>
+</div>
+<p>Посмотреть лог можно командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span> <span class="pre">&lt;pod&gt;</span></code>, если в поде несколько контейнеров, то указать
+конкретный можно через ключ <code class="docutils literal notranslate"><span class="pre">-c</span></code> - <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span> <span class="pre">&lt;pod&gt;</span> <span class="pre">-c</span> <span class="pre">&lt;container&gt;</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>logs<span class="w"> </span>nginx
+<span class="go">/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration</span>
+<span class="go">/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh</span>
+<span class="go">10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf</span>
+<span class="go">10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh</span>
+<span class="go">/docker-entrypoint.sh: Configuration complete; ready for start up</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: using the &quot;epoll&quot; event method</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: nginx/1.23.3</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: OS: Linux 4.19.130-boot2docker</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: start worker processes</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: start worker process 36</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: start worker process 37</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: start worker process 38</span>
+<span class="go">2023/02/19 13:54:37 [notice] 1#1: start worker process 39</span>
+</pre></div>
+</div>
+<p>Если процесс внутри контейнера завершился и перезапустился, то лог предыдущей работы можно посмотреть
+с помощью флага <code class="docutils literal notranslate"><span class="pre">--previous</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>nginx<span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;kill 1&#39;</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>nginx
+<span class="go">NAME    READY   STATUS    RESTARTS      AGE</span>
+<span class="go">nginx   1/1     Running   2 (22s ago)   83m</span>
+<span class="gp">$ </span>k<span class="w"> </span>logs<span class="w"> </span>nginx<span class="w"> </span>--previous
+<span class="go">/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration</span>
+<span class="go">/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh</span>
+<span class="go">10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf</span>
+<span class="go">10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh</span>
+<span class="go">/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh</span>
+<span class="go">/docker-entrypoint.sh: Configuration complete; ready for start up</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: using the &quot;epoll&quot; event method</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: nginx/1.23.3</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: OS: Linux 4.19.130-boot2docker</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: start worker processes</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: start worker process 35</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: start worker process 36</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: start worker process 37</span>
+<span class="go">2023/02/19 15:11:03 [notice] 1#1: start worker process 38</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: signal 15 (SIGTERM) received from 82, exiting</span>
+<span class="go">2023/02/19 15:17:19 [notice] 35#35: exiting</span>
+<span class="go">2023/02/19 15:17:19 [notice] 35#35: exit</span>
+<span class="go">2023/02/19 15:17:19 [notice] 36#36: exiting</span>
+<span class="go">2023/02/19 15:17:19 [notice] 36#36: exit</span>
+<span class="go">2023/02/19 15:17:19 [notice] 37#37: exiting</span>
+<span class="go">2023/02/19 15:17:19 [notice] 37#37: exit</span>
+<span class="go">2023/02/19 15:17:19 [notice] 38#38: exiting</span>
+<span class="go">2023/02/19 15:17:19 [notice] 38#38: exit</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: signal 17 (SIGCHLD) received from 36</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: worker process 35 exited with code 0</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: worker process 36 exited with code 0</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: signal 29 (SIGIO) received</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: signal 17 (SIGCHLD) received from 37</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: worker process 37 exited with code 0</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: worker process 38 exited with code 0</span>
+<span class="go">2023/02/19 15:17:19 [notice] 1#1: exit</span>
+</pre></div>
+</div>
+<p>На объекты можно навешивать метки, чтобы потом было удобно фильтровать объекты по определенным меткам.
+Для этого можно либо изменить непосредственно в самом объекте секцию <code class="docutils literal notranslate"><span class="pre">metadata.labels</span></code>,
+либо воспользоваться командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">label</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>label<span class="w"> </span>pod<span class="w"> </span>nginx<span class="w"> </span><span class="nv">app</span><span class="o">=</span>old
+<span class="go">pod/nginx labeled</span>
+</pre></div>
+</div>
+<p>Давайте добавим еще пару подов и пролейблим их:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>run<span class="w"> </span>--image<span class="w"> </span>nginx<span class="w"> </span>nginx1
+<span class="go">pod/nginx1 created</span>
+<span class="gp">$ </span>k<span class="w"> </span>run<span class="w"> </span>--image<span class="w"> </span>nginx<span class="w"> </span>nginx2
+<span class="go">pod/nginx2 created</span>
+<span class="go">pod/nginx labeled</span>
+<span class="gp">$ </span>k<span class="w"> </span>label<span class="w"> </span>pod<span class="w"> </span>nginx1<span class="w"> </span><span class="nv">app</span><span class="o">=</span>new
+<span class="go">pod/nginx1 labeled</span>
+<span class="gp">$ </span>k<span class="w"> </span>label<span class="w"> </span>pod<span class="w"> </span>nginx2<span class="w"> </span><span class="nv">app</span><span class="o">=</span>new
+<span class="go">pod/nginx2 labeled</span>
+</pre></div>
+</div>
+<p>Посмотреть все лейблы на объектах можно добавив к команде <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span></code> опцию <code class="docutils literal notranslate"><span class="pre">--show-labels</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>--show-labels
+<span class="go">NAME     READY   STATUS    RESTARTS       AGE     LABELS</span>
+<span class="go">nginx    1/1     Running   2              4h13m   app=old,run=nginx</span>
+<span class="go">nginx1   1/1     Running   0              3h20m   app=new,run=nginx1</span>
+<span class="go">nginx2   1/1     Running   0              3h20m   app=new,run=nginx2</span>
+</pre></div>
+</div>
+<p>Теперь при получении объектов мы можем использовать селектор с помощью ключа <code class="docutils literal notranslate"><span class="pre">-l</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>old
+<span class="go">NAME    READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx   1/1     Running   0          59m</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>new
+<span class="go">NAME     READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx1   1/1     Running   0          6m44s</span>
+<span class="go">nginx2   1/1     Running   0          6m42s</span>
+</pre></div>
+</div>
+<p>Через запятую можно указывать несколько лейблов <code class="docutils literal notranslate"><span class="pre">-l</span> <span class="pre">key1=value1,key2=value2</span></code>, объект должен
+удовлетворять сразу всем условиям:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">run</span><span class="o">=</span>nginx1,app<span class="o">=</span>new
+<span class="go">NAME     READY   STATUS    RESTARTS   AGE</span>
+<span class="go">nginx1   1/1     Running   0          11m</span>
+</pre></div>
+</div>
+<p>Операция просмотра логов также может выполняться с селектором, для добавления информации из какого пода
+конкретная строка лога можно с помощью опции <code class="docutils literal notranslate"><span class="pre">--prefix</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>new<span class="w"> </span>--prefix
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: using the &quot;epoll&quot; event method</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: nginx/1.23.3</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: OS: Linux 4.19.130-boot2docker</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: start worker processes</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: start worker process 36</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: start worker process 37</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: start worker process 38</span>
+<span class="go">[pod/nginx1/nginx1] 2023/02/19 14:47:46 [notice] 1#1: start worker process 39</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: using the &quot;epoll&quot; event method</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: nginx/1.23.3</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: OS: Linux 4.19.130-boot2docker</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: start worker processes</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: start worker process 35</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: start worker process 36</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: start worker process 37</span>
+<span class="go">[pod/nginx2/nginx2] 2023/02/19 14:47:49 [notice] 1#1: start worker process 38</span>
+</pre></div>
+</div>
+<p>Аннотации можно добавлять с помощью команды <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">annotate</span></code> также как и лейблы:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>annotate<span class="w"> </span>pod<span class="w"> </span>nginx<span class="w"> </span><span class="nv">key</span><span class="o">=</span>value
+<span class="go">pod/nginx annotated</span>
+</pre></div>
+</div>
+<p>Для изменения пода можно воспользоваться командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">edit</span></code>, которая откроет его в текстовом
+редакторе определенном в переменной среды <code class="docutils literal notranslate"><span class="pre">KUBE_EDITOR</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">export</span><span class="w"> </span><span class="nv">KUBE_EDITOR</span><span class="o">=</span>nano
+<span class="gp">$ </span>k<span class="w"> </span>edit<span class="w"> </span>po<span class="w"> </span>nginx
+<span class="go">  UW PICO 5.09  File: /var/folders/62/_p4ngvx105qdskglcfwb2j8hr9_rkn/T/kubectl-edit-4203624632.yaml   Modified</span>
+
+<span class="gp"># </span>Please<span class="w"> </span>edit<span class="w"> </span>the<span class="w"> </span>object<span class="w"> </span>below.<span class="w"> </span>Lines<span class="w"> </span>beginning<span class="w"> </span>with<span class="w"> </span>a<span class="w"> </span><span class="s1">&#39;#&#39;</span><span class="w"> </span>will<span class="w"> </span>be<span class="w"> </span>ignored,
+<span class="gp"># </span>and<span class="w"> </span>an<span class="w"> </span>empty<span class="w"> </span>file<span class="w"> </span>will<span class="w"> </span>abort<span class="w"> </span>the<span class="w"> </span>edit.<span class="w"> </span>If<span class="w"> </span>an<span class="w"> </span>error<span class="w"> </span>occurs<span class="w"> </span><span class="k">while</span><span class="w"> </span>saving<span class="w"> </span>this<span class="w"> </span>file<span class="w"> </span>will<span class="w"> </span>be
+<span class="gp"># </span>reopened<span class="w"> </span>with<span class="w"> </span>the<span class="w"> </span>relevant<span class="w"> </span>failures.
+<span class="gp">#</span>
+<span class="go">apiVersion: v1</span>
+<span class="go">kind: Pod</span>
+<span class="go">metadata:</span>
+<span class="go">  annotations:</span>
+<span class="go">    key: value1</span>
+<span class="go">  creationTimestamp: &quot;2023-02-19T13:54:24Z&quot;</span>
+
+<span class="go">^G Get Help       ^O WriteOut       ^R Read File      ^Y Prev Pg        ^K Cut Text       ^C Cur Pos</span>
+<span class="go">^X Exit           ^J Justify        ^W Where is       ^V Next Pg        ^U UnCut Text     ^T To Spell</span>
+</pre></div>
+</div>
+<p>Изменим значение аннотации и сохраним <code class="docutils literal notranslate"><span class="pre">Ctrl-X</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pod/nginx edited</span>
+</pre></div>
+</div>
+<p>Другой способ редактирования объектов возможен через сохранение текущего состояния в файл,
+редактирование этого файла и последующее применение в кластере:</p>
+<ul>
+<li><p>Сперва мы получаем под командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span></code> и сохраняем в текущей директории</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>nginx<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span>&gt;<span class="w"> </span>nginx.yaml
+</pre></div>
+</div>
+</li>
+<li><p>Редактируем данный файл удобным средствами</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>sed<span class="w"> </span>-i<span class="w"> </span><span class="s1">&#39;s/value1/value2/&#39;</span><span class="w"> </span>nginx.yaml
+</pre></div>
+</div>
+</li>
+<li><p>Можем посмотреть разницу значений в файле с значениями в кластере командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">diff</span></code></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>diff<span class="w"> </span>-f<span class="w"> </span>nginx.yaml
+<span class="go">diff -u -N /var/folders/62/_p4ngvx105qdskglcfwb2j8hr9_rkn/T/LIVE-3347262426/v1.Pod.default.nginx /var/folders/62/_p4ngvx105qdskglcfwb2j8hr9_rkn/T/MERGED-1669273324/v1.Pod.default.nginx</span>
+<span class="go">--- /var/folders/62/_p4ngvx105qdskglcfwb2j8hr9_rkn/T/LIVE-3347262426/v1.Pod.default.nginx       2023-02-19 20:25:10.000000000 +0300</span>
+<span class="go">+++ /var/folders/62/_p4ngvx105qdskglcfwb2j8hr9_rkn/T/MERGED-1669273324/v1.Pod.default.nginx     2023-02-19 20:25:10.000000000 +0300</span>
+<span class="go">@@ -2,7 +2,7 @@</span>
+<span class="go"> kind: Pod</span>
+<span class="go"> metadata:</span>
+<span class="go">   annotations:</span>
+<span class="go">-    key: value1</span>
+<span class="go">+    key: value2</span>
+<span class="go">   creationTimestamp: &quot;2023-02-19T13:54:24Z&quot;</span>
+<span class="go">   labels:</span>
+<span class="go">     app: old</span>
+</pre></div>
+</div>
+</li>
+<li><p>Применяем значения из файла в кластере командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span></code></p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>nginx.yaml
+<span class="go">Warning: resource pods/nginx is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.</span>
+<span class="go">pod/nginx configured</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="practice.html" class="btn btn-neutral float-left" title="Практика" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="02_practice_pod.html" class="btn btn-neutral float-right" title="Работа с Pod" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

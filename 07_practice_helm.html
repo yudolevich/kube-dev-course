@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kustomize/Helm &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Operator" href="08_practice_operator.html" />
+    <link rel="prev" title="Access Control" href="06_practice_accesscontrol.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Kustomize/Helm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kind">Kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Установка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#kustomize">Kustomize</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#base">Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#development">Development</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#production">Production</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deploy">Deploy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#helm">Helm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#chart">Chart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#templates">Templates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#values">Values</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Deploy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Kustomize/Helm</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/07_practice_helm.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kustomize-helm">
+<h1>Kustomize/Helm<a class="headerlink" href="#kustomize-helm" title="Permalink to this heading"></a></h1>
+<section id="kind">
+<h2>Kind<a class="headerlink" href="#kind" title="Permalink to this heading"></a></h2>
+<p>Для работы Ingress Controller в кластере kind необходимо, чтобы кластер был предварительно подготовлен
+<a class="reference internal" href="04_practice_netbalance.html"><span class="doc std std-doc">как это было сделано в одной из предыдущих практик</span></a>.</p>
+</section>
+<section id="id1">
+<h2>Установка<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Утилита <code class="docutils literal notranslate"><span class="pre">kustomize</span></code> существует в двух вариантах - как отдельная утилита, которую
+<a class="reference external" href="https://github.com/kubernetes-sigs/kustomize/releases">можно скачать со страницы с релизами</a>, и как встроенная в утилиту <code class="docutils literal notranslate"><span class="pre">kubectl</span></code>. Для
+практических занятий воспользуемся встроенным функционалом.</p>
+<p>Утилиту <code class="docutils literal notranslate"><span class="pre">helm</span></code> необходимо <a class="reference external" href="https://github.com/helm/helm/releases">скачать со страницы с релизами</a> и разместить в каталоге из
+переменной <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, вариант для Linux:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">curl -Ls https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz | tar xvz linux-amd64/helm</span>
+<span class="go">chmod +x linux-amd64/helm</span>
+<span class="go">sudo mv linux-amd64/helm /usr/local/bin/helm</span>
+</pre></div>
+</div>
+</section>
+<section id="kustomize">
+<h2>Kustomize<a class="headerlink" href="#kustomize" title="Permalink to this heading"></a></h2>
+<p>Опробуем работу <code class="docutils literal notranslate"><span class="pre">kustomize</span></code> в варианте, когда у нас есть базовая конфигурация и дополнительные модификации
+для различных сред. В качестве основного приложения для деплоя возьмем образ nginx и в зависимости от
+среды развертывания модифицируем хостнейм для Ingress и сообщение выдаваемое при запросе.</p>
+<p>Создадим директории и неймспейсы для деплоя:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>mkdir<span class="w"> </span>base<span class="w"> </span>dev<span class="w"> </span>prod
+<span class="gp">$ </span>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>development
+<span class="gp">$ </span>kubectl<span class="w"> </span>create<span class="w"> </span>ns<span class="w"> </span>production
+</pre></div>
+</div>
+<section id="base">
+<h3>Base<a class="headerlink" href="#base" title="Permalink to this heading"></a></h3>
+<p>Подготовим базовую конфигурацию из ресурсов Deployment, Service и Ingress, а также файл <code class="docutils literal notranslate"><span class="pre">kustomization</span></code> в
+котором перечислены данные ресурсы:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; base/deployment.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: apps/v1</span>
+<span class="s">kind: Deployment</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  selector:</span>
+<span class="s">    matchLabels:</span>
+<span class="s">      app: nginx</span>
+<span class="s">  template:</span>
+<span class="s">    metadata:</span>
+<span class="s">      labels:</span>
+<span class="s">        app: nginx</span>
+<span class="s">    spec:</span>
+<span class="s">      containers:</span>
+<span class="s">      - image: nginx</span>
+<span class="s">        name: nginx</span>
+<span class="s">EOF</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; base/service.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Service</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  ports:</span>
+<span class="s">  - port: 80</span>
+<span class="s">    protocol: TCP</span>
+<span class="s">    targetPort: 80</span>
+<span class="s">  selector:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  type: ClusterIP</span>
+<span class="s">EOF</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; base/ingress.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: networking.k8s.io/v1</span>
+<span class="s">kind: Ingress</span>
+<span class="s">metadata:</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  rules:</span>
+<span class="s">  - host: localhost</span>
+<span class="s">    http:</span>
+<span class="s">      paths:</span>
+<span class="s">      - backend:</span>
+<span class="s">          service:</span>
+<span class="s">            name: nginx</span>
+<span class="s">            port:</span>
+<span class="s">              number: 80</span>
+<span class="s">        path: /</span>
+<span class="s">        pathType: Prefix</span>
+<span class="s">EOF</span>
+
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; base/kustomization.yaml</span>
+<span class="s">resources:</span>
+<span class="s">- deployment.yaml</span>
+<span class="s">- service.yaml</span>
+<span class="s">- ingress.yaml</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</section>
+<section id="development">
+<h3>Development<a class="headerlink" href="#development" title="Permalink to this heading"></a></h3>
+<p>Создадим <code class="docutils literal notranslate"><span class="pre">kustomize</span></code> конфигурацию для develop среды:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; dev/kustomization.yaml</span>
+<span class="s">resources:</span>
+<span class="s">- ../base</span>
+<span class="s">namespace: development</span>
+<span class="s">commonLabels:</span>
+<span class="s">  environment: development</span>
+<span class="s">configMapGenerator:</span>
+<span class="s">- name: index</span>
+<span class="s">  literals:</span>
+<span class="s">  - |</span>
+<span class="s">    index.html=develop server</span>
+
+<span class="s">  options:</span>
+<span class="s">    disableNameSuffixHash: true</span>
+<span class="s">patchesStrategicMerge:</span>
+<span class="s">- |-</span>
+<span class="s">  apiVersion: apps/v1</span>
+<span class="s">  kind: Deployment</span>
+<span class="s">  metadata:</span>
+<span class="s">    name: nginx</span>
+<span class="s">  spec:</span>
+<span class="s">    template:</span>
+<span class="s">      spec:</span>
+<span class="s">        containers:</span>
+<span class="s">        - name: nginx</span>
+<span class="s">          volumeMounts:</span>
+<span class="s">          - name: index</span>
+<span class="s">            mountPath: /usr/share/nginx/html</span>
+<span class="s">        volumes:</span>
+<span class="s">        - name: index</span>
+<span class="s">          configMap:</span>
+<span class="s">            name: index</span>
+<span class="s">patchesJson6902:</span>
+<span class="s">- target:</span>
+<span class="s">    group: networking.k8s.io</span>
+<span class="s">    version: v1</span>
+<span class="s">    kind: Ingress</span>
+<span class="s">    name: nginx</span>
+<span class="s">  patch: |-</span>
+<span class="s">    - op: replace</span>
+<span class="s">      path: /spec/rules/0/host</span>
+<span class="s">      value: dev.127.0.0.1.nip.io</span>
+<span class="s">    - op: add</span>
+<span class="s">      path: /spec/ingressClassName</span>
+<span class="s">      value: nginx</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Здесь мы модифицируем лейблы и неймспейс, генерируем ConfigMap из одной строки, а также делаем патчи:</p>
+<ul class="simple">
+<li><p>для Deployment, добавляя <code class="docutils literal notranslate"><span class="pre">volume</span></code> с ConfigMap</p></li>
+<li><p>для Ingress, указывая поля <code class="docutils literal notranslate"><span class="pre">host</span></code> и <code class="docutils literal notranslate"><span class="pre">ingressClassName</span></code></p></li>
+</ul>
+</section>
+<section id="production">
+<h3>Production<a class="headerlink" href="#production" title="Permalink to this heading"></a></h3>
+<p>Аналогично создадим <code class="docutils literal notranslate"><span class="pre">kustomize</span></code> конфигурацию для production среды:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; prod/kustomization.yaml</span>
+<span class="s">resources:</span>
+<span class="s">- ../base</span>
+<span class="s">namespace: production</span>
+<span class="s">commonLabels:</span>
+<span class="s">  environment: production</span>
+<span class="s">configMapGenerator:</span>
+<span class="s">- name: index</span>
+<span class="s">  literals:</span>
+<span class="s">  - |</span>
+<span class="s">    index.html=PRODUCTION SERVER!!!</span>
+
+<span class="s">  options:</span>
+<span class="s">    disableNameSuffixHash: true</span>
+<span class="s">patchesStrategicMerge:</span>
+<span class="s">- |-</span>
+<span class="s">  apiVersion: apps/v1</span>
+<span class="s">  kind: Deployment</span>
+<span class="s">  metadata:</span>
+<span class="s">    name: nginx</span>
+<span class="s">  spec:</span>
+<span class="s">    template:</span>
+<span class="s">      spec:</span>
+<span class="s">        containers:</span>
+<span class="s">        - name: nginx</span>
+<span class="s">          volumeMounts:</span>
+<span class="s">          - name: index</span>
+<span class="s">            mountPath: /usr/share/nginx/html</span>
+<span class="s">        volumes:</span>
+<span class="s">        - name: index</span>
+<span class="s">          configMap:</span>
+<span class="s">            name: index</span>
+<span class="s">patchesJson6902:</span>
+<span class="s">- target:</span>
+<span class="s">    group: networking.k8s.io</span>
+<span class="s">    version: v1</span>
+<span class="s">    kind: Ingress</span>
+<span class="s">    name: nginx</span>
+<span class="s">  patch: |-</span>
+<span class="s">    - op: replace</span>
+<span class="s">      path: /spec/rules/0/host</span>
+<span class="s">      value: prod.127.0.0.1.nip.io</span>
+<span class="s">    - op: add</span>
+<span class="s">      path: /spec/ingressClassName</span>
+<span class="s">      value: nginx</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Здесь мы меняем те же параметры, что и для develop среды.</p>
+</section>
+<section id="deploy">
+<h3>Deploy<a class="headerlink" href="#deploy" title="Permalink to this heading"></a></h3>
+<p>Получается следующая структура каталогов:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">.</span>
+<span class="go">├── base</span>
+<span class="go">│   ├── deployment.yaml</span>
+<span class="go">│   ├── ingress.yaml</span>
+<span class="go">│   ├── kustomization.yaml</span>
+<span class="go">│   └── service.yaml</span>
+<span class="go">├── dev</span>
+<span class="go">│   └── kustomization.yaml</span>
+<span class="go">└── prod</span>
+<span class="go">    └── kustomization.yaml</span>
+</pre></div>
+</div>
+<p>Используя <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span> <span class="pre">-k</span></code> применим обе конфигурации:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>dev/
+<span class="go">configmap/index created</span>
+<span class="go">service/nginx created</span>
+<span class="go">deployment.apps/nginx created</span>
+<span class="go">ingress.networking.k8s.io/nginx created</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span>prod/
+<span class="go">configmap/index created</span>
+<span class="go">service/nginx created</span>
+<span class="go">deployment.apps/nginx created</span>
+<span class="go">ingress.networking.k8s.io/nginx created</span>
+</pre></div>
+</div>
+<p>После деплоя можно наблюдать созданные ресурсы в каждом неймспейсе:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,po,svc,ingress<span class="w"> </span>-n<span class="w"> </span>development
+<span class="go">NAME                    READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">deployment.apps/nginx   1/1     1            1           24m</span>
+<span class="go">NAME                         READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pod/nginx-6b9b58c86f-5888p   1/1     Running   0          16m</span>
+<span class="go">NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+<span class="go">service/nginx   ClusterIP   10.96.242.213   &lt;none&gt;        80/TCP    24m</span>
+<span class="go">NAME                              CLASS   HOSTS                     ADDRESS     PORTS   AGE</span>
+<span class="go">ingress.networking.k8s.io/nginx   nginx   dev.127.0.0.1.nip.io   localhost   80      24m</span>
+
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,po,svc,ingress<span class="w"> </span>-n<span class="w"> </span>production
+<span class="go">NAME                    READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">deployment.apps/nginx   1/1     1            1           8m20s</span>
+<span class="go">NAME                         READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pod/nginx-79ffd89469-mzhtf   1/1     Running   0          8m20s</span>
+<span class="go">NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+<span class="go">service/nginx   ClusterIP   10.96.189.189   &lt;none&gt;        80/TCP    8m20s</span>
+<span class="go">NAME                              CLASS   HOSTS                      ADDRESS     PORTS   AGE</span>
+<span class="go">ingress.networking.k8s.io/nginx   nginx   prod.127.0.0.1.nip.io   localhost   80      8m20s</span>
+</pre></div>
+</div>
+<p>Также видно, что в зависимости от среды приложение ведет себя по разному:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl<span class="w"> </span>dev.127.0.0.1.nip.io
+<span class="go">develop server</span>
+<span class="gp">$ </span>curl<span class="w"> </span>prod.127.0.0.1.nip.io
+<span class="go">PRODUCTION SERVER!!!</span>
+</pre></div>
+</div>
+<p>После можно удалить созданные неймспейсы вместе с ресурсами:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>delete<span class="w"> </span>ns<span class="w"> </span>development<span class="w"> </span>production
+</pre></div>
+</div>
+</section>
+</section>
+<section id="helm">
+<h2>Helm<a class="headerlink" href="#helm" title="Permalink to this heading"></a></h2>
+<p>Повторим такой же сценарий, но уже с использованием утилиты <code class="docutils literal notranslate"><span class="pre">helm</span></code>.</p>
+<section id="chart">
+<h3>Chart<a class="headerlink" href="#chart" title="Permalink to this heading"></a></h3>
+<p>Создадим новый чарт с именем <em>nginx</em> и удалим генерируемые шаблоны по-умолчанию, так как они нам не
+понадобятся:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>helm<span class="w"> </span>create<span class="w"> </span>nginx
+<span class="go">Creating nginx</span>
+<span class="gp">$ </span>rm<span class="w"> </span>-r<span class="w"> </span>nginx/templates/*
+</pre></div>
+</div>
+</section>
+<section id="templates">
+<h3>Templates<a class="headerlink" href="#templates" title="Permalink to this heading"></a></h3>
+<p>Создадим шаблоны ресурсов Deployment, Service, Ingress и ConfigMap взяв за основу базовые ресурсы
+из примера с <code class="docutils literal notranslate"><span class="pre">kustomize</span></code> и параметризовав те части, которые будут зависеть от среды развертывания:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/templates/deployment.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: apps/v1</span>
+<span class="s">kind: Deployment</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  selector:</span>
+<span class="s">    matchLabels:</span>
+<span class="s">      app: nginx</span>
+<span class="s">  template:</span>
+<span class="s">    metadata:</span>
+<span class="s">      labels:</span>
+<span class="s">        app: nginx</span>
+<span class="s">    spec:</span>
+<span class="s">      containers:</span>
+<span class="s">      - image: {{ .Values.image }}</span>
+<span class="s">        name: nginx</span>
+<span class="s">        volumeMounts: {{- toYaml .Values.volumeMounts | nindent 8 }}</span>
+<span class="s">      volumes: {{- toYaml .Values.volumes | nindent 6 }}</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/templates/service.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Service</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  ports:</span>
+<span class="s">  - port: 80</span>
+<span class="s">    protocol: TCP</span>
+<span class="s">    targetPort: 80</span>
+<span class="s">  selector:</span>
+<span class="s">    app: nginx</span>
+<span class="s">  type: ClusterIP</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/templates/ingress.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: networking.k8s.io/v1</span>
+<span class="s">kind: Ingress</span>
+<span class="s">metadata:</span>
+<span class="s">  name: nginx</span>
+<span class="s">spec:</span>
+<span class="s">  ingressClassName: {{ .Values.ingress.className }}</span>
+<span class="s">  rules:</span>
+<span class="s">  - host: {{ .Values.ingress.host }}</span>
+<span class="s">    http:</span>
+<span class="s">      paths:</span>
+<span class="s">      - backend:</span>
+<span class="s">          service:</span>
+<span class="s">            name: nginx</span>
+<span class="s">            port:</span>
+<span class="s">              number: 80</span>
+<span class="s">        path: /</span>
+<span class="s">        pathType: Prefix</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/templates/configmap.yaml</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: ConfigMap</span>
+<span class="s">metadata:</span>
+<span class="s">  name: index</span>
+<span class="s">data:</span>
+<span class="s">  index.html: |</span>
+<span class="s">    {{ .Values.indexData }}</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Для шаблонизации используется <a class="reference external" href="https://pkg.go.dev/text/template">шаблонизатор языка go</a>, подробнее о
+<a class="reference external" href="https://helm.sh/docs/chart_template_guide/getting_started/">работе с шаблонами в helm можно почитать тут</a>.</p>
+</section>
+<section id="values">
+<h3>Values<a class="headerlink" href="#values" title="Permalink to this heading"></a></h3>
+<p>Также создадим файл <code class="docutils literal notranslate"><span class="pre">values.yaml</span></code>, который будет содержать параметры вставляемые в шаблон по-умолчанию и
+отдельно файлы с параметрами для каждой среды:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/values.yaml</span>
+<span class="s">image: nginx</span>
+
+<span class="s">volumeMounts:</span>
+<span class="s">- name: index</span>
+<span class="s">  mountPath: /usr/share/nginx/html</span>
+<span class="s">volumes:</span>
+<span class="s">- name: index</span>
+<span class="s">  configMap:</span>
+<span class="s">    name: index</span>
+
+<span class="s">indexData: &quot;index string&quot;</span>
+
+<span class="s">ingress:</span>
+<span class="s">  host: localhost</span>
+<span class="s">  className: nginx</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/values-dev.yaml</span>
+<span class="s">indexData: &quot;develop server&quot;</span>
+
+<span class="s">ingress:</span>
+<span class="s">  host: dev.127.0.0.1.nip.io</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt;EOF&gt;&gt; nginx/values-prod.yaml</span>
+<span class="s">indexData: &quot;PRODUCTION SERVER!!!&quot;</span>
+
+<span class="s">ingress:</span>
+<span class="s">  host: prod.127.0.0.1.nip.io</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Deploy<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<p>В итоге у нас получится следующая структура каталогов:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">nginx/</span>
+<span class="go">├── Chart.yaml</span>
+<span class="go">├── charts</span>
+<span class="go">├── templates</span>
+<span class="go">│   ├── configmap.yaml</span>
+<span class="go">│   ├── deployment.yaml</span>
+<span class="go">│   ├── ingress.yaml</span>
+<span class="go">│   └── service.yaml</span>
+<span class="go">├── values-dev.yaml</span>
+<span class="go">├── values-prod.yaml</span>
+<span class="go">└── values.yaml</span>
+</pre></div>
+</div>
+<p>Установим наш чарт с разными параметрами в отдельные неймспейсы:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>helm<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>./nginx/<span class="w"> </span>-f<span class="w"> </span>nginx/values-dev.yaml<span class="w"> </span>--namespace<span class="w"> </span>development<span class="w"> </span>--create-namespace
+<span class="go">NAME: nginx</span>
+<span class="go">LAST DEPLOYED: Tue May 23 00:01:23 2023</span>
+<span class="go">NAMESPACE: development</span>
+<span class="go">STATUS: deployed</span>
+<span class="go">REVISION: 1</span>
+<span class="go">TEST SUITE: None</span>
+<span class="gp">$ </span>helm<span class="w"> </span>install<span class="w"> </span>nginx<span class="w"> </span>./nginx/<span class="w"> </span>-f<span class="w"> </span>nginx/values-prod.yaml<span class="w"> </span>--namespace<span class="w"> </span>production<span class="w"> </span>--create-namespace
+<span class="go">NAME: nginx</span>
+<span class="go">LAST DEPLOYED: Tue May 23 00:03:24 2023</span>
+<span class="go">NAMESPACE: production</span>
+<span class="go">STATUS: deployed</span>
+<span class="go">REVISION: 1</span>
+<span class="go">TEST SUITE: None</span>
+</pre></div>
+</div>
+<p>После установки также можно наблюдать созданные ресурсы с разными параметрами:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,po,svc,ingress<span class="w"> </span>-n<span class="w"> </span>development
+<span class="go">NAME                    READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">deployment.apps/nginx   1/1     1            1           37s</span>
+<span class="go">NAME                         READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pod/nginx-796d76f6f9-dn6vf   1/1     Running   0          37s</span>
+<span class="go">NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+<span class="go">service/nginx   ClusterIP   10.96.147.211   &lt;none&gt;        80/TCP    38s</span>
+<span class="go">NAME                              CLASS   HOSTS                  ADDRESS     PORTS   AGE</span>
+<span class="go">ingress.networking.k8s.io/nginx   nginx   dev.127.0.0.1.nip.io   localhost   80      37s</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,po,svc,ingress<span class="w"> </span>-n<span class="w"> </span>production
+<span class="go">NAME                    READY   UP-TO-DATE   AVAILABLE   AGE</span>
+<span class="go">deployment.apps/nginx   1/1     1            1           35s</span>
+<span class="go">NAME                         READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pod/nginx-796d76f6f9-vbmd9   1/1     Running   0          35s</span>
+<span class="go">NAME            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE</span>
+<span class="go">service/nginx   ClusterIP   10.96.229.104   &lt;none&gt;        80/TCP    35s</span>
+<span class="go">NAME                              CLASS   HOSTS                   ADDRESS     PORTS   AGE</span>
+<span class="go">ingress.networking.k8s.io/nginx   nginx   prod.127.0.0.1.nip.io   localhost   80      36s</span>
+
+<span class="gp">$ </span>curl<span class="w"> </span>dev.127.0.0.1.nip.io
+<span class="go">develop server</span>
+<span class="gp">$ </span>curl<span class="w"> </span>prod.127.0.0.1.nip.io
+<span class="go">PRODUCTION SERVER!!!</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="06_practice_accesscontrol.html" class="btn btn-neutral float-left" title="Access Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="08_practice_operator.html" class="btn btn-neutral float-right" title="Operator" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Storage &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Access Control" href="06_practice_accesscontrol.html" />
+    <link rel="prev" title="LoadBalance" href="04_practice_netbalance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Storage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#persistent-volume">Persistent Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#persistent-volume-claim">Persistent Volume Claim</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pvc-in-pod">PVC in Pod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storage-class">Storage Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Storage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/05_practice_storage.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="storage">
+<h1>Storage<a class="headerlink" href="#storage" title="Permalink to this heading"></a></h1>
+<p>В данном практическом занятии рассмотрим работу с постоянным хранилищем посредством ресурсов
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">PersistentVolume</a>, <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">PersistentVolumeClaim</a> и <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/storage-classes/">StorageClass</a>.</p>
+<section id="persistent-volume">
+<h2>Persistent Volume<a class="headerlink" href="#persistent-volume" title="Permalink to this heading"></a></h2>
+<p>Создадим ресурс <code class="docutils literal notranslate"><span class="pre">PersistentVolume</span></code>, который будет использовать файловую систему хоста, на котором он
+будет расположен.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: PersistentVolume</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-volume</span>
+<span class="s">spec:</span>
+<span class="s">  storageClassName: manual</span>
+<span class="s">  capacity:</span>
+<span class="s">    storage: 100Mi</span>
+<span class="s">  accessModes:</span>
+<span class="s">    - ReadWriteOnce</span>
+<span class="s">  hostPath:</span>
+<span class="s">    path: &quot;/mnt/data&quot;</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>В данном примере в параметрах указано:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">storageClassName:</span> <span class="pre">manual</span></code> - имя StorageClass, указано явно для будущего связывания с <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">capacity.storage</span></code> - размер тома</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">accessModes</span></code> - <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes">режим подключения тома к подам</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hostPath.path</span></code> - путь на ноде, по которому будут храниться данные</p></li>
+</ul>
+<p>После создания можно увидеть его состояние:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pv
+<span class="go">NAME        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM   STORAGECLASS   REASON   AGE</span>
+<span class="go">pv-volume   100Mi      RWO            Retain           Available           manual                  12s</span>
+</pre></div>
+</div>
+<p>Также из вывода видно, что reclaim policy задано как <code class="docutils literal notranslate"><span class="pre">Retain</span></code>, означающая, что после удаления <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a>
+данные в нем не будут удалены. А также status - <code class="docutils literal notranslate"><span class="pre">Available</span></code>, означающий, что том готов к подключению.</p>
+</section>
+<section id="persistent-volume-claim">
+<h2>Persistent Volume Claim<a class="headerlink" href="#persistent-volume-claim" title="Permalink to this heading"></a></h2>
+<p>Теперь необходимо создать ресурс <code class="docutils literal notranslate"><span class="pre">PersistentVolumeClaim</span></code>, который можно рассматривать как запрос на
+том с определенными характеристиками(размер, параметры доступа, тип хранилища и т.д.), который можно
+использовать непосредственно в поде.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: PersistentVolumeClaim</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-claim</span>
+<span class="s">spec:</span>
+<span class="s">  storageClassName: manual</span>
+<span class="s">  accessModes:</span>
+<span class="s">    - ReadWriteOnce</span>
+<span class="s">  resources:</span>
+<span class="s">    requests:</span>
+<span class="s">      storage: 50Mi</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>После создания можно увидеть состояние <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pvc
+<span class="go">NAME       STATUS   VOLUME      CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span>
+<span class="go">pv-claim   Bound    pv-volume   100Mi      RWO            manual         2s</span>
+</pre></div>
+</div>
+<p>Можно заметить интересную особенность: при создании <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a> мы указали требуемый нам размер - 50Mi, при
+этом параметр capacity - 100Mi. Дело в том, что при создании <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a> ищется любой подходящий по параметрам
+<a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a>, в том числе большего размера. Если теперь посмотреть список <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a>, то мы увидим, что он теперь
+связан с созданным <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pv
+<span class="go">NAME      CAPACITY ACCESS MODES RECLAIM POLICY STATUS CLAIM            STORAGECLASS REASON AGE</span>
+<span class="go">pv-volume 100Mi    RWO          Retain         Bound  default/pv-claim manual              21m</span>
+</pre></div>
+</div>
+</section>
+<section id="pvc-in-pod">
+<h2>PVC in Pod<a class="headerlink" href="#pvc-in-pod" title="Permalink to this heading"></a></h2>
+<p>Теперь созданный <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a> можно использовать в параметре <code class="docutils literal notranslate"><span class="pre">spec.volumes</span></code> пода:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Pod</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-pod</span>
+<span class="s">spec:</span>
+<span class="s">  containers:</span>
+<span class="s">  - name: nginx</span>
+<span class="s">    image: nginx</span>
+<span class="s">    volumeMounts:</span>
+<span class="s">    - mountPath: &quot;/usr/share/nginx/html&quot;</span>
+<span class="s">      name: pv-storage</span>
+<span class="s">  volumes:</span>
+<span class="s">  - name: pv-storage</span>
+<span class="s">    persistentVolumeClaim:</span>
+<span class="s">      claimName: pv-claim</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>После создания можно создать файл в нашем <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a> выполнив команду внутри контейнера:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pv-pod<span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;echo &quot;hello&quot; &gt; /usr/share/nginx/html/index.html&#39;</span>
+</pre></div>
+</div>
+<p>Далее можно убедиться, что файл корректно создан обратившись к nginx либо через <code class="docutils literal notranslate"><span class="pre">port-forward</span></code>, либо с
+использованием <code class="docutils literal notranslate"><span class="pre">Service</span></code> и <code class="docutils literal notranslate"><span class="pre">Ingress</span></code>. Также можно воспользоваться специальным сабресурсом <code class="docutils literal notranslate"><span class="pre">/proxy</span></code> у пода,
+сделав запрос через api kubernetes:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/api/v1/namespaces/default/pods/pv-pod/proxy
+<span class="go">hello</span>
+</pre></div>
+</div>
+<p>Создадим еще один под, который также будет использовать данный <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Pod</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-pod-new</span>
+<span class="s">spec:</span>
+<span class="s">  containers:</span>
+<span class="s">  - name: nginx</span>
+<span class="s">    image: nginx</span>
+<span class="s">    volumeMounts:</span>
+<span class="s">    - mountPath: &quot;/usr/share/nginx/html&quot;</span>
+<span class="s">      name: pv-storage</span>
+<span class="s">  volumes:</span>
+<span class="s">  - name: pv-storage</span>
+<span class="s">    persistentVolumeClaim:</span>
+<span class="s">      claimName: pv-claim</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>После его запуска также сделаем запрос к nginx:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME         READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pv-pod       1/1     Running   0          11m</span>
+<span class="go">pv-pod-new   1/1     Running   0          10s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/api/v1/namespaces/default/pods/pv-pod-new/proxy
+<span class="go">hello</span>
+</pre></div>
+</div>
+<p>Как видно, под запустился и также смонтировал данный том не смотря на режим <code class="docutils literal notranslate"><span class="pre">ReadWriteOnce</span></code>. Это связано
+с тем, что режим <code class="docutils literal notranslate"><span class="pre">ReadWriteOnce</span></code> позволяет монтировать <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a>, если поды находятся на одной ноде. Если
+требуется запретить данную возможность, то существует режим <code class="docutils literal notranslate"><span class="pre">ReadWriteOncePod</span></code>.</p>
+<p>Также можем удалить созданные нами ресурсы и убедиться, что данные остались на ноде согласно политике
+<code class="docutils literal notranslate"><span class="pre">Retain</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>delete<span class="w"> </span>pvc<span class="w"> </span>--all
+<span class="go">persistentvolumeclaim &quot;pv-claim&quot; deleted</span>
+<span class="gp">$ </span>k<span class="w"> </span>delete<span class="w"> </span>pv<span class="w"> </span>--all
+<span class="go">persistentvolume &quot;pv-volume&quot; deleted</span>
+<span class="gp">$ </span>k<span class="w"> </span>delete<span class="w"> </span>po<span class="w"> </span>--all
+<span class="go">pod &quot;pv-pod&quot; deleted</span>
+<span class="go">pod &quot;pv-pod-new&quot; deleted</span>
+<span class="gp">$ </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w">  </span>-it<span class="w"> </span>kind-control-plane<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;cat /mnt/data/index.html&#39;</span>
+<span class="go">hello</span>
+</pre></div>
+</div>
+</section>
+<section id="storage-class">
+<h2>Storage Class<a class="headerlink" href="#storage-class" title="Permalink to this heading"></a></h2>
+<p>В <a class="reference external" href="https://kind.sigs.k8s.io/">kind</a> при создании кластера также устанавливается <code class="docutils literal notranslate"><span class="pre">local-path-provisioner</span></code>, который позволяет
+динамически нарезать <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a> на нодах. Для их использования создается StorageClass:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>sc
+<span class="go">NAME               PROVISIONER           RECLAIMPOLICY VOLUMEBINDINGMODE    ALLOWVOLUMEEXPANSION AGE</span>
+<span class="go">standard (default) rancher.io/local-path Delete        WaitForFirstConsumer false                14d</span>
+</pre></div>
+</div>
+<p>Так как данный Storage Class используется по умолчанию, то можно создавать <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a> без указания параметра
+<code class="docutils literal notranslate"><span class="pre">storageClassName</span></code>. Таким образом нам достаточно создать <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">pvc</a> и под, а <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistent-volumes">pv</a> создастся автоматически:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: PersistentVolumeClaim</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-claim-sc</span>
+<span class="s">spec:</span>
+<span class="s">  accessModes:</span>
+<span class="s">    - ReadWriteOnce</span>
+<span class="s">  resources:</span>
+<span class="s">    requests:</span>
+<span class="s">      storage: 150Mi</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: Pod</span>
+<span class="s">metadata:</span>
+<span class="s">  name: pv-pod-sc</span>
+<span class="s">spec:</span>
+<span class="s">  containers:</span>
+<span class="s">  - name: nginx</span>
+<span class="s">    image: nginx</span>
+<span class="s">    volumeMounts:</span>
+<span class="s">    - mountPath: &quot;/usr/share/nginx/html&quot;</span>
+<span class="s">      name: pv-storage</span>
+<span class="s">  volumes:</span>
+<span class="s">  - name: pv-storage</span>
+<span class="s">    persistentVolumeClaim:</span>
+<span class="s">      claimName: pv-claim-sc</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pv
+<span class="go">NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                 STORAGECLASS   REASON   AGE</span>
+<span class="go">pvc-828145c8-2e48-4046-b96f-d3cadbece5d8   150Mi      RWO            Delete           Bound    default/pv-claim-sc   standard                28s</span>
+
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>pvc
+<span class="go">NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE</span>
+<span class="go">pv-claim-sc   Bound    pvc-828145c8-2e48-4046-b96f-d3cadbece5d8   150Mi      RWO            standard       36s</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po
+<span class="go">NAME        READY   STATUS    RESTARTS   AGE</span>
+<span class="go">pv-pod-sc   1/1     Running   0          38s</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="04_practice_netbalance.html" class="btn btn-neutral float-left" title="LoadBalance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="06_practice_accesscontrol.html" class="btn btn-neutral float-right" title="Access Control" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

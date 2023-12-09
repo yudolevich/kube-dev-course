@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workloads &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="LoadBalance" href="04_practice_netbalance.html" />
+    <link rel="prev" title="Работа с Pod" href="02_practice_pod.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Workloads</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#metrics-server">Metrics server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#application">Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#statefulset">StatefulSet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#horizontal-pod-autoscaler">Horizontal Pod Autoscaler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cronjob">Cronjob</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scaling">Scaling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Workloads</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/03_practice_workloads.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="workloads">
+<h1>Workloads<a class="headerlink" href="#workloads" title="Permalink to this heading"></a></h1>
+<p>В данной практике предлагаю испробовать работу <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaler</a> в связке с
+<a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a>, увеличивая потребляемые ресурсы приложения с помощью <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">Cronjob</a>.</p>
+<section id="metrics-server">
+<h2>Metrics server<a class="headerlink" href="#metrics-server" title="Permalink to this heading"></a></h2>
+<p>В первую очередь для работы <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">HPA</a> в кластер необходимо установить <a class="reference external" href="https://github.com/kubernetes-sigs/metrics-server">metrics server</a>,
+который позволит hpa контроллеру получать информацию о потребляемых ресурсах подами приложения.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.6.3/components.yaml
+<span class="gp">$ </span>k<span class="w"> </span>patch<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>deployment<span class="w"> </span>metrics-server<span class="w"> </span>--type<span class="o">=</span>json<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;[{&quot;op&quot;:&quot;add&quot;,&quot;path&quot;:&quot;/spec/template/spec/containers/0/args/-&quot;,&quot;value&quot;:&quot;--kubelet-insecure-tls&quot;}]&#39;</span>
+</pre></div>
+</div>
+</section>
+<section id="application">
+<h2>Application<a class="headerlink" href="#application" title="Permalink to this heading"></a></h2>
+<p>Для проверки работы <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">HPA</a> предлагаю использовать масштабирование на основе потребления памяти
+приложением. Потребуется простое приложение, которое сможет занять память заданного размера, для этого
+можно использовать вызов <a class="reference external" href="https://en.wikipedia.org/wiki/Mmap">mmap</a>, отображая файл в оперативную память. Наше приложение будет отображать
+файл заданного размера в оперативную память, таким образом можно будет регулировать потребляемую память.
+Вы можете написать его на своем любимом языке, в качестве примера приведу простую реализацию на C:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fcntl.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/mman.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/stat.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;too few arguments</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">open</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">O_RDONLY</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fd</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;error read file: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+<span class="w">      </span><span class="n">sleep</span><span class="p">(</span><span class="n">strtol</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">));</span>
+<span class="w">      </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">stat</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fstat</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mmap</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">st_size</span><span class="p">,</span><span class="w"> </span><span class="n">PROT_READ</span><span class="p">,</span><span class="w"> </span><span class="n">MAP_SHARED</span><span class="p">,</span><span class="w"> </span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">st_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="p">;</span>
+<span class="w">      </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;size: %lld</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">st_size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sleep</span><span class="p">(</span><span class="n">strtol</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">));</span>
+<span class="w">    </span><span class="n">munmap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">st_size</span><span class="p">);</span>
+<span class="w">    </span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Данное программа перечитывает файл заданный первым аргументом с периодичностью заданной вторым
+аргументом и отображает в оперативную память.</p>
+</section>
+<section id="image">
+<h2>Image<a class="headerlink" href="#image" title="Permalink to this heading"></a></h2>
+<p>Для запуска приложения в kubernetes нам понадобится docker образ, для приведенной выше программы
+Dockerfile будет выглядеть так:</p>
+<div class="highlight-dockerfile notranslate"><div class="highlight"><pre><span></span><span class="k">FROM</span><span class="w"> </span><span class="s">alpine:3.17</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s">build</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/build</span>
+
+<span class="k">RUN</span><span class="w"> </span>apk<span class="w"> </span>add<span class="w"> </span>--no-cache<span class="w"> </span>clang<span class="w"> </span>musl-dev<span class="w"> </span>binutils<span class="w"> </span>gcc
+<span class="k">COPY</span><span class="w"> </span>main.c<span class="w"> </span>./
+<span class="k">RUN</span><span class="w"> </span>clang<span class="w"> </span>main.c
+
+<span class="k">FROM</span><span class="w"> </span><span class="s">alpine:3.17</span>
+
+<span class="k">COPY</span><span class="w"> </span>--from<span class="o">=</span>build<span class="w"> </span>/build/a.out<span class="w"> </span>/app
+
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;/app&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;/tmp/data&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;30&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Таким образом для сборки образа можно выполнить следующие команды:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>testapp<span class="p">;</span><span class="nb">cd</span><span class="w"> </span>testapp
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF &gt; main.c</span>
+<span class="s">#include &lt;fcntl.h&gt;</span>
+<span class="s">#include &lt;stdio.h&gt;</span>
+<span class="s">#include &lt;stdlib.h&gt;</span>
+<span class="s">#include &lt;sys/mman.h&gt;</span>
+<span class="s">#include &lt;sys/stat.h&gt;</span>
+<span class="s">#include &lt;unistd.h&gt;</span>
+
+<span class="s">int main(int argc, char *argv[]) {</span>
+<span class="s">  if (argc &lt; 3) {</span>
+<span class="s">    printf(&quot;too few arguments\n&quot;);</span>
+<span class="s">    return 1;</span>
+<span class="s">  }</span>
+
+<span class="s">  while (1) {</span>
+<span class="s">    int fd = open(argv[1], O_RDONLY);</span>
+<span class="s">    if (fd &lt; 0) {</span>
+<span class="s">      printf(&quot;error read file: %s\n&quot;, argv[1]);</span>
+<span class="s">      sleep(strtol(argv[2], NULL, 10));</span>
+<span class="s">      continue;</span>
+<span class="s">    }</span>
+<span class="s">    struct stat s;</span>
+<span class="s">    int status = fstat(fd, &amp;s);</span>
+<span class="s">    char *data = mmap(0, s.st_size, PROT_READ, MAP_SHARED, fd, 0);</span>
+<span class="s">    for (int i = 0; i &lt; s.st_size; i++) {</span>
+<span class="s">      char c;</span>
+<span class="s">      c = data[i];</span>
+<span class="s">    }</span>
+<span class="s">    printf(&quot;size: %lld\n&quot;, s.st_size);</span>
+<span class="s">    sleep(strtol(argv[2], NULL, 10));</span>
+<span class="s">    munmap(data, s.st_size);</span>
+<span class="s">    close(fd);</span>
+<span class="s">  }</span>
+<span class="s">}</span>
+<span class="s">EOF</span>
+cat<span class="w"> </span><span class="s">&lt;&lt; EOF &gt; Dockerfile</span>
+<span class="s">FROM alpine:3.17 as build</span>
+
+<span class="s">WORKDIR /build</span>
+
+<span class="s">RUN apk add --no-cache clang musl-dev binutils gcc</span>
+<span class="s">COPY main.c ./</span>
+<span class="s">RUN clang main.c</span>
+
+<span class="s">FROM alpine:3.17</span>
+
+<span class="s">COPY --from=build /build/a.out /app</span>
+
+<span class="s">CMD [&quot;/app&quot;, &quot;/tmp/data&quot;, &quot;30&quot;]</span>
+<span class="s">EOF</span>
+docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>app:test<span class="w"> </span>.
+</pre></div>
+</div>
+<p>Появится образ <code class="docutils literal notranslate"><span class="pre">app:test</span></code>, который необходимо загрузить в кластер. В утилите <code class="docutils literal notranslate"><span class="pre">kind</span></code> для этого есть
+команда <code class="docutils literal notranslate"><span class="pre">kind</span> <span class="pre">load</span> <span class="pre">docker-image</span></code>, которая загрузит образ на все ноды кластера.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kind<span class="w"> </span>load<span class="w"> </span>docker-image<span class="w"> </span>app:test
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:7966712b4b2f550489f136128f48fafd8d0224c85f6770ae4562714ce5a0c202&quot; not yet present on node &quot;kind-worker&quot;, loading...</span>
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:7966712b4b2f550489f136128f48fafd8d0224c85f6770ae4562714ce5a0c202&quot; not yet present on node &quot;kind-worker2&quot;, loading...</span>
+<span class="go">Image: &quot;&quot; with ID &quot;sha256:7966712b4b2f550489f136128f48fafd8d0224c85f6770ae4562714ce5a0c202&quot; not yet present on node &quot;kind-control-plane&quot;, loading...</span>
+</pre></div>
+</div>
+</section>
+<section id="statefulset">
+<h2>StatefulSet<a class="headerlink" href="#statefulset" title="Permalink to this heading"></a></h2>
+<p>Создадим <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSet</a> с собранным образом, указав в нем:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">resources.requests</span></code> - необходимые ресурсы для работы пода, также <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">hpa</a> будет учитывать данный
+параметр при расчете необходимости увеличения количества реплик</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resources.limits</span></code> - максимально возможное потребление для пода</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">image:</span> <span class="pre">app:test</span></code> - собранный образ</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">imagePullPolicy:</span> <span class="pre">Never</span></code> - для того, чтобы kubelet не пытался скачать собранный локально образ
+из внешнего источника</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">volumeClaimTemplates</span></code> с необходимыми параметрами дискового хранилища, в котором будет лежать файл,
+загружаемый в память</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">volumeMounts</span></code> с указанием пути для монтирования хранилища</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StatefulSet</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">  </span><span class="nt">podManagementPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OrderedReady</span>
+<span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app:test</span>
+<span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+<span class="w">        </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300Mi</span>
+<span class="w">          </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100Mi</span>
+<span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp</span>
+<span class="w">  </span><span class="nt">updateStrategy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+<span class="w">  </span><span class="nt">volumeClaimTemplates</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;ReadWriteOnce&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;standard&quot;</span>
+<span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300Mi</span>
+</pre></div>
+</div>
+<p>Для создания можно воспользоваться командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: apps/v1</span>
+<span class="s">kind: StatefulSet</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app</span>
+<span class="s">spec:</span>
+<span class="s">  selector:</span>
+<span class="s">    matchLabels:</span>
+<span class="s">      app: app</span>
+<span class="s">  podManagementPolicy: OrderedReady</span>
+<span class="s">  replicas: 1</span>
+<span class="s">  template:</span>
+<span class="s">    metadata:</span>
+<span class="s">      labels:</span>
+<span class="s">        app: app</span>
+<span class="s">    spec:</span>
+<span class="s">      containers:</span>
+<span class="s">      - name: app</span>
+<span class="s">        image: app:test</span>
+<span class="s">        imagePullPolicy: Never</span>
+<span class="s">        resources:</span>
+<span class="s">          limits:</span>
+<span class="s">            memory: 300Mi</span>
+<span class="s">          requests:</span>
+<span class="s">            memory: 100Mi</span>
+<span class="s">        volumeMounts:</span>
+<span class="s">        - name: data</span>
+<span class="s">          mountPath: /tmp</span>
+<span class="s">  updateStrategy:</span>
+<span class="s">    type: RollingUpdate</span>
+<span class="s">  volumeClaimTemplates:</span>
+<span class="s">  - metadata:</span>
+<span class="s">      name: data</span>
+<span class="s">    spec:</span>
+<span class="s">      accessModes: [ &quot;ReadWriteOnce&quot; ]</span>
+<span class="s">      storageClassName: &quot;standard&quot;</span>
+<span class="s">      resources:</span>
+<span class="s">        requests:</span>
+<span class="s">          storage: 300Mi</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>После создания пода при установленном <a class="reference external" href="https://github.com/kubernetes-sigs/metrics-server">metrics server</a> потребление ресурсов подами
+можно посмотреть командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">top</span> <span class="pre">pod</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>top<span class="w"> </span>pod
+<span class="go">NAME    CPU(cores)   MEMORY(bytes)</span>
+<span class="go">app-0   1m           1Mi</span>
+</pre></div>
+</div>
+</section>
+<section id="horizontal-pod-autoscaler">
+<h2>Horizontal Pod Autoscaler<a class="headerlink" href="#horizontal-pod-autoscaler" title="Permalink to this heading"></a></h2>
+<p>Для конфигурации автоматического масштабирования необходимо создать ресурс <code class="docutils literal notranslate"><span class="pre">HorizontalPodAutoscaler</span></code>,
+где необходимо указать:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxReplicas</span></code> - максимальное количество реплик, до которого можно масштабироваться</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">minReplicas</span></code> - минимальное количество реплик</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">averageUtilization</span></code> - средняя утилизация между всеми репликами в процентах от параметра
+<code class="docutils literal notranslate"><span class="pre">resource.requests</span></code></p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">autoscaling/v2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HorizontalPodAutoscaler</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">minReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">scaleTargetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StatefulSet</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">  </span><span class="nt">metrics</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Resource</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">memory</span>
+<span class="w">      </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Utilization</span>
+<span class="w">        </span><span class="nt">averageUtilization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p><code class="docutils literal notranslate"><span class="pre">HorizontalPodAutoscaler</span></code> имеет несколько версий своей спецификации, важно указывать правильную версию
+в поле <code class="docutils literal notranslate"><span class="pre">apiVersion</span></code>. Управление на основе ресурса памяти есть в стабильной версии <code class="docutils literal notranslate"><span class="pre">autoscaling/v2</span></code>.
+Информацию по параметрам конкретной версии можно посмотреть командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span></code> с указанием
+опции <code class="docutils literal notranslate"><span class="pre">--api-version</span></code>, например <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">explain</span> <span class="pre">--api-version='autoscaling/v2'</span> <span class="pre">hpa</span></code>.</p>
+</div>
+<p>Для создания можно воспользоваться командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: autoscaling/v2</span>
+<span class="s">kind: HorizontalPodAutoscaler</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app</span>
+<span class="s">spec:</span>
+<span class="s">  maxReplicas: 5</span>
+<span class="s">  minReplicas: 1</span>
+<span class="s">  scaleTargetRef:</span>
+<span class="s">    apiVersion: apps/v1</span>
+<span class="s">    kind: StatefulSet</span>
+<span class="s">    name: app</span>
+<span class="s">  metrics:</span>
+<span class="s">  - type: Resource</span>
+<span class="s">    resource:</span>
+<span class="s">      name: memory</span>
+<span class="s">      target:</span>
+<span class="s">        type: Utilization</span>
+<span class="s">        averageUtilization: 60</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>После создания можно посмотреть текущее состояние:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="go">NAME   REFERENCE         TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</span>
+<span class="go">app    StatefulSet/app   1%/60%    1         5         1          4s</span>
+</pre></div>
+</div>
+<p>Как видно из вывода - текущее среднее потребление памяти составляет 1% от <code class="docutils literal notranslate"><span class="pre">resource.requests</span></code>.</p>
+</section>
+<section id="cronjob">
+<h2>Cronjob<a class="headerlink" href="#cronjob" title="Permalink to this heading"></a></h2>
+<p>Теперь необходимо сделать механизм для постепенного увеличения потребления, для этого можно сделать
+небольшой скрипт, который будет создавать файл заданного размера внутри каждого пода. Сохранять состояние
+между запусками скрипта можно в ConfigMap:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500&quot;</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;50&quot;</span>
+</pre></div>
+</div>
+<p>Где size - текущий размер, который необходимо распределить между подами, max - максимальный размер.</p>
+<p>Сам скрипт будет выглядеть так:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="nv">NAME</span><span class="o">=</span><span class="s2">&quot;app&quot;</span>
+<span class="nv">ADD</span><span class="o">=</span><span class="s2">&quot;10&quot;</span>
+
+<span class="nv">data</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>configmap<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NAME</span><span class="s2">&quot;</span><span class="w"> </span>-o<span class="w"> </span>json<span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">max</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$data</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-rc<span class="w"> </span><span class="s1">&#39;.data.max&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="nv">size</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$data</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-rc<span class="w"> </span><span class="s1">&#39;.data.size&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+
+<span class="nv">size</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$((</span><span class="nv">size</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">ADD</span><span class="k">))</span><span class="s2">&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[[</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$size</span><span class="s2">&quot;</span><span class="w"> </span>-gt<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$max</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]]</span><span class="p">;</span><span class="k">then</span>
+<span class="w">  </span><span class="nv">size</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$max</span><span class="s2">&quot;</span>
+<span class="k">fi</span>
+
+<span class="nv">pods</span><span class="o">=(</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$NAME</span><span class="s2">&quot;</span><span class="w"> </span>-o<span class="w"> </span>name<span class="k">)</span><span class="o">)</span>
+<span class="nv">count</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">${#</span><span class="nv">pods</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nv">pod_size</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$((</span><span class="nv">size</span><span class="o">/</span><span class="nv">count</span><span class="k">))</span><span class="s2">&quot;</span>
+
+<span class="k">for</span><span class="w"> </span>pod<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">pods</span><span class="p">[@]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span><span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$pod</span><span class="s2"> - </span><span class="nv">$pod_size</span><span class="s2">&quot;</span>
+<span class="w">  </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$pod</span><span class="s2">&quot;</span><span class="w"> </span>--<span class="w"> </span>/bin/sh<span class="w"> </span>-c<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="s2">&quot;dd if=/dev/zero of=/tmp/data.tmp bs=1M count=</span><span class="nv">$pod_size</span><span class="s2">;mv /tmp/data.tmp /tmp/data&quot;</span>
+<span class="k">done</span>
+
+kubectl<span class="w"> </span>patch<span class="w"> </span>configmap<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$NAME</span><span class="s2">&quot;</span><span class="w"> </span>-p<span class="w"> </span><span class="s2">&quot;{\&quot;data\&quot;:{\&quot;size\&quot;:\&quot;</span><span class="nv">$size</span><span class="s2">\&quot;}}&quot;</span>
+</pre></div>
+</div>
+<p>Сам скрипт можно также сохранить в ConfigMap.</p>
+<p>Для работы данного скрипта внутри кластера потребуется дать права сервисному аккаунту default, для этого
+необходимо создать Role и RoleBinding такого вида:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">rules</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pods</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pods/exec</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configmaps</span>
+<span class="w">  </span><span class="nt">verbs</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;*&#39;</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RoleBinding</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">roleRef</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rbac.authorization.k8s.io</span>
+<span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Role</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">subjects</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ServiceAccount</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</pre></div>
+</div>
+<p>Применить данные ресурсы в кластер можно также командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: Role</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app</span>
+<span class="s">rules:</span>
+<span class="s">- apiGroups:</span>
+<span class="s">  - &quot;&quot;</span>
+<span class="s">  resources:</span>
+<span class="s">  - pods</span>
+<span class="s">  - pods/exec</span>
+<span class="s">  - configmaps</span>
+<span class="s">  verbs:</span>
+<span class="s">  - &#39;*&#39;</span>
+<span class="s">---</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: RoleBinding</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app</span>
+<span class="s">roleRef:</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">  kind: Role</span>
+<span class="s">  name: app</span>
+<span class="s">subjects:</span>
+<span class="s">- kind: ServiceAccount</span>
+<span class="s">  name: default</span>
+<span class="s">  namespace: default</span>
+<span class="s">---</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: ConfigMap</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app</span>
+<span class="s">data:</span>
+<span class="s">  max: &quot;500&quot;</span>
+<span class="s">  size: &quot;50&quot;</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; &#39;EOF&#39;</span>
+<span class="s">apiVersion: v1</span>
+<span class="s">kind: ConfigMap</span>
+<span class="s">metadata:</span>
+<span class="s">  name: app-job-sh</span>
+<span class="s">data:</span>
+<span class="s">  job.sh: |</span>
+<span class="s">    #!/bin/bash</span>
+<span class="s">    set -e</span>
+
+<span class="s">    NAME=&quot;app&quot;</span>
+<span class="s">    ADD=&quot;10&quot;</span>
+
+<span class="s">    data=&quot;$(kubectl get configmap &quot;$NAME&quot; -o json)&quot;</span>
+<span class="s">    max=&quot;$(echo &quot;$data&quot; | jq -rc &#39;.data.max&#39;)&quot;</span>
+<span class="s">    size=&quot;$(echo &quot;$data&quot; | jq -rc &#39;.data.size&#39;)&quot;</span>
+
+<span class="s">    size=&quot;$((size + ADD))&quot;</span>
+<span class="s">    if [[ &quot;$size&quot; -gt &quot;$max&quot; ]];then</span>
+<span class="s">      size=&quot;$max&quot;</span>
+<span class="s">    fi</span>
+
+<span class="s">    pods=($(kubectl get pods -l app=&quot;$NAME&quot; -o name))</span>
+<span class="s">    count=&quot;${#pods[@]}&quot;</span>
+<span class="s">    pod_size=&quot;$((size/count))&quot;</span>
+
+<span class="s">    for pod in &quot;${pods[@]}&quot;;do</span>
+<span class="s">      echo &quot;$pod - $pod_size&quot;</span>
+<span class="s">      kubectl exec &quot;$pod&quot; -- /bin/sh -c \</span>
+<span class="s">        &quot;dd if=/dev/zero of=/tmp/data.tmp bs=1M count=$pod_size;mv /tmp/data.tmp /tmp/data&quot;</span>
+<span class="s">    done</span>
+
+<span class="s">    kubectl patch configmap &quot;$NAME&quot; -p &quot;{\&quot;data\&quot;:{\&quot;size\&quot;:\&quot;$size\&quot;}}&quot;</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Для запуска скрипта с заданной периодичностью можно воспользоваться ресурсом <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">Cronjob</a>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-job</span>
+<span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine/k8s:1.25.8</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app</span>
+<span class="w">            </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/bash</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/script/job.sh</span>
+<span class="w">            </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">script</span>
+<span class="w">              </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/script</span>
+<span class="w">          </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnFailure</span>
+<span class="w">          </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">script</span>
+<span class="w">            </span><span class="nt">configMap</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-job-sh</span>
+<span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;*/5</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&#39;</span>
+</pre></div>
+</div>
+<p>Данный Cronjob будет запускать созданный скрипт каждые 5 минут, создадим также через <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">apply</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>k<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt; EOF</span>
+<span class="s">apiVersion: batch/v1</span>
+<span class="s">kind: CronJob</span>
+<span class="s">metadata:</span>
+<span class="s">  labels:</span>
+<span class="s">    app: app</span>
+<span class="s">  name: app</span>
+<span class="s">spec:</span>
+<span class="s">  jobTemplate:</span>
+<span class="s">    metadata:</span>
+<span class="s">      name: app</span>
+<span class="s">    spec:</span>
+<span class="s">      template:</span>
+<span class="s">        metadata:</span>
+<span class="s">          labels:</span>
+<span class="s">            app: app-job</span>
+<span class="s">        spec:</span>
+<span class="s">          containers:</span>
+<span class="s">          - image: alpine/k8s:1.25.8</span>
+<span class="s">            name: app</span>
+<span class="s">            command:</span>
+<span class="s">            - /bin/bash</span>
+<span class="s">            - /script/job.sh</span>
+<span class="s">            resources: {}</span>
+<span class="s">            volumeMounts:</span>
+<span class="s">            - name: script</span>
+<span class="s">              mountPath: /script</span>
+<span class="s">          restartPolicy: OnFailure</span>
+<span class="s">          volumes:</span>
+<span class="s">          - name: script</span>
+<span class="s">            configMap:</span>
+<span class="s">              name: app-job-sh</span>
+<span class="s">  schedule: &#39;*/5 * * * *&#39;</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+</section>
+<section id="scaling">
+<h2>Scaling<a class="headerlink" href="#scaling" title="Permalink to this heading"></a></h2>
+<p>После запуска скрипта из <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJob</a> с некоторой задержкой будет отображаться новое потребление у пода:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>top<span class="w"> </span>po
+<span class="go">NAME    CPU(cores)   MEMORY(bytes)</span>
+<span class="go">app-0   10m          64Mi</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="go">NAME   REFERENCE         TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</span>
+<span class="go">app    StatefulSet/app   64%/60%   1         5         1          52m</span>
+</pre></div>
+</div>
+<p>Последующие запуски будут увеличивать потребление и разделять между подами, в свою очередь <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">hpa</a>
+при прохождении порога в 60% средней нагрузки между подами и нахождении за этим порогом достаточное
+время будет увеличивать количество реплик.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>top<span class="w"> </span>po
+<span class="go">NAME    CPU(cores)   MEMORY(bytes)</span>
+<span class="go">app-0   19m          44Mi</span>
+<span class="go">app-1   7m           43Mi</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="go">NAME   REFERENCE         TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</span>
+<span class="go">app    StatefulSet/app   44%/60%   1         5         2          61m</span>
+</pre></div>
+</div>
+<p>По итогу постепенно развернутся все поды до максимального количества, заданного в hpa:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>top<span class="w"> </span>po
+<span class="go">NAME    CPU(cores)   MEMORY(bytes)</span>
+<span class="go">app-0   0m           58Mi</span>
+<span class="go">app-1   0m           59Mi</span>
+<span class="go">app-2   14m          58Mi</span>
+<span class="go">app-3   17m          57Mi</span>
+<span class="go">app-4   0m           57Mi</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="go">NAME   REFERENCE         TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</span>
+<span class="go">app    StatefulSet/app   58%/60%   1         5         5          159m</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Чтобы процесс шел быстрее можно увеличить частоту запуска Job в CronJob через параметр <code class="docutils literal notranslate"><span class="pre">schedule</span></code>.</p>
+</div>
+<p>После можно вернуть количество потребляемых ресурсов в ConfigMap в 0:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>patch<span class="w"> </span>cm<span class="w"> </span>app<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;{&quot;data&quot;:{&quot;size&quot;: &quot;0&quot;}}&#39;</span>
+<span class="go">configmap/app patched</span>
+</pre></div>
+</div>
+<p>Что через некоторое время приведет к уменьшению количества реплик:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app
+<span class="go">NAME                 READY   STATUS        RESTARTS   AGE</span>
+<span class="go">app-0                1/1     Running       0          3h48m</span>
+<span class="go">app-1                1/1     Running       0          117m</span>
+<span class="go">app-2                0/1     Terminating   0          87m</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>po<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>app
+<span class="go">NAME    READY   STATUS    RESTARTS   AGE</span>
+<span class="go">app-0   1/1     Running   0          3h49m</span>
+<span class="gp">$ </span>k<span class="w"> </span>get<span class="w"> </span>hpa
+<span class="go">NAME   REFERENCE         TARGETS   MINPODS   MAXPODS   REPLICAS   AGE</span>
+<span class="go">app    StatefulSet/app   7%/60%    1         5         1          172m</span>
+</pre></div>
+</div>
+<p>Все примеры, используемые здесь, можно также посмотреть на <a class="reference external" href="https://github.com/yudolevich/kube-dev-course/tree/main/examples/workloads/">github</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="02_practice_pod.html" class="btn btn-neutral float-left" title="Работа с Pod" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="04_practice_netbalance.html" class="btn btn-neutral float-right" title="LoadBalance" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

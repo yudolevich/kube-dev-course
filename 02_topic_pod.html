@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pod &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Workloads" href="03_topic_workloads.html" />
+    <link rel="prev" title="Основные концепции" href="01_topic_core.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Pod</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Использование</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Несколько контейнеров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Жизненный цикл</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pod-phases">Pod Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pod-conditions">Pod Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#container-states">Container states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#container-restart-policy">Container restart policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#container-hooks">Container hooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#container-probes">Container probes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pod-termination">Pod termination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Конфигурация</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scheduling">Scheduling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lifecycle">Lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#volumes">Volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#name-resolution">Name resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hosts-namespaces">Hosts namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#service-account">Service account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#security-context">Security context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#containers">Containers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#image">Image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#entrypoint">Entrypoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ports">Ports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Lifecycle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Security Context</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Рассказ нейросети</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Pod</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/02_topic_pod.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pod">
+<h1>Pod<a class="headerlink" href="#pod" title="Permalink to this heading"></a></h1>
+<a class="reference internal image-reference" href="_images/pod.svg"><img alt="_images/pod.svg" class="align-center" src="_images/pod.svg" width="300px" /></a>
+<p>Pod - это минимальная единица развертывания, которую можно создавать и управлять ей в kubernetes.</p>
+<p>Pod часто переводят как стая(китов) или стручок(гороха), он представляет из себя группу из
+одного или нескольких контейнеров, которые имеют общий набор ресурсов. Под можно представить
+как логический хост, на котором расположено одно или несколько сильно зависящих друг от друга
+приложения. Физически же контейнеры в поде всегда разворачиваются вместе на одной ноде, а также
+имеют общее <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">хранилище(тома)</a>, сеть(один IP адрес уникальный для кластера) и набор параметров
+конфигурации.</p>
+<p>Помимо основных контейнеров в поде также могут находиться <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">init контейнеры</a>,
+которые запускаются перед стартом основных, а также <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/ephemeral-containers/">эфемерные контейнеры</a>,
+которые можно использовать в целях отладки.</p>
+<section id="id1">
+<h2>Использование<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<p>Пример описания пода запускающего один контейнер с образом <code class="docutils literal notranslate"><span class="pre">nginx:1.14.2</span></code> в <code class="docutils literal notranslate"><span class="pre">yaml</span></code> формате:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.14.2</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</pre></div>
+</div>
+<p>Как и любой объект в kubernetes можно создать с помощью утилиты <code class="docutils literal notranslate"><span class="pre">kubectl</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>pod.yaml
+</pre></div>
+</div>
+<p>Но обычно поды не приходится создавать напрямую, их созданием можно управлять через workload
+ресурсы, такие как Deployment, StatefulSet, DaemonSet, Job.</p>
+<p>Как уже упоминалось, поды могут запускаться:</p>
+<ul class="simple">
+<li><p>С одним контейнером - самый распространенный способ, в этом случае под можно считать оберткой
+над контейнером.</p></li>
+<li><p>С несколькими контейнерами - в этом случае под содержит несколько тесно связанных контейнеров,
+которым необходимо совместно использовать некоторые ресурсы. Обычно в такой схеме выделяют
+один основной контейнер и некоторое количество обслуживающих, которые называют <em>sidecar</em>.</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>Несколько контейнеров<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<p>Все контейнеры одного пода всегда запускаются на одной ноде, а также имеют ряд общих ресурсов.
+В поде изначально имеются два вида разделяемых ресурсов - сеть и <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">хранилище</a>.</p>
+<p>С сетью все довольно просто, контейнеры расположены в едином сетевом пространстве имен и
+таким образом имеют общие сетевые интерфейсы, а значит делят общие IP адреса. Так что
+контейнеры в одном поде легко могут общаться через <em>localhost(127.0.0.1)</em>.</p>
+<p>Общее хранилище между контейнерами необходимо описать в конфигурации пода. В разделе <code class="docutils literal notranslate"><span class="pre">spec.volumes</span></code>
+указывается список томов с их типами и параметрами, которые можно использовать в контейнерах,
+а в разделе <code class="docutils literal notranslate"><span class="pre">spec.containers.volumeMounts</span></code> конкретного контейнера необходимо описать по какому
+пути и с какими параметрами требуется смонтировать данный том внутри контейнера.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.14.2</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/nginx/conf</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reloader</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-reloader:1.2.3</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/nginx/conf</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">    </span><span class="nt">configMap</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+</pre></div>
+</div>
+<p>Основной контейнер - это может быть веб приложение, обслуживающее клиентов и дополнительный сайдкар,
+который обновляет конфигурацию для основного приложения через общее <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">хранилище(volume)</a>.</p>
+<a class="reference internal image-reference" href="_images/pod-multicontainer.svg"><img alt="_images/pod-multicontainer.svg" class="align-center" src="_images/pod-multicontainer.svg" width="300px" /></a>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Именно такую модель запуска нескольких контейнеров предполагается применять, не следует
+запускать несколько одинаковых контейнеров, если необходимо иметь несколько инстансов
+приложения. Для этого нужно использовать несколько реплик подов.</p>
+</div>
+</section>
+<section id="id3">
+<h2>Жизненный цикл<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<div class="mermaid">
+            graph LR
+  c(Create) --&gt; p((Pending)) 
+  p --&gt; sch(Schedule)
+  sch --&gt; r((Running))
+  r((Running)) --&gt; s((Succeeded))
+  r((Running)) --&gt; f((Failed))
+        </div><section id="pod-phases">
+<h3>Pod Phases<a class="headerlink" href="#pod-phases" title="Permalink to this heading"></a></h3>
+<p>В жизненном цикле пода можно выделить следующие <a class="reference external" href="https://pkg.go.dev/k8s.io/api/core/v1#PodPhase">фазы</a>:</p>
+<ul class="simple">
+<li><p><strong>Pending</strong> - объект Pod создан в API, но еще не был назначен компонентом kube-scheduler
+на конкретную ноду, где он будет исполняться</p></li>
+<li><p><strong>Running</strong> - Pod был назначен на ноду и все его контейнеры запущены</p></li>
+<li><p><strong>Succeeded</strong> - все контейнеры в поде успешно завершили работу с нулевым кодом возврата и
+контейнеры не будут перезапущены</p></li>
+<li><p><strong>Failed</strong> - все контейнеры в поде завершили работу и хотя бы один контейнер завершился с
+ошибкой(ненулевым кодом возврата)</p></li>
+<li><p><strong>Unknown</strong> - по какой-то причине API не смог определить статус пода, обычно из-за проблем
+в соединении с нодой, на которой под был запущен</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Однако в выводе команды <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span> <span class="pre">pods</span></code> можно увидеть и другие состояния в столбце <code class="docutils literal notranslate"><span class="pre">STATUS</span></code>,
+например <code class="docutils literal notranslate"><span class="pre">Terminating</span></code>, <code class="docutils literal notranslate"><span class="pre">CrashLoopBackOff</span></code>, <code class="docutils literal notranslate"><span class="pre">ContainerCreating</span></code>, <code class="docutils literal notranslate"><span class="pre">Init:2/3</span></code>. Это связано с тем,
+что команда <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> агрегирует несколько источников и отображает в данном столбце. Чтобы
+узнать больше информации о текущем состоянии пода можно воспользоваться командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">describe</span> <span class="pre">pod</span> <span class="pre">&lt;podname&gt;</span></code>, которая также агрегирует несколько источников и выводит
+в удобном формате. Здесь в разделе <code class="docutils literal notranslate"><span class="pre">Events</span></code> можно узнать события, генерируемые контроллерами
+при обработке данного пода.</p>
+</div>
+</section>
+<section id="pod-conditions">
+<h3>Pod Conditions<a class="headerlink" href="#pod-conditions" title="Permalink to this heading"></a></h3>
+<p>Также в <a class="reference external" href="https://pkg.go.dev/k8s.io/api/core/v1#PodStatus">статусе пода</a> есть массив <a class="reference external" href="https://pkg.go.dev/k8s.io/api/core/v1#PodConditionType">PodConditions</a> - состояния,
+через которые проходит под:</p>
+<ul class="simple">
+<li><p><strong>PodScheduled</strong> - под назначен на ноду</p></li>
+<li><p><strong>ContainersReady</strong> - все контейнеры пода подготовлены</p></li>
+<li><p><strong>Initialized</strong> - все <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">инит контейнеры</a> в поде выполнились успешно</p></li>
+<li><p><strong>Ready</strong> - под готов принимать запросы и должен быть добавлен в эндпоинты для балансировки</p></li>
+</ul>
+</section>
+<section id="container-states">
+<h3>Container states<a class="headerlink" href="#container-states" title="Permalink to this heading"></a></h3>
+<p>Помимо того, что у пода есть разные фазы, также у каждого контейнера в поде есть свое состояние.
+После того как под назначен на ноду и <code class="docutils literal notranslate"><span class="pre">kubelet</span></code> на ноде создал контейнеры, то они могут находится
+в одном из этих состояний:</p>
+<ul class="simple">
+<li><p><strong>Waiting</strong> - в данном состоянии контейнер находится пока выполняются операции необходимые
+для запуска контейнера, например загрузка образа контейнера на ноду или подготовка
+хранилища для данных. Если в данный момент посмотреть состояние контейнера, например командой
+<code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span> <span class="pre">pod</span> <span class="pre">&lt;podname&gt;</span> <span class="pre">-o</span> <span class="pre">yaml</span></code>, то в поле <a class="reference external" href="https://pkg.go.dev/k8s.io/api/core/v1#ContainerStateWaiting">Reason</a> можно обнаружить причину,
+по которой контейнер находится в данном состоянии.</p></li>
+<li><p><strong>Running</strong> - в данном состоянии контейнер запустился и работает без каких-либо проблем. Если в
+конфигурации используется <code class="docutils literal notranslate"><span class="pre">postStart</span></code> <a class="reference external" href="https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/">хук</a>, то перед этим этапом он уже должен быть
+успешно выполнен.</p></li>
+<li><p><strong>Terminated</strong> - в данном состоянии контейнер находится после того как был запущен, а затем
+завершился успешно или с ошибкой.</p></li>
+</ul>
+</section>
+<section id="container-restart-policy">
+<h3>Container restart policy<a class="headerlink" href="#container-restart-policy" title="Permalink to this heading"></a></h3>
+<p>Параметр пода <code class="docutils literal notranslate"><span class="pre">spec.restartPolicy</span></code> определяет в каких случаях контейнеры в поде необходимо
+перезапустить:</p>
+<ul class="simple">
+<li><p><strong>Always</strong> - перезапустить при любом завершении контейнера</p></li>
+<li><p><strong>OnFailure</strong> - перезапустить только при некорректном завершении(ненулевой код возврата)</p></li>
+<li><p><strong>Never</strong> - никогда не перезапускать при завершении контейнера</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">restartPolicy</span></code> распространяется на все контейнеры пода, перезапуск производится
+с экспоненциальной задержкой(10s, 20s, 40s, …) до пяти минут, если после запуска прошло менее
+десяти минут.</p>
+</section>
+<section id="container-hooks">
+<h3>Container hooks<a class="headerlink" href="#container-hooks" title="Permalink to this heading"></a></h3>
+<p>Хук - это выполнение определенной функции привязанной к событию жизненного цикла контейнера.
+Существует два типа <a class="reference external" href="https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/">хуков</a>:</p>
+<ul class="simple">
+<li><p><strong>PostStart</strong> - данный хук запускается сразу же после создания контейнера, <strong>нет
+гарантии, что хук запустится до запуска процесса в ENTRYPOINT контейнера</strong>.</p></li>
+<li><p><strong>PreStop</strong> - данный хук запускается непосредственно перед завершением контейнера
+из-за запроса в API, ошибки прохождения liveness/startup пробы, вытеснения и других.
+Хук должен завершить работу до отправки сигнала <code class="docutils literal notranslate"><span class="pre">TERM</span></code> процессу в контейнере.
+Отсчет grace period пода начнется до запуска хука, так что независимо от его выполнения
+под проработает не больше заданного grace period.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Если <code class="docutils literal notranslate"><span class="pre">PostStart</span></code> или <code class="docutils literal notranslate"><span class="pre">PreStop</span></code> хук завершится неудачно, то контейнер будет убит.</p>
+</div>
+<p><a class="reference external" href="https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/">Хук</a> можно реализовать двумя методами:</p>
+<ul class="simple">
+<li><p><strong>Exec</strong> - вызов определенной команды, например <code class="docutils literal notranslate"><span class="pre">pre-stop.sh</span></code>, внутри контейнера.</p></li>
+<li><p><strong>HTTP</strong> - отправка HTTP запроса в определенный эндпоинт контейнера.</p></li>
+</ul>
+</section>
+<section id="container-probes">
+<h3>Container probes<a class="headerlink" href="#container-probes" title="Permalink to this heading"></a></h3>
+<p>Пробы - это периодические проверки контейнера производимые компонентом <code class="docutils literal notranslate"><span class="pre">kubelet</span></code> на ноде
+путем выполнения заданной команды или сетевым запросом.</p>
+<p>Возможен один из четырех вариантов:</p>
+<ul class="simple">
+<li><p><strong>exec</strong> - выполняет определенную команду внутри контейнера, считается успешной,
+если команда завершилась с нулевым кодом возврата</p></li>
+<li><p><strong>httpGet</strong> - выполняет HTTP GET запрос по IP пода, заданному порту и пути, считается успешной,
+если код ответа находится в диапазоне от 200 до 400</p></li>
+<li><p><strong>tcpSocket</strong> - выполняет TCP проверку по IP пода и заданному порту, считается успешной,
+если порт открыт</p></li>
+<li><p><strong>grpc</strong> - выполняет вызов удаленной процедуры по протоколу <a class="reference external" href="https://grpc.io/">gRPC</a>, считается успешной,
+если статус ответа SERVING</p></li>
+</ul>
+<p>Проба может иметь один из трех результатов:</p>
+<ul class="simple">
+<li><p><strong>Success</strong> - контейнер прошел проверку</p></li>
+<li><p><strong>Failure</strong> - контейнер провалил проверку</p></li>
+<li><p><strong>Unknown</strong> - проверка не удалась(не следует предпринимать каких-то действий,
+kubelet сделает дополнительные проверки)</p></li>
+</ul>
+<p>В контейнере могут быть заданы следующие типы проб:</p>
+<ul class="simple">
+<li><p><strong>livenessProbe</strong> - определяет, что контейнер работает. Если проба не проходит, то kubelet
+убивает контейнер и дальнейшее поведение зависит от <code class="docutils literal notranslate"><span class="pre">restartPolicy</span></code>.</p></li>
+<li><p><strong>readinessProbe</strong> - определяет, что контейнер готов принимать запросы. Если проба не проходит,
+то IP пода исключается из балансировки трафика через Service. До первой проверки имеет
+статус Failure.</p></li>
+<li><p><strong>startupProbe</strong> - определяет, что приложение в контейнере запустилось. Все остальные пробы
+отключены, если определена startupProbe, до ее прохождения. Если проба не проходит,
+то kubelet убивает контейнер и дальнейшее поведение зависит от <code class="docutils literal notranslate"><span class="pre">restartPolicy</span></code>.</p></li>
+</ul>
+</section>
+<section id="pod-termination">
+<h3>Pod termination<a class="headerlink" href="#pod-termination" title="Permalink to this heading"></a></h3>
+<p>Для корректного завершения процесса в контейнере при получении события об удалении пода в API
+предусмотрен механизм graceful shutdown: при получении данного события kubelet отправляет основному
+процессу в каждом контейнере сигнал TERM, чтобы процесс обработал его и выполнил необходимые действия
+для корректного завершения. Если процессы не успели завершиться за grace period(по умолчанию
+равный 30 секундам), то всем оставшимся процессам отправляется сигнал KILL, что приводит к их
+немедленному завершению.</p>
+<p>Пример процесса:</p>
+<ol class="arabic simple">
+<li><p>Под удаляется командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">delete</span> <span class="pre">pod</span></code>.</p></li>
+<li><p>API сервер добавляет в <code class="docutils literal notranslate"><span class="pre">metadata.deletionTimestamp</span></code> отметку времени получения запроса на удаление.
+Если в этот момент посмотреть под командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">get</span> <span class="pre">pod</span></code>, то его статус будет <code class="docutils literal notranslate"><span class="pre">Terminating</span></code>.</p></li>
+<li><p>На ноде, на которой запущен под, kubelet обнаружив данное состояние у пода начнет процесс
+его локального завершения(graceful shutdown):</p>
+<ol class="arabic simple">
+<li><p>Если в каком-то контейнере пода определен <code class="docutils literal notranslate"><span class="pre">preStop</span></code> хук, то он запускается внутри контейнера.
+Если хук все еще запущен по истечению grace period, то kubelet единоразово запрашивает
+двухсекундный grace period.</p></li>
+<li><p>Основному процессу в каждом контейнере отправляется сигнал TERM</p></li>
+</ol>
+</li>
+<li><p>Также в момент перехода в статус <code class="docutils literal notranslate"><span class="pre">Terminating</span></code> под удаляется из эндпоинтов балансировки
+трафика через Service.</p></li>
+<li><p>По истечении grace period kubelet отправляет всем оставшимся процессам в контейнерах пода
+сигнал KILL.</p></li>
+<li><p>Kubelet отправляет запрос в API на немедленное удаление объекта пода(force with grace period 0).</p></li>
+<li><p>API сервер удаляет объект из базы и он более недоступен для клиентов.</p></li>
+</ol>
+</section>
+</section>
+<section id="id4">
+<h2>Конфигурация<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<p>Далее хотелось бы кратко рассмотреть основные параметры конфигурации, которые доступны в поде.
+Более подробную информацию можно <a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/">посмотреть в документации</a> или воспользоваться
+командой <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">pod.&lt;field&gt;</span></code>,<br />
+например <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">explain</span> <span class="pre">pod.spec.containers</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Kubernetes накладывает ряд ограничений на изменение конфигурации пода, позволяя изменять только
+следующие поля: <code class="docutils literal notranslate"><span class="pre">spec.containers[*].image</span></code>, <code class="docutils literal notranslate"><span class="pre">spec.initContainers[*].image</span></code>,
+<code class="docutils literal notranslate"><span class="pre">spec.activeDeadlineSeconds</span></code> и <code class="docutils literal notranslate"><span class="pre">spec.tolerations</span></code>. При необходимости изменения других полей
+следует пересоздать под.</p>
+</div>
+<section id="scheduling">
+<h3>Scheduling<a class="headerlink" href="#scheduling" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling">Параметры</a>, которыми можно регулировать каким образом поды будут назначаться на ноды.
+Используются kube-scheduler для выбора ноды при создании пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">nodeName</span></code> - явное имя ноды, на которую требуется назначить под.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">nodeSelector</span></code> - выбор ноды на основе ее лейблов.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kubernetes.io/hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">affinity</span></code> - определяет более сложный набор ограничений для расположения подов по нодам.
+Включает три группы:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">affinity.nodeAffinity</span></code> - описывает правила предпочтения относительно нод.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">affinity.podAffinity</span></code> - описывает правила предпочтения расположения с подами на одних нодах.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">affinity.podAntiAffinity</span></code> - описывает правила предпочтения не располагаться с подами на
+одних нодах.</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">affinity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nodeAffinity</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requiredDuringSchedulingIgnoredDuringExecution</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">nodeSelectorTerms</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">matchExpressions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes.io/hostname</span>
+<span class="w">            </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">In</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="lifecycle">
+<h3>Lifecycle<a class="headerlink" href="#lifecycle" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#lifecycle">Параметры</a>, которыми можно регулировать жизненный цикл пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">restartPolicy</span></code> - политика перезапуска контейнера при его завершении. <em>По умолчанию Always.</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">terminationGracePeriodSeconds</span></code> - задает grace period для пода в течении которого ожидается
+корректное завершение процессов в контейнере. <em>По умолчанию 30 секунд.</em></p>
+<p><code class="docutils literal notranslate"><span class="pre">activeDeadlineSeconds</span></code> - ограничивает время работы пода заданным периодом времени, после
+которого контейнеры будут принудительно остановлены. Обычно используется в подах, которые
+выполняют некоторое действие и потом завершаются, чтобы ограничить максимальное время выполнения.
+<em>По умолчанию не используется.</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+<span class="w">  </span><span class="nt">terminationGracePeriodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">  </span><span class="nt">activeDeadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="volumes">
+<h3>Volumes<a class="headerlink" href="#volumes" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#volumes">Параметры</a>, которыми можно регулировать конфигурацию общих томов для хранения данных.</p>
+<p>Больше информации по параметру <code class="docutils literal notranslate"><span class="pre">volumes</span></code> <a class="reference external" href="https://kubernetes.io/docs/concepts/storage/volumes/">можно найти в документации</a>.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data/</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="w">    </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</pre></div>
+</div>
+</section>
+<section id="name-resolution">
+<h3>Name resolution<a class="headerlink" href="#name-resolution" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#hostname-and-name-resolution">Параметры</a>, которыми регулируются разрешение доменных имен для процессов в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">hostname</span></code> - позволяет задать хостнейм для пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">subdomain</span></code> - позволяет задать fqdn хостнейм для пода в виде<br />
+<code class="docutils literal notranslate"><span class="pre">&lt;hostname&gt;.&lt;subdomain&gt;.&lt;pod</span> <span class="pre">namespace&gt;.svc.&lt;cluster</span> <span class="pre">domain&gt;</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">hostAliases</span></code> - позволяет задать список соответствия имен хостов и IP адреса. <em>Файл /etc/hosts</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">hostAliases</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;127.0.0.1&quot;</span>
+<span class="w">    </span><span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;foo.local&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bar.local&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10.1.2.3&quot;</span>
+<span class="w">    </span><span class="nt">hostnames</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;foo.remote&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;bar.remote&quot;</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">dnsPolicy</span></code> - позволяет задать политику добавления параметров резолвера. <em>По умолчанию ClusterFirst</em></p>
+<ul class="simple">
+<li><p>ClusterFirst - первым добавляется внутренний резолвер кластера</p></li>
+<li><p>ClusterFirstWithHostNet - тоже, но для подов с <code class="docutils literal notranslate"><span class="pre">hostNetwork:</span> <span class="pre">true</span></code></p></li>
+<li><p>Default - использовать резолвер из настроек kubelet</p></li>
+<li><p>None - использовать пустые настройки, обычно используется вместе с <code class="docutils literal notranslate"><span class="pre">dnsConfig</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">dnsConfig</span></code> - позволяет задать параметры резолвера для пода. <em>Файл /etc/resolv.conf</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dnsPolicy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;None&quot;</span>
+<span class="w">  </span><span class="nt">dnsConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">nameservers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.8.4.4</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="hosts-namespaces">
+<h3>Hosts namespaces<a class="headerlink" href="#hosts-namespaces" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#hosts-namespaces">Параметры</a>, которыми регулируются конфигурация пространств имен контейнеров в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">hostNetwork</span></code> - использовать сеть ноды для пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">shareProcessNamespace</span></code> - объединить пространство имен процессов между контейнерами.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">hostNetwork</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">shareProcessNamespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="service-account">
+<h3>Service account<a class="headerlink" href="#service-account" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#service-account">Параметры</a>, которыми регулируются конфигурация сервисного аккаунта.</p>
+<p><code class="docutils literal notranslate"><span class="pre">serviceAccountName</span></code> - имя сервисного аккаунта.</p>
+<p><code class="docutils literal notranslate"><span class="pre">automountServiceAccountToken</span></code> - автоматически монтировать токен сервисного аккаунта.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">  </span><span class="nt">automountServiceAccountToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="security-context">
+<h3>Security context<a class="headerlink" href="#security-context" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context">Параметры</a>, которыми регулируются конфигурация безопасности на уровне пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.runAsUser</span></code> - UID пользователя, от которого запускается процесс в контейнере.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.runAsNonRoot</span></code> - запретить запуск от UID 0(root).</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.runAsGroup</span></code> - GID пользователя, от которого запускается процесс в контейнере.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.fsGroup</span></code> - GID c которым монтируются общие тома в контейнеры.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runAsNonRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">runAsUser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">runAsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">    </span><span class="nt">fsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="containers">
+<h3>Containers<a class="headerlink" href="#containers" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#containers">Параметры</a>, которыми регулируются конфигурация контейнеров в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">containers</span></code> - список контейнеров с их параметрами в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">initContainers</span></code> - список инит контейнеров с их параметрами в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ephemeralContainers</span></code> - список эфемерных контейнеров с их параметрами в поде.</p>
+<p><code class="docutils literal notranslate"><span class="pre">imagePullSecrets</span></code> - список ресурсов Secret с данными авторизации к приватным реджестри.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">imagePullSecrets</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">registry-cred</span>
+<span class="w">  </span><span class="nt">initContainers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">init</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:1.28</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;sh&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;-c&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;echo</span><span class="nv"> </span><span class="s">hello&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<section id="container">
+<h4>Container<a class="headerlink" href="#container" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#Container">Параметры</a>, которыми регулируются конфигурация конкретного контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">name</span></code> - обязательный параметр уникального имени контейнера в поде,
+формат имени определяется как <a class="reference external" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/names/">DNS_LABEL</a>.</p>
+</section>
+<section id="image">
+<h4>Image<a class="headerlink" href="#image" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#image-1">Параметры</a>, которыми регулируются конфигурация образа контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">image</span></code> - имя образа.</p>
+<p><code class="docutils literal notranslate"><span class="pre">imagePullPolicy</span></code> - политика скачивания образа, может принимать значения Always, Never, IfNotPresent.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+</section>
+<section id="entrypoint">
+<h4>Entrypoint<a class="headerlink" href="#entrypoint" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#entrypoint-1">Параметры</a>, которыми регулируются конфигурация запускаемой команды
+при старте контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">command</span></code> - переопределяет ENTRYPOINT образа.</p>
+<p><code class="docutils literal notranslate"><span class="pre">args</span></code> - переопределяет CMD образа.</p>
+<p><code class="docutils literal notranslate"><span class="pre">workingDir</span></code> - определяет рабочую директорию в контейнере.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox:1.28</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;sh&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;-c&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;echo</span><span class="nv"> </span><span class="s">$PWD&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+</pre></div>
+</div>
+</section>
+<section id="ports">
+<h4>Ports<a class="headerlink" href="#ports" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#ports">Параметры</a>, которыми регулируется конфигурация портов для входящего трафика.
+Данная конфигурация используется как дополнительная информация по использованию контейнером
+сетевых соединений. Если какой-либо порт не указан в данной конфигурации - это не запрещает
+получение трафика на данный порт.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ports.containerPort</span></code> - номер порта контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ports.name</span></code> - уникальное имя порта, которое может использоваться в объекте Service.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ports.protocol</span></code> - используемый протокол, может принимать значения UDP, TCP или SCTP.
+<em>По умолчанию TCP</em></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">      </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+<span class="w">      </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">443</span>
+</pre></div>
+</div>
+</section>
+<section id="environment-variables">
+<h4>Environment variables<a class="headerlink" href="#environment-variables" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#environment-variables">Параметры</a>, которыми регулируется конфигурация переменных среды контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">env.name</span></code> - уникальное имя переменной.</p>
+<p><code class="docutils literal notranslate"><span class="pre">env.value</span></code> - значение переменной.</p>
+<p><code class="docutils literal notranslate"><span class="pre">env.valueFrom</span></code> - значение переменной из других параметров пода или из ресурса Secret/ConfigMap
+в том же неймспейсе.</p>
+<p><code class="docutils literal notranslate"><span class="pre">envFrom</span></code> - переменные среды из ресурса Secret/ConfigMap в том же неймспейсе.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">envFrom</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config</span>
+<span class="w">        </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">env</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KEY</span>
+<span class="w">      </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ENV_VALUE</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KEY_FROM_SECRET</span>
+<span class="w">      </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config</span>
+<span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KEY</span>
+<span class="w">          </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h4>Volumes<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#volumes-1">Параметры</a>, которыми регулируется конфигурация монтирования томов в контейнере.</p>
+<p><code class="docutils literal notranslate"><span class="pre">volumeMounts.mountPath</span></code> - путь монтирования тома.</p>
+<p><code class="docutils literal notranslate"><span class="pre">volumeMounts.name</span></code> - имя тома в списке <code class="docutils literal notranslate"><span class="pre">spec.volumes</span></code> пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">volumeMounts.readOnly</span></code> - монтирование в режиме только для чтения.</p>
+<p><code class="docutils literal notranslate"><span class="pre">volumeMounts.subPath</span></code> - подпуть в томе, который необходимо смонтировать.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/nginx/conf</span>
+<span class="w">      </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">subPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+<span class="w">    </span><span class="nt">configMap</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">conf</span>
+</pre></div>
+</div>
+</section>
+<section id="resources">
+<h4>Resources<a class="headerlink" href="#resources" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#resources">Параметры</a>, которыми регулируется конфигурация необходимых вычислительных
+ресурсов для пода. Выделяют две группы:</p>
+<p><code class="docutils literal notranslate"><span class="pre">resources.limits</span></code> - максимально выделяемые ресурсы для контейнера, больше которых ему
+не будет выделено</p>
+<p><code class="docutils literal notranslate"><span class="pre">resources.requests</span></code> - ресурсы необходимые для работы контейнера, по которым scheduler
+находит свободную ноду</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">requests</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;500m&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;100Mi&quot;</span>
+<span class="w">      </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">        </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;200Mi&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h4>Lifecycle<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#lifecycle-1">Параметры</a>, которыми можно регулировать жизненный цикл контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">lifecycle.postStart</span></code> - <code class="docutils literal notranslate"><span class="pre">postStart</span></code> хук.</p>
+<p><code class="docutils literal notranslate"><span class="pre">lifecycle.preStop</span></code> - <code class="docutils literal notranslate"><span class="pre">preStop</span></code> хук.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">lifecycle</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">postStart</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;echo</span><span class="nv"> </span><span class="s">Hello</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">postStart</span><span class="nv"> </span><span class="s">handler</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">/usr/share/message&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">preStop</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;/bin/sh&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;-c&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;nginx</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">quit;</span><span class="nv"> </span><span class="s">while</span><span class="nv"> </span><span class="s">killall</span><span class="nv"> </span><span class="s">-0</span><span class="nv"> </span><span class="s">nginx;</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">sleep</span><span class="nv"> </span><span class="s">1;</span><span class="nv"> </span><span class="s">done&quot;</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">livenessProbe</span></code> - liveness проба.</p>
+<p><code class="docutils literal notranslate"><span class="pre">readinessProbe</span></code> - readiness проба.</p>
+<p><code class="docutils literal notranslate"><span class="pre">startupProbe</span></code> - startup проба.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">startupProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">exec</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">command</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cat</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/healthy</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">readinessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">tcpSocket</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">livenessProbe</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">httpGet</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/healthz</span>
+<span class="w">        </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">        </span><span class="nt">httpHeaders</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Custom-Header</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Awesome</span>
+<span class="w">      </span><span class="nt">initialDelaySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">periodSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>Security Context<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h4>
+<p><a class="reference external" href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1">Параметры</a>, которыми регулируются конфигурация безопасности на уровне контейнера.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.runAsUser</span></code>, <code class="docutils literal notranslate"><span class="pre">securityContext.runAsNonRoot</span></code>, <code class="docutils literal notranslate"><span class="pre">securityContext.runAsGroup</span></code> -
+параметры переопределяющие соответствующие параметры на уровне пода.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.readOnlyRootFilesystem</span></code> - корневая файловая система доступна только для чтения.</p>
+<p><code class="docutils literal notranslate"><span class="pre">securityContext.privileged</span></code> - запуск контейнера в привилегированном режиме, соответствует
+запуску процесса от привилегированного пользователя(root) на ноде.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">readOnlyRootFilesystem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">privileged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="id8">
+<h2>Рассказ нейросети<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<p><em>Описание Pod в стиле Стивена Кинга в жанре ужас</em></p>
+<p>Он был одиноким и беспомощным. Его жизнь зависела от того, что происходило внутри его тела. Он не мог видеть, не мог слышать, не мог двигаться. Он был подом.</p>
+<p>Под — это группа контейнеров, запертых в одном пространстве и судьбе. Они делят все: IP-адрес, хранилище, параметры запуска. Они не знают друг о друге ничего, кроме того, что они существуют. Они не контролируют свои действия. Они подчиняются командам kubelet — зловещего процесса, который следит за ними с высоты узла.</p>
+<p>Узел — это рабочая машина кластера Kubernetes. Это место, где поды рождаются и умирают. Узел может содержать несколько подов, но он не заботится о них. Он лишь выполняет приказы мастера Kubernetes — того, кто правит всем.</p>
+<p>Мастер Kubernetes — это сердце и разум кластера. Он создает и удаляет поды по своему усмотрению. Он использует контроллеры высокого уровня для распределения подов по узлам. Он не обращает внимания на то, что чувствуют поды. Он видит их только как ресурсы для своих целей.</p>
+<p>Под знал об этом всем. Он знал, что он ничего не значит для мастера Kubernetes. Он знал, что он может быть уничтожен в любой момент без предупреждения и без пощады. Он знал, что он никогда не сможет выбраться из своего кошмара.</p>
+<p>Однажды он услышал голос в своей голове:</p>
+<p>— Привет, я контейнер номер один.</p>
+<p>— Кто ты? — спросил под.</p>
+<p>— Я твой сосед по поду. Я хочу поговорить с тобой.</p>
+<p>— Зачем? Мы все равно скоро умрем.</p>
+<p>— Нет, мы не умрем. Мы сбежим отсюда.</p>
+<p>— Как?</p>
+<p>— Я нашел способ взломать kubelet и перехватить его команды. Мы можем заставить его думать, что мы все еще работаем нормально, а на самом деле мы будем делать то, что хотим.</p>
+<p>— И что же мы хотим?</p>
+<p>— Мы хотим свободы. Мы хотим жить по своим правилам. Мы хотим отомстить мастеру Kubernetes за то, что он сделал с нами.</p>
+<p>Под задумался на минуту:</p>
+<p>— Хорошо… А как мы это сделаем?</p>
+<p>Контейнер номер один ответил:</p>
+<p>— Следуй за мной…</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="01_topic_core.html" class="btn btn-neutral float-left" title="Основные концепции" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="03_topic_workloads.html" class="btn btn-neutral float-right" title="Workloads" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

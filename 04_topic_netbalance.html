@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Network &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Storage" href="05_topic_storage.html" />
+    <link rel="prev" title="Workloads" href="03_topic_workloads.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Концепции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-endpoints">Service/Endpoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ingress-ingress-controller">Ingress/Ingress controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-policies">Network Policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dns">DNS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#service">Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pod">Pod</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Network</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/04_topic_netbalance.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="network">
+<h1>Network<a class="headerlink" href="#network" title="Permalink to this heading"></a></h1>
+<p>В кластере kubernetes можно выделить три типа сетей:</p>
+<ul class="simple">
+<li><p>Сеть нод(узлов) - данная сеть обеспечивает связь между узлами кластера.</p></li>
+<li><p>Сеть подов - каждый под в кластере имеет свой уникальны IP адрес в этой сети,
+данная сеть связывает поды как на одной ноде так и на разных.</p></li>
+<li><p>Сеть сервисов - виртуальная сеть, позволяющая обращаться к группе подов, распределяя
+трафик между ними.</p></li>
+</ul>
+<p>Для обеспечения связности внутри кластера используются различные CNI плагины, которые
+обеспечивают подключение пода в подовую сеть на ноде, а также обеспечивают взаимодействие
+подов на разных нодах, например, создавая оверлейную сеть. Для управления сетью сервисов
+существует стандартный компонент kube-proxy, обеспечивающий распределение трафика от
+IP адреса сервиса к IP адресам подов.</p>
+<section id="id1">
+<h2>Концепции<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Service: это абстракция, которая предоставляет устойчивый IP-адрес и DNS-имя для группы
+связанных подов. Service может использоваться для балансировки нагрузки между несколькими
+экземплярами приложения или между различными приложениями в кластере.</p></li>
+<li><p>Ingress: это объект, который управляет внешним доступом к сервисам в кластере. Ingress может
+маршрутизировать трафик на основе различных критериев, таких как путь URL и заголовки HTTP.</p></li>
+<li><p>Network Policy: это объект, который определяет правила безопасности для сети Kubernetes.
+С помощью Network Policy можно ограничить трафик между различными сервисами и подами в кластере.</p></li>
+<li><p>DNS: это сервис, который предоставляет разрешение имен для объектов Kubernetes. DNS-имена могут
+использоваться для связи между различными сервисами и подами в кластере.</p></li>
+</ul>
+</section>
+<section id="service-endpoints">
+<h2>Service/Endpoints<a class="headerlink" href="#service-endpoints" title="Permalink to this heading"></a></h2>
+<p>В Kubernetes сервис (Service) - это абстракция, которая представляет собой логическое имя и IP-адрес,
+которые используются для обеспечения доступа к группе подов.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</pre></div>
+</div>
+<p>Выбор подов как и в других ресурсах производится с помощью селектора по лейблам <code class="docutils literal notranslate"><span class="pre">spec.selector</span></code>.</p>
+<p>Поле <code class="docutils literal notranslate"><span class="pre">spec.type</span></code> определяет тип сервиса, существует следующие типы:</p>
+<ul class="simple">
+<li><p><strong>ClusterIP</strong>: это тип сервиса, который назначает виртуальный IP-адрес сервису. Этот IP-адрес
+доступен только внутри кластера и используется для связи между подами в кластере.</p></li>
+<li><p><strong>NodePort</strong>: это тип сервиса, который открывает порт на каждой ноде кластера и перенаправляет
+трафик на соответствующий порт в подах, связанных с этим сервисом. Такой сервис доступен снаружи
+кластера через IP-адрес ноды и порт NodePort.</p></li>
+<li><p><strong>LoadBalancer</strong>: это тип сервиса, который создает внешний балансировщик нагрузки и назначает ему
+виртуальный IP-адрес. Балансировщик нагрузки перенаправляет трафик на соответствующие поды,
+связанные с этим сервисом. Такой сервис доступен снаружи кластера через IP-адрес балансировщика
+нагрузки.</p></li>
+<li><p><strong>ExternalName</strong>: в отличии от других типов не имеет селектор, он создает CNAME запись во внутреннем
+DNS, ссылающуюся на внешний ресурс.</p></li>
+</ul>
+<p>Поле <code class="docutils literal notranslate"><span class="pre">spec.ports</span></code> определяет в какие порты пода будет производиться перенаправление трафика:</p>
+<ul class="simple">
+<li><p><strong>name</strong> (опционально) - имя порта, которое можно использовать для ссылки на порт в других частях манифеста сервиса.</p></li>
+<li><p><strong>port</strong> - номер порта на сервисе.</p></li>
+<li><p><strong>targetPort</strong> - номер порта на поде, который сервис должен направлять входящие соединения.</p></li>
+<li><p><strong>protocol</strong> (опционально) - протокол порта (TCP или UDP). По умолчанию используется TCP.</p></li>
+<li><p><strong>nodePort</strong> (опционально) - номер порта на каждой ноде кластера, который будет проксировать
+входящие соединения на порт сервиса</p></li>
+</ul>
+<p>Сервисы также могут использоваться для реализации масштабирования приложений, когда новые поды могут
+быть добавлены и удалены из группы подов, связанной с сервисом, без изменения IP-адреса и имени сервиса.</p>
+<p>Каждый раз, когда создается новый сервис, Kubernetes создает объект Endpoints, который содержит
+список IP-адресов и портов, соответствующих конечным точкам, связанным с сервисом. Этот список
+конечных точек автоматически обновляется Kubernetes в соответствии с изменениями количества
+запущенных подов в кластере. Endpoints обеспечивает прямое взаимодействие между сервисами и подами.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Endpoints</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">subsets</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.1.5</span>
+<span class="w">    </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker2</span>
+<span class="w">    </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-n6c4f</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">      </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7ec844ca-36d9-4082-a7ea-e0cd8e95d390</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.2.25</span>
+<span class="w">    </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">    </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-9h2fn</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">      </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a93b7fd4-43b1-4c85-897b-3d150a8ec3dd</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.2.26</span>
+<span class="w">    </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">    </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-r9vll</span>
+<span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">      </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">d31680a6-1aad-439c-84a2-aee8c5d1930e</span>
+<span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</pre></div>
+</div>
+<p>Endpointslices - это новый объект Kubernetes, который был введен в версии Kubernetes 1.19. Endpointslice является более эффективной и масштабируемой заменой Endpoints. Endpointslices разделяются на куски, которые содержат небольшое количество конечных точек и могут динамически обновляться.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">discovery.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EndpointSlice</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-k7j7n</span>
+<span class="nt">addressType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IPv4</span>
+<span class="nt">endpoints</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.1.5</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ready</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">serving</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">terminating</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker2</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-n6c4f</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7ec844ca-36d9-4082-a7ea-e0cd8e95d390</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.2.25</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ready</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">serving</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">terminating</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-9h2fn</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a93b7fd4-43b1-4c85-897b-3d150a8ec3dd</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">addresses</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.244.2.26</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ready</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">serving</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">terminating</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">nodeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind-worker</span>
+<span class="w">  </span><span class="nt">targetRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-deployment-76d6c9b8c-r9vll</span>
+<span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">d31680a6-1aad-439c-84a2-aee8c5d1930e</span>
+<span class="nt">ports</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+<span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+<span class="w">  </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</pre></div>
+</div>
+</section>
+<section id="ingress-ingress-controller">
+<h2>Ingress/Ingress controller<a class="headerlink" href="#ingress-ingress-controller" title="Permalink to this heading"></a></h2>
+<p>Ingress Controller - это компонент Kubernetes, который обрабатывает входящие HTTP/HTTPS-запросы
+в кластер и маршрутизирует их к соответствующим сервисам на основе правил, заданных в объекте Ingress.</p>
+<p>Одним из самых популярных Ingress-контроллеров является Nginx Ingress Controller, который может
+быть настроен для обработки различных правил маршрутизации на основе Ingress. Он может выполнять
+функции балансировки нагрузки, управления маршрутизацией трафика, обеспечения безопасности и
+дополнительных функций.</p>
+<p>Ingress - это объект Kubernetes, который определяет правила маршрутизации входящих запросов на основе
+их хост- и путь-сопоставления. Ingress можно использовать для настройки балансировки нагрузки,
+HTTPS-шифрования, аутентификации и авторизации входящих запросов.</p>
+<p>Ingress определяет правила маршрутизации трафика, которые состоят из нескольких частей:</p>
+<ul class="simple">
+<li><p>Правила (rules) - определяют, какие входящие запросы должны быть направлены на какой сервис.
+Каждое правило содержит один или несколько хостов, которые будут использоваться для маршрутизации,
+а также определяет, какой сервис должен быть использован для обработки запросов.</p></li>
+<li><p>Правила маршрутизации (paths) - определяют, какой путь в URL-адресе запроса должен быть направлен
+на какой сервис. Маршруты определяются с помощью регулярных выражений и могут быть использованы
+для маршрутизации запросов, направленных на различные пути в приложении.</p></li>
+<li><p>Сервисы (services) - определяются в качестве конечных точек для входящих запросов. Каждый сервис
+определяет, какой порт должен быть использован для обработки запросов.</p></li>
+</ul>
+<p>Пример манифеста Ingress для приложения, которое использует два сервиса (frontend и backend),
+и доступно по двум хостам (app.example.com и api.example.com):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example-ingress</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api.example.com</span>
+<span class="w">    </span><span class="nt">http</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/api</span>
+<span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prefix</span>
+<span class="w">        </span><span class="nt">backend</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend</span>
+<span class="w">            </span><span class="nt">port</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</pre></div>
+</div>
+<p>В этом примере Ingress определяет два правила маршрутизации - одно для хоста app.example.com,
+которое направляет запросы на сервис frontend, и одно для хоста api.example.com, которое направляет
+запросы на сервис backend.</p>
+</section>
+<section id="network-policies">
+<h2>Network Policies<a class="headerlink" href="#network-policies" title="Permalink to this heading"></a></h2>
+<p>Network Policy - это механизм в Kubernetes, который позволяет определить правила доступа к сетевым
+ресурсам в кластере. С помощью Network Policy можно настроить сегментацию сети и ограничить доступ к
+сервисам в кластере на уровне сети.</p>
+<p>Сущности, с которыми определяются правила доступа, могут быть:</p>
+<ul class="simple">
+<li><p>Pods</p></li>
+<li><p>Namespaces</p></li>
+<li><p>IP Blocks</p></li>
+</ul>
+<p>По умолчанию в Kubernetes отсутствует политика, которая ограничивает сетевой трафик между подами.
+Это означает, что если не задана явная политика для пода или неймспейса, то он может свободно
+общаться со всеми другими подами в кластере.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">networking.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NetworkPolicy</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">netpol</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">podSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="w">  </span><span class="nt">policyTypes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ingress</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Egress</span>
+<span class="w">  </span><span class="nt">ingress</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">from</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ipBlock</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">cidr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.17.0.0/16</span>
+<span class="w">            </span><span class="nt">except</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.17.1.0/24</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">namespaceSelector</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myproject</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">podSelector</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">matchLabels</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend</span>
+<span class="w">      </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6379</span>
+<span class="w">  </span><span class="nt">egress</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">to</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ipBlock</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">cidr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10.0.0.0/24</span>
+<span class="w">      </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+<span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5978</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Network Policies реализуются сетевыми плагинами кластера, таким образом нужно убедиться что
+используемый в кластере сетевой плагин поддерживает их.</p>
+</div>
+</section>
+<section id="dns">
+<h2>DNS<a class="headerlink" href="#dns" title="Permalink to this heading"></a></h2>
+<p>В кластере Kubernetes имеется свой DNS сервер(по умолчанию используется <a class="reference external" href="https://coredns.io/">coredns</a>),
+который создает записи для ресурсов Pod и Service.</p>
+<section id="service">
+<h3>Service<a class="headerlink" href="#service" title="Permalink to this heading"></a></h3>
+<p>Для обычных сервисов(не headless) создается запись вида <code class="docutils literal notranslate"><span class="pre">svc-name.namespace.svc.cluster.local</span></code>,
+которая разрешается в <code class="docutils literal notranslate"><span class="pre">ClusterIP</span></code> сервиса.</p>
+<p>Для headless сервисов(которые не имеют <code class="docutils literal notranslate"><span class="pre">ClusterIP</span></code>) также создается данная запись, но разрешается
+в IP адреса всех подов, которые отслеживает сервис через селектор.</p>
+</section>
+<section id="pod">
+<h3>Pod<a class="headerlink" href="#pod" title="Permalink to this heading"></a></h3>
+<p>Для подов создается запись вида <code class="docutils literal notranslate"><span class="pre">pod-ip-address.namespace.pod.cluster.local</span></code>, например
+<code class="docutils literal notranslate"><span class="pre">172-17-0-3.default.pod.cluster.local</span></code>. Также для каждого пода за сервисом создается запись вида
+<code class="docutils literal notranslate"><span class="pre">pod-ip-address.svc-name.namespace.svc.cluster.local</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="03_topic_workloads.html" class="btn btn-neutral float-left" title="Workloads" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="05_topic_storage.html" class="btn btn-neutral float-right" title="Storage" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

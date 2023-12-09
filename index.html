@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kubernetes &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Основные концепции" href="01_topic_core.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Kubernetes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kubernetes">
+<h1>Kubernetes<a class="headerlink" href="#kubernetes" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_topic_core.html#id2">Эволюция инфраструктуры</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id3">Физические сервера</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id4">Виртуализация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id5">Контейнеры</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01_topic_core.html#id6">Эволюция архитектуры приложений</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id7">Монолитная архитектура</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id8">Микросервисная архитектура</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="01_topic_core.html#kubernetes">Kubernetes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#id9">Основные компоненты</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_topic_core.html#control-plane">Control Plane</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#kube-apiserver">kube-apiserver</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#etcd">etcd</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#kube-scheduler">kube-scheduler</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#kube-controller-manager">kube-controller-manager</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#cloud-controller-manager">cloud-controller-manager</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#id10">Отказоустойчивый кластер</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="01_topic_core.html#node">Node</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#kubelet">kubelet</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#kube-proxy">kube-proxy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_topic_core.html#container-runtime">container runtime</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="01_topic_core.html#api-kubernetes">API Kubernetes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_topic_core.html#id11">Объект</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_topic_core.html#id12">Структура путей</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="02_topic_pod.html#id1">Использование</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_topic_pod.html#id2">Несколько контейнеров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_topic_pod.html#id3">Жизненный цикл</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#pod-phases">Pod Phases</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#pod-conditions">Pod Conditions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#container-states">Container states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#container-restart-policy">Container restart policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#container-hooks">Container hooks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#container-probes">Container probes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#pod-termination">Pod termination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02_topic_pod.html#id4">Конфигурация</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#scheduling">Scheduling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#lifecycle">Lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#volumes">Volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#name-resolution">Name resolution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#hosts-namespaces">Hosts namespaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#service-account">Service account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#security-context">Security context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_topic_pod.html#containers">Containers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#container">Container</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#image">Image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#entrypoint">Entrypoint</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#ports">Ports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#environment-variables">Environment variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#id5">Volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#resources">Resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#id6">Lifecycle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="02_topic_pod.html#id7">Security Context</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02_topic_pod.html#id8">Рассказ нейросети</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#deployment-replicaset">Deployment/ReplicaSet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#id1">Селектор</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#id2">Обновление</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="03_topic_workloads.html#recreate">Recreate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03_topic_workloads.html#rollingupdate">RollingUpdate</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#id3">Состояние</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#statefulset">StatefulSet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#id4">Идентификатор пода</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#pod-management-policies">Pod Management Policies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="03_topic_workloads.html#orderedready">OrderedReady</a></li>
+<li class="toctree-l4"><a class="reference internal" href="03_topic_workloads.html#parallel">Parallel</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#update-strategies">Update Strategies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#daemonset">DaemonSet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#job-cronjob">Job/Cronjob</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#rollout">Rollout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#status">Status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#history">History</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#pause-resume">Pause/Resume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#rollback">Rollback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#restart">Restart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#scaling">Scaling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_topic_workloads.html#horizontal-pod-autoscaling">Horizontal Pod Autoscaling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_topic_workloads.html#disruptions">Disruptions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="04_topic_netbalance.html#id1">Концепции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_topic_netbalance.html#service-endpoints">Service/Endpoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_topic_netbalance.html#ingress-ingress-controller">Ingress/Ingress controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_topic_netbalance.html#network-policies">Network Policies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_topic_netbalance.html#dns">DNS</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="04_topic_netbalance.html#service">Service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_topic_netbalance.html#pod">Pod</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_topic_storage.html#volumes">Volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_topic_storage.html#ephemeral-volumes">Ephemeral Volumes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="05_topic_storage.html#emptydir">EmptyDir</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_topic_storage.html#configmap">ConfigMap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_topic_storage.html#secret">Secret</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_topic_storage.html#downwardapi">DownwardAPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_topic_storage.html#projected">Projected</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="05_topic_storage.html#persistent-volumes">Persistent Volumes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_topic_storage.html#storage-classes">Storage Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="06_topic_accesscontrol.html#authentication">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_topic_accesscontrol.html#certificate">Certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="06_topic_accesscontrol.html#token">Token</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_topic_accesscontrol.html#authorization">Authorization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_topic_accesscontrol.html#rbac">RBAC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="06_topic_accesscontrol.html#role">Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_topic_accesscontrol.html#clusterrole">ClusterRole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_topic_accesscontrol.html#rolebinding">RoleBinding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_topic_accesscontrol.html#clusterrolebinding">ClusterRoleBinding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="practice.html">Практика</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#id1">Пререквизиты</a></li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#kind">kind</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id2">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id3">Создание кластера</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="01_practice_core.html#kubectl">kubectl</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id4">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id5">Конфигурация</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id6">Автодополнение</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id7">Информация о ресурсах</a></li>
+<li class="toctree-l4"><a class="reference internal" href="01_practice_core.html#id8">Работа с объектами</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="01_practice_core.html#id9">Полезные функции</a></li>
+<li class="toctree-l5"><a class="reference internal" href="01_practice_core.html#c-kind-pod">Работа c объектами на примере kind: Pod</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id1">Создание</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id2">Получение информации</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id3">Логи</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id4">Проброс портов</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id5">Запуск команд в контейнере</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#id6">Копирование файлов контейнера</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_practice_pod.html#configmap-secret">Использование ConfigMap/Secret</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#metrics-server">Metrics server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#application">Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#image">Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#statefulset">StatefulSet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#horizontal-pod-autoscaler">Horizontal Pod Autoscaler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#cronjob">Cronjob</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_practice_workloads.html#scaling">Scaling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#kind">Kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#nginx-ingress">Nginx Ingress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#application">Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#deploy">Deploy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#id1">LoadBalance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_practice_netbalance.html#rollingupdate">RollingUpdate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="05_practice_storage.html#persistent-volume">Persistent Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_practice_storage.html#persistent-volume-claim">Persistent Volume Claim</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_practice_storage.html#pvc-in-pod">PVC in Pod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_practice_storage.html#storage-class">Storage Class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="06_practice_accesscontrol.html">Access Control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="06_practice_accesscontrol.html#authn">Authn</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#generate-csr-and-key">Generate csr and key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#kind-certificatesigningrequest">kind: CertificateSigningRequest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#kubectl-credentials">kubectl credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="06_practice_accesscontrol.html#rbac-authz">RBAC Authz</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#role">Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#cluster-role">Cluster Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#rolebinding">RoleBinding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#rolebinding-with-cluster-role">RoleBinding with Cluster Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="06_practice_accesscontrol.html#clusterrolebinding">ClusterRoleBinding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="07_practice_helm.html#kind">Kind</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_practice_helm.html#id1">Установка</a></li>
+<li class="toctree-l3"><a class="reference internal" href="07_practice_helm.html#kustomize">Kustomize</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#base">Base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#development">Development</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#production">Production</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#deploy">Deploy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="07_practice_helm.html#helm">Helm</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#chart">Chart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#templates">Templates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#values">Values</a></li>
+<li class="toctree-l4"><a class="reference internal" href="07_practice_helm.html#id2">Deploy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="08_practice_operator.html#operator-sdk">Operator-SDK</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#id1">Установка</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#id2">Инициализация</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="08_practice_operator.html#go">GO</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#custom-types">Custom Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#controllers">Controllers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#nginx-controller">Nginx controller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#telegram">Telegram</a></li>
+<li class="toctree-l4"><a class="reference internal" href="08_practice_operator.html#telegram-controller">Telegram controller</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="08_practice_operator.html#build-deploy">Build &amp; Deploy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="08_practice_operator.html#run">Run</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="01_topic_core.html" class="btn btn-neutral float-right" title="Основные концепции" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Access Control &mdash; документация kube-dev-course </title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/translations.js"></script>
+        <script src="https://unpkg.com/mermaid@9.4.0/dist/mermaid.min.js"></script>
+        <script>mermaid.initialize({startOnLoad:true});</script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Kustomize/Helm" href="07_practice_helm.html" />
+    <link rel="prev" title="Storage" href="05_practice_storage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kube-dev-course
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="01_topic_core.html">Основные концепции</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_topic_pod.html">Pod</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_topic_workloads.html">Workloads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_topic_netbalance.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_topic_storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_topic_accesscontrol.html">Access Control</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="practice.html">Практика</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01_practice_core.html">Основы работы с kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_practice_pod.html">Работа с Pod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03_practice_workloads.html">Workloads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_practice_netbalance.html">LoadBalance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05_practice_storage.html">Storage</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Access Control</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#authn">Authn</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#generate-csr-and-key">Generate csr and key</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kind-certificatesigningrequest">kind: CertificateSigningRequest</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kubectl-credentials">kubectl credentials</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rbac-authz">RBAC Authz</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#role">Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cluster-role">Cluster Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rolebinding">RoleBinding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rolebinding-with-cluster-role">RoleBinding with Cluster Role</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#clusterrolebinding">ClusterRoleBinding</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="07_practice_helm.html">Kustomize/Helm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08_practice_operator.html">Operator</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kube-dev-course</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="practice.html">Практика</a></li>
+      <li class="breadcrumb-item active">Access Control</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/06_practice_accesscontrol.md.txt" rel="nofollow"> Просмотреть исходный код страницы</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="access-control">
+<h1>Access Control<a class="headerlink" href="#access-control" title="Permalink to this heading"></a></h1>
+<p>В данном практическом занятии рассмотрим процесс аутентификации с помощью сертификата и разделение
+прав с <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">RBAC</a>.</p>
+<section id="authn">
+<h2>Authn<a class="headerlink" href="#authn" title="Permalink to this heading"></a></h2>
+<p>Для того, чтобы получить сертификат, которому будет доверять api kubernetes, необходимо сгенерировать
+запрос на подпись - [Certificate Signing Request(csr)] и отправить на подтверждение в api. В данном
+примере для генерации csr и ключа я воспользуюсь утилитой openssl, в Linux и MacOS данная утилита
+обычно есть по умолчанию, для Windows <a class="reference external" href="https://wiki.openssl.org/index.php/Binaries">список источников для загрузки есть тут</a>.</p>
+<section id="generate-csr-and-key">
+<h3>Generate csr and key<a class="headerlink" href="#generate-csr-and-key" title="Permalink to this heading"></a></h3>
+<p>Генерацию ключа и <a class="reference external" href="https://en.wikipedia.org/wiki/Certificate_signing_request">csr</a> можно произвести одной командой:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>openssl<span class="w"> </span>req<span class="w"> </span>-new<span class="w"> </span>-newkey<span class="w"> </span>rsa:2048<span class="w"> </span>-nodes<span class="w"> </span>-subj<span class="w"> </span><span class="s1">&#39;/CN=Alex&#39;</span><span class="w"> </span>-keyout<span class="w"> </span>key.pem<span class="w"> </span>-out<span class="w"> </span>csr.pem
+<span class="go">Generating a 2048 bit RSA private key</span>
+<span class="go">.................................................+++++</span>
+<span class="go">...............................................+++++</span>
+<span class="go">writing new private key to &#39;key.pem&#39;</span>
+<span class="go">-----</span>
+</pre></div>
+</div>
+<p>В данной команде используются опции:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">req</span> <span class="pre">-new</span></code> - создание нового csr</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-newkey</span> <span class="pre">rsa:2048</span></code> - генерация нового RSA ключа длиной 2048 бит</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-nodes</span></code> - не использовать пароль для ключа</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-subj</span> <span class="pre">'/CN=&lt;name&gt;'</span></code> - указание Subject для сертификата, где <code class="docutils literal notranslate"><span class="pre">name</span></code> - ваше имя</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-keyout</span> <span class="pre">&lt;path&gt;</span></code> - путь и имя для сохранения ключа</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-out</span> <span class="pre">&lt;path&gt;</span></code> - путь и имя для сохранения csr</p></li>
+</ul>
+<p>После выполнения данной команды в директории, в которой вы находитесь, создадутся файлы
+<code class="docutils literal notranslate"><span class="pre">key.pem</span></code> и <code class="docutils literal notranslate"><span class="pre">csr.pem</span></code>.</p>
+</section>
+<section id="kind-certificatesigningrequest">
+<h3>kind: CertificateSigningRequest<a class="headerlink" href="#kind-certificatesigningrequest" title="Permalink to this heading"></a></h3>
+<p>Для возможности подписать наш csr внутрикластерным сертификатом удостоверяющего центра необходимо
+создать объект <a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/">CertificateSigningRequest</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat<span class="w"> </span><span class="s">&lt;&lt;EOF | kubectl apply -f -</span>
+<span class="s">apiVersion: certificates.k8s.io/v1</span>
+<span class="s">kind: CertificateSigningRequest</span>
+<span class="s">metadata:</span>
+<span class="s">  name: myuser</span>
+<span class="s">spec:</span>
+<span class="s">  request: $(base64 -w0 &lt; csr.pem)</span>
+<span class="s">  signerName: kubernetes.io/kube-apiserver-client</span>
+<span class="s">  expirationSeconds: 86400  # one day</span>
+<span class="s">  usages:</span>
+<span class="s">  - client auth</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>В данном ресурсе указаны поля:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">request</span></code> - содержимое файла <code class="docutils literal notranslate"><span class="pre">csr.pem</span></code> в base64 формате</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">signerName</span></code> - кем будет подписан сертификат</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expirationSeconds</span></code> - время до истечения срока жизни сертификата</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">usage</span></code> - опции использования, в нашем случае <code class="docutils literal notranslate"><span class="pre">client</span> <span class="pre">auth</span></code></p></li>
+</ul>
+<p>После создания ресурса необходимо подтвердить выписывание сертификата для данного csr:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>certificate<span class="w"> </span>approve<span class="w"> </span>myuser
+<span class="go">certificatesigningrequest.certificates.k8s.io/myuser approved</span>
+</pre></div>
+</div>
+<p>Когда ручное подтверждение было выполнено контроллер выпишет сертификат и добавить его в поле
+<code class="docutils literal notranslate"><span class="pre">.status.certificate</span></code> в base64 формате нашего ресурса CertificateSigningRequest. Сохраним его в файл
+<code class="docutils literal notranslate"><span class="pre">crt.pem</span></code> декодировав из base64:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>csr<span class="w"> </span>myuser<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.status.certificate}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="w"> </span>&gt;<span class="w"> </span>crt.pem
+</pre></div>
+</div>
+</section>
+<section id="kubectl-credentials">
+<h3>kubectl credentials<a class="headerlink" href="#kubectl-credentials" title="Permalink to this heading"></a></h3>
+<p>Теперь у нас есть необходимые файлы для аутентификации в кластере - ключ <code class="docutils literal notranslate"><span class="pre">key.pem</span></code> и подписанный
+сертификат <code class="docutils literal notranslate"><span class="pre">crt.pem</span></code>, осталось внести изменения в конфигурацию kubectl, чтобы воспользоваться ими.</p>
+<p>Создаем пользовательскую конфигурацию <code class="docutils literal notranslate"><span class="pre">myuser</span></code> указав сертификат и ключ:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-credentials<span class="w"> </span>myuser<span class="w"> </span>--client-certificate<span class="w"> </span>crt.pem<span class="w"> </span>--client-key<span class="w"> </span>key.pem<span class="w"> </span>--embed-certs
+<span class="go">User &quot;myuser&quot; set.</span>
+</pre></div>
+</div>
+<p>Модифицируем текущий контекст, указав созданного пользователя, а также можем убедиться, что в
+конфигурации применились наши изменения:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>myuser
+<span class="go">Context &quot;kind-kind&quot; modified.</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>view
+<span class="go">apiVersion: v1</span>
+<span class="go">clusters:</span>
+<span class="go">- cluster:</span>
+<span class="go">    certificate-authority-data: DATA+OMITTED</span>
+<span class="go">    server: https://192.168.56.2:6443</span>
+<span class="go">  name: kind-kind</span>
+<span class="go">contexts:</span>
+<span class="go">- context:</span>
+<span class="go">    cluster: kind-kind</span>
+<span class="go">    user: myuser</span>
+<span class="go">  name: kind-kind</span>
+<span class="go">current-context: kind-kind</span>
+<span class="go">kind: Config</span>
+<span class="go">preferences: {}</span>
+<span class="go">users:</span>
+<span class="go">- name: kind-kind</span>
+<span class="go">  user:</span>
+<span class="go">    client-certificate-data: DATA+OMITTED</span>
+<span class="go">    client-key-data: DATA+OMITTED</span>
+<span class="go">- name: myuser</span>
+<span class="go">  user:</span>
+<span class="go">    client-certificate-data: DATA+OMITTED</span>
+<span class="go">    client-key-data: DATA+OMITTED</span>
+</pre></div>
+</div>
+<p>Как видно в конфигурации добавился новый пользователь - <code class="docutils literal notranslate"><span class="pre">myuser</span></code>, а также он применился к текущему
+контексту в блоке <code class="docutils literal notranslate"><span class="pre">contexts</span></code>.</p>
+<p>Можно попробовать сделать любой запрос в кластер:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+<span class="go">Error from server (Forbidden): pods is forbidden: User &quot;Alex&quot; cannot list resource &quot;pods&quot; in API group &quot;&quot; in the namespace &quot;default&quot;</span>
+</pre></div>
+</div>
+<p>Так как наш новый пользователь не имеет никаких прав, то мы получаем данное сообщение.</p>
+</section>
+</section>
+<section id="rbac-authz">
+<h2>RBAC Authz<a class="headerlink" href="#rbac-authz" title="Permalink to this heading"></a></h2>
+<p>Для выдачи прав нашему пользователю воспользуемся режимом авторизации
+<a class="reference external" href="https://kubernetes.io/docs/reference/access-authn-authz/rbac/">Role-based access control (RBAC)</a>.</p>
+<section id="role">
+<h3>Role<a class="headerlink" href="#role" title="Permalink to this heading"></a></h3>
+<p>Набор прав в неймспейсе можно задать с помощью ресурса <code class="docutils literal notranslate"><span class="pre">Role</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>kind-kind<span class="w"> </span><span class="c1"># вернем пользователя по-умолчанию</span>
+Context<span class="w"> </span><span class="s2">&quot;kind-kind&quot;</span><span class="w"> </span>modified.
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: Role</span>
+<span class="s">metadata:</span>
+<span class="s">  namespace: default</span>
+<span class="s">  name: pod-reader</span>
+<span class="s">rules:</span>
+<span class="s">- apiGroups: [&quot;&quot;]</span>
+<span class="s">  resources: [&quot;pods&quot;]</span>
+<span class="s">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Как видно из правил, данная роль позволяет просматривать поды в неймспейсе default.</p>
+</section>
+<section id="cluster-role">
+<h3>Cluster Role<a class="headerlink" href="#cluster-role" title="Permalink to this heading"></a></h3>
+<p>Набор прав на уровне всего кластера можно задать с помощью ресурса <code class="docutils literal notranslate"><span class="pre">ClusterRole</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: ClusterRole</span>
+<span class="s">metadata:</span>
+<span class="s">  name: cm-reader</span>
+<span class="s">rules:</span>
+<span class="s">- apiGroups: [&quot;&quot;]</span>
+<span class="s">  resources: [&quot;configmaps&quot;]</span>
+<span class="s">  verbs: [&quot;get&quot;, &quot;watch&quot;, &quot;list&quot;]</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Данная роль создается на уровне кластера(cluster-wide) и дает права на чтение ресурса configmaps.</p>
+</section>
+<section id="rolebinding">
+<h3>RoleBinding<a class="headerlink" href="#rolebinding" title="Permalink to this heading"></a></h3>
+<p>Чтобы присвоить права нашему пользователю в конкретном неймспейсе необходимо создать объект
+<code class="docutils literal notranslate"><span class="pre">RoleBinding</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: RoleBinding</span>
+<span class="s">metadata:</span>
+<span class="s">  name: read-pods</span>
+<span class="s">  namespace: default</span>
+<span class="s">subjects:</span>
+<span class="s">- kind: User</span>
+<span class="s">  name: Alex</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">roleRef:</span>
+<span class="s">  kind: Role</span>
+<span class="s">  name: pod-reader</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<p>Данный объект связывает созданную ранее роль <code class="docutils literal notranslate"><span class="pre">pod-reader</span></code> с нашим пользователем. Теперь можем
+переключиться на него и проверить:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>myuser
+<span class="go">Context &quot;kind-kind&quot; modified.</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+<span class="go">NAME        READY   STATUS    RESTARTS        AGE</span>
+<span class="go">pv-pod-sc   1/1     Running   3 (3h14m ago)   15d</span>
+</pre></div>
+</div>
+<p>Как видно теперь пользователь обладает правами указанными в объекте <code class="docutils literal notranslate"><span class="pre">Role</span></code> <code class="docutils literal notranslate"><span class="pre">pod-reader</span></code>.</p>
+</section>
+<section id="rolebinding-with-cluster-role">
+<h3>RoleBinding with Cluster Role<a class="headerlink" href="#rolebinding-with-cluster-role" title="Permalink to this heading"></a></h3>
+<p>В объекте <code class="docutils literal notranslate"><span class="pre">RoleBinding</span></code> также можно ссылаться на <code class="docutils literal notranslate"><span class="pre">ClusterRole</span></code>, при этом нет необходимости создавать
+данную роль в каждом неймспейсе, таким образом выдавая одни и те же права в различных неймспейсах.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>kind-kind
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: RoleBinding</span>
+<span class="s">metadata:</span>
+<span class="s">  name: read-cm</span>
+<span class="s">  namespace: kube-system</span>
+<span class="s">subjects:</span>
+<span class="s">- kind: User</span>
+<span class="s">  name: Alex</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">roleRef:</span>
+<span class="s">  kind: ClusterRole</span>
+<span class="s">  name: cm-reader</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>myuser
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>cm
+<span class="go">Error from server (Forbidden): configmaps is forbidden: User &quot;Alex&quot; cannot list resource &quot;configmaps&quot; in API group &quot;&quot; in the namespace &quot;default&quot;</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>cm<span class="w"> </span>-n<span class="w"> </span>kube-system
+<span class="go">NAME                                 DATA   AGE</span>
+<span class="go">coredns                              1      29d</span>
+<span class="go">extension-apiserver-authentication   6      29d</span>
+<span class="go">kube-proxy                           2      29d</span>
+<span class="go">kube-root-ca.crt                     1      29d</span>
+<span class="go">kubeadm-config                       1      29d</span>
+<span class="go">kubelet-config                       1      29d</span>
+</pre></div>
+</div>
+<p>Как видно пользователь получил права в конкретном неймспейсе <code class="docutils literal notranslate"><span class="pre">kube-system</span></code>.</p>
+</section>
+<section id="clusterrolebinding">
+<h3>ClusterRoleBinding<a class="headerlink" href="#clusterrolebinding" title="Permalink to this heading"></a></h3>
+<p>Для получения прав во всем кластере, а не только в конкретных неймспейсах, необходимо воспользоваться
+<code class="docutils literal notranslate"><span class="pre">ClusterRoleBinding</span></code>. Он позволяет связать пользователя с <code class="docutils literal notranslate"><span class="pre">ClusterRole</span></code> и выдать права на все
+неймспейсы, либо права для cluster-wide объектов(например ноды).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>kind-kind
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">apiVersion: rbac.authorization.k8s.io/v1</span>
+<span class="s">kind: ClusterRoleBinding</span>
+<span class="s">metadata:</span>
+<span class="s">  name: read-cm</span>
+<span class="s">subjects:</span>
+<span class="s">- kind: User</span>
+<span class="s">  name: Alex</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">roleRef:</span>
+<span class="s">  kind: ClusterRole</span>
+<span class="s">  name: cm-reader</span>
+<span class="s">  apiGroup: rbac.authorization.k8s.io</span>
+<span class="s">EOF</span>
+</pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--user<span class="w"> </span>myuser
+<span class="go">Context &quot;kind-kind&quot; modified.</span>
+<span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>cm<span class="w"> </span>-A
+<span class="go">NAMESPACE            NAME                                 DATA   AGE</span>
+<span class="go">default              kube-root-ca.crt                     1      29d</span>
+<span class="go">ingress-nginx        ingress-nginx-controller             1      29d</span>
+<span class="go">ingress-nginx        kube-root-ca.crt                     1      29d</span>
+<span class="go">kube-node-lease      kube-root-ca.crt                     1      29d</span>
+<span class="go">kube-public          cluster-info                         1      29d</span>
+<span class="go">kube-public          kube-root-ca.crt                     1      29d</span>
+<span class="go">kube-system          coredns                              1      29d</span>
+<span class="go">kube-system          extension-apiserver-authentication   6      29d</span>
+<span class="go">kube-system          kube-proxy                           2      29d</span>
+<span class="go">kube-system          kube-root-ca.crt                     1      29d</span>
+<span class="go">kube-system          kubeadm-config                       1      29d</span>
+<span class="go">kube-system          kubelet-config                       1      29d</span>
+<span class="go">local-path-storage   kube-root-ca.crt                     1      29d</span>
+<span class="go">local-path-storage   local-path-config                    4      29d</span>
+</pre></div>
+</div>
+<p>Как видно пользователь получил возможность чтения configmaps во всем кластере.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="05_practice_storage.html" class="btn btn-neutral float-left" title="Storage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="07_practice_helm.html" class="btn btn-neutral float-right" title="Kustomize/Helm" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Алексей Юдолевич.</p>
+  </div>
+
+  Собрано при помощи <a href="https://www.sphinx-doc.org/">Sphinx</a> с использованием
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">темы,</a>
+    предоставленной <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
